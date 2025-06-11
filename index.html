@@ -11,770 +11,95 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-        .card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        .btn-primary {
-            background-color: #4f46e5;
-            color: white;
-            transition: background-color 0.3s ease;
-        }
-        .btn-primary:hover {
-            background-color: #4338ca;
-        }
-        .hero-background {
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1547471080-771cb5f6a0b3?q=80&w=2070&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-        }
-        .icon-btn {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-        }
-        .map-container {
-            height: 300px;
-            width: 100%;
-            border-radius: 0.75rem;
-            overflow: hidden;
-        }
-        .driver-marker {
-            background-color: #4f46e5;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 2px solid white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 12px;
-        }
-        .trip-progress {
-            height: 6px;
-            background-color: #e5e7eb;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        .trip-progress-bar {
-            height: 100%;
-            background-color: #4f46e5;
-            transition: width 0.3s ease;
-        }
+        /* Add your custom styles here */
     </style>
 </head>
 <body class="bg-gray-100">
-    <div id="app" class="min-h-screen flex flex-col items-center justify-center p-4 hero-background">
-        <div class="w-full max-w-3xl mx-auto bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl p-6 md:p-10">
+    <div id="app" class="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-200">
+        <div class="w-full max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6">
             <header class="text-center mb-8">
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Victoria Falls Transit</h1>
+                <h1 class="text-3xl font-bold text-gray-800">Victoria Falls Transit</h1>
                 <p class="text-gray-600 mt-2">Your complete transportation solution in Vic Falls, Zimbabwe</p>
             </header>
 
-            <div id="auth-section" class="hidden">
-                <div class="flex justify-center space-x-4 mb-6">
-                    <button id="login-tab" class="px-4 py-2 font-medium border-b-2 border-transparent hover:text-indigo-600">Login</button>
-                    <button id="register-tab" class="px-4 py-2 font-medium border-b-2 border-transparent hover:text-indigo-600">Register</button>
-                </div>
-                
-                <div id="login-form" class="hidden">
-                    <div class="mb-4">
-                        <label for="login-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                        <input type="email" id="login-email" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-                    <div class="mb-6">
-                        <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                        <input type="password" id="login-password" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-                    <button id="login-btn" class="w-full btn-primary font-bold py-3 px-8 rounded-lg shadow-lg">Login</button>
-                </div>
-                
-                <div id="register-form" class="hidden">
-                    <div class="mb-4">
-                        <label for="register-name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                        <input type="text" id="register-name" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-                    <div class="mb-4">
-                        <label for="register-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                        <input type="email" id="register-email" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-                    <div class="mb-4">
-                        <label for="register-phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                        <input type="tel" id="register-phone" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-                    <div class="mb-6">
-                        <label for="register-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                        <input type="password" id="register-password" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                    </div>
-                    <button id="register-btn" class="w-full btn-primary font-bold py-3 px-8 rounded-lg shadow-lg">Register</button>
-                </div>
-                
-                <div class="text-center mt-4">
-                    <button id="skip-auth" class="text-indigo-600 hover:text-indigo-800">Continue as guest</button>
-                </div>
-            </div>
-
-            <div id="main-app" class="hidden">
+            <div id="main-app">
+                <h2 class="text-xl font-bold text-gray-800">Plan Your Trip</h2>
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-bold text-gray-800">Plan Your Trip</h2>
-                    <div class="flex items-center space-x-4">
-                        <button id="profile-btn" class="text-gray-600 hover:text-indigo-600">
-                            <i class="fas fa-user-circle text-2xl"></i>
-                        </button>
-                        <button id="history-btn" class="text-gray-600 hover:text-indigo-600">
-                            <i class="fas fa-history text-2xl"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-center gap-4 mb-6">
                     <div class="flex-1">
-                        <label for="startLocation" class="block text-sm font-medium text-gray-700 mb-1">Start Location</label>
-                        <div class="flex items-center gap-2">
-                           <select id="startLocation" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></select>
-                           <button id="useCurrentLocation" title="Use my current location" class="p-2 rounded-full hover:bg-gray-200 transition-colors">
-                                <i class="fas fa-location-arrow text-gray-600"></i>
-                           </button>
-                        </div>
+                        <label for="startLocation">Start Location</label>
+                        <select id="startLocation" class="w-full p-3 border border-gray-300 rounded-lg"></select>
                     </div>
-                    
-                    <div class="pt-6">
-                        <button id="swapLocations" title="Swap locations" class="p-2 rounded-full hover:bg-gray-200 transition-colors">
-                            <i class="fas fa-exchange-alt text-gray-600"></i>
-                        </button>
-                    </div>
-
+                    <button id="swapLocations">Swap</button>
                     <div class="flex-1">
-                        <label for="endLocation" class="block text-sm font-medium text-gray-700 mb-1">Destination</label>
-                        <select id="endLocation" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></select>
+                        <label for="endLocation">Destination</label>
+                        <select id="endLocation" class="w-full p-3 border border-gray-300 rounded-lg"></select>
                     </div>
                 </div>
 
-                <div class="mb-6">
-                    <label for="rideType" class="block text-sm font-medium text-gray-700 mb-1">Ride Type</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button data-type="standard" class="ride-type-btn p-3 border rounded-lg hover:border-indigo-500">
-                            <i class="fas fa-car text-xl mb-1"></i>
-                            <span>Standard</span>
-                        </button>
-                        <button data-type="premium" class="ride-type-btn p-3 border rounded-lg hover:border-indigo-500">
-                            <i class="fas fa-car-side text-xl mb-1"></i>
-                            <span>Premium</span>
-                        </button>
-                        <button data-type="shared" class="ride-type-btn p-3 border rounded-lg hover:border-indigo-500">
-                            <i class="fas fa-users text-xl mb-1"></i>
-                            <span>Shared</span>
-                        </button>
-                    </div>
-                </div>
+                <button id="planTripBtn" class="btn-primary py-2 px-4 rounded">Find Rides</button>
 
-                <div class="text-center mb-8">
-                    <button id="planTripBtn" class="w-full md:w-auto btn-primary font-bold py-3 px-8 rounded-lg shadow-lg">
-                        Find Rides
-                    </button>
-                </div>
-                
                 <div id="results" class="hidden">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold text-gray-800">Available Rides</h2>
-                        <button id="back-to-search" class="text-indigo-600 hover:text-indigo-800">Back to search</button>
-                    </div>
-                    
-                    <div id="results-container" class="space-y-4"></div>
-                </div>
-                
-                <div id="ride-details" class="hidden">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold text-gray-800">Ride Details</h2>
-                        <button id="back-to-results" class="text-indigo-600 hover:text-indigo-800">Back to options</button>
-                    </div>
-                    
-                    <div class="card p-6 mb-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <div>
-                                <h3 class="text-lg font-bold" id="ride-type-display"></h3>
-                                <p class="text-gray-600" id="ride-eta"></p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-2xl font-bold" id="ride-price"></p>
-                            </div>
-                        </div>
-                        
-                        <div class="map-container mb-4" id="ride-map"></div>
-                        
-                        <div class="mb-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="font-medium">Pickup:</span>
-                                <span id="ride-pickup"></span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="font-medium">Destination:</span>
-                                <span id="ride-destination"></span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center justify-between mb-6">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center mr-3">
-                                    <i class="fas fa-user text-indigo-600"></i>
-                                </div>
-                                <div>
-                                    <p class="font-medium" id="driver-name"></p>
-                                    <div class="flex items-center">
-                                        <i class="fas fa-star text-yellow-400 mr-1"></i>
-                                        <span id="driver-rating"></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <button id="call-driver" class="p-2 rounded-full bg-green-100 text-green-600">
-                                <i class="fas fa-phone"></i>
-                            </button>
-                        </div>
-                        
-                        <button id="confirm-ride" class="w-full btn-primary font-bold py-3 px-8 rounded-lg shadow-lg">
-                            Confirm Ride
-                        </button>
-                    </div>
-                </div>
-                
-                <div id="active-ride" class="hidden">
-                    <div class="card p-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-xl font-bold text-gray-800">Your Ride</h2>
-                            <button id="cancel-ride" class="text-red-600 hover:text-red-800">Cancel</button>
-                        </div>
-                        
-                        <div class="flex items-center justify-between mb-6">
-                            <div class="flex items-center">
-                                <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mr-3">
-                                    <i class="fas fa-car text-indigo-600 text-xl"></i>
-                                </div>
-                                <div>
-                                    <p class="font-medium" id="active-driver-name"></p>
-                                    <div class="flex items-center">
-                                        <i class="fas fa-star text-yellow-400 mr-1"></i>
-                                        <span id="active-driver-rating"></span>
-                                        <span class="mx-2">•</span>
-                                        <span id="active-driver-vehicle"></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <button id="active-call-driver" class="p-3 rounded-full bg-green-100 text-green-600">
-                                <i class="fas fa-phone"></i>
-                            </button>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="font-medium">From:</span>
-                                <span id="active-ride-pickup"></span>
-                            </div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="font-medium">To:</span>
-                                <span id="active-ride-destination"></span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="font-medium">Price:</span>
-                                <span class="font-bold" id="active-ride-price"></span>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-6">
-                            <div class="flex justify-between mb-1">
-                                <span id="active-ride-status"></span>
-                                <span id="active-ride-time"></span>
-                            </div>
-                            <div class="trip-progress">
-                                <div class="trip-progress-bar" id="ride-progress-bar"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="map-container mb-4" id="active-ride-map"></div>
-                        
-                        <button id="complete-ride" class="w-full btn-primary font-bold py-3 px-8 rounded-lg shadow-lg hidden">
-                            Complete Ride
-                        </button>
-                    </div>
-                </div>
-                
-                <div id="message-area" class="hidden mt-4 text-center p-3 rounded-lg"></div>
-            </div>
-            
-            <div id="profile-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div class="bg-white rounded-lg p-6 w-full max-w-md">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-bold">Your Profile</h3>
-                        <button id="close-profile" class="text-gray-500 hover:text-gray-700">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="mb-6 text-center">
-                        <div class="w-20 h-20 rounded-full bg-indigo-100 flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-user text-indigo-600 text-3xl"></i>
-                        </div>
-                        <h4 class="text-lg font-bold" id="profile-name">Guest User</h4>
-                        <p class="text-gray-600" id="profile-email">guest@example.com</p>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <button id="payment-methods" class="w-full text-left p-3 border rounded-lg hover:bg-gray-50">
-                            <i class="fas fa-credit-card mr-2"></i> Payment Methods
-                        </button>
-                        <button id="trip-history" class="w-full text-left p-3 border rounded-lg hover:bg-gray-50">
-                            <i class="fas fa-history mr-2"></i> Trip History
-                        </button>
-                        <button id="settings" class="w-full text-left p-3 border rounded-lg hover:bg-gray-50">
-                            <i class="fas fa-cog mr-2"></i> Settings
-                        </button>
-                        <button id="logout" class="w-full text-left p-3 border rounded-lg hover:bg-gray-50 text-red-600">
-                            <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="history-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div class="bg-white rounded-lg p-6 w-full max-w-md">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-bold">Your Trips</h3>
-                        <button id="close-history" class="text-gray-500 hover:text-gray-700">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    
-                    <div id="trip-list" class="space-y-3">
-                        <div class="p-3 border rounded-lg">
-                            <div class="flex justify-between">
-                                <span class="font-medium">Victoria Falls Hotel to Town Center</span>
-                                <span class="text-green-600">$5.00</span>
-                            </div>
-                            <div class="flex justify-between text-sm text-gray-500">
-                                <span>Jun 10, 2023</span>
-                                <span>Completed</span>
-                            </div>
-                        </div>
-                        <div class="p-3 border rounded-lg">
-                            <div class="flex justify-between">
-                                <span class="font-medium">Airport to Elephant Hills</span>
-                                <span class="text-green-600">$12.00</span>
-                            </div>
-                            <div class="flex justify-between text-sm text-gray-500">
-                                <span>Jun 8, 2023</span>
-                                <span>Completed</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="payment-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                <div class="bg-white rounded-lg p-6 w-full max-w-md">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-xl font-bold">Payment Methods</h3>
-                        <button id="close-payment" class="text-gray-500 hover:text-gray-700">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <div class="p-3 border rounded-lg mb-2">
-                            <div class="flex items-center">
-                                <i class="fab fa-cc-visa text-2xl text-blue-600 mr-3"></i>
-                                <div>
-                                    <p class="font-medium">Visa ending in 4242</p>
-                                    <p class="text-sm text-gray-500">Expires 12/24</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-3 border rounded-lg">
-                            <div class="flex items-center">
-                                <i class="fas fa-money-bill-wave text-2xl text-green-600 mr-3"></i>
-                                <div>
-                                    <p class="font-medium">Cash</p>
-                                    <p class="text-sm text-gray-500">Pay driver directly</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <button id="add-payment" class="w-full btn-primary font-bold py-3 px-8 rounded-lg shadow-lg">
-                        Add Payment Method
-                    </button>
+                    <h2>Available Rides</h2>
+                    <div id="results-container"></div>
                 </div>
             </div>
         </div>
-
-        <footer class="text-center text-white/80 mt-8 text-sm">
-            <p>© 2023 Victoria Falls Transit. All rights reserved.</p>
-        </footer>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Expanded Data Store
             const localTransportData = {
-                "Victoria Falls Hotel": { 
-                    arrival_time: "10 min", 
-                    cost: "$5", 
-                    icon: "🏨",
-                    coords: [-17.9312, 25.8307]
-                },
-                "Zambezi National Park": { 
-                    arrival_time: "15 min", 
-                    cost: "$5", 
-                    icon: "🐘",
-                    coords: [-17.8833, 25.6167]
-                },
-                "Town Center": { 
-                    arrival_time: "5 min", 
-                    cost: "$3", 
-                    icon: "🏙️",
-                    coords: [-17.9319, 25.8306]
-                },
-                "Victoria Falls Airport (VFA)": { 
-                    arrival_time: "20 min", 
-                    cost: "$10", 
-                    icon: "✈️",
-                    coords: [-18.0956, 25.8392]
-                },
-                "Curio Market": { 
-                    arrival_time: "7 min", 
-                    cost: "$2", 
-                    icon: "🛍️",
-                    coords: [-17.9325, 25.8328]
-                },
-                "The Lookout Cafe": { 
-                    arrival_time: "12 min", 
-                    cost: "$6", 
-                    icon: "☕",
-                    coords: [-17.9286, 25.8425]
-                },
-                "Elephant's Walk Shopping Village": { 
-                    arrival_time: "8 min", 
-                    cost: "$4", 
-                    icon: "🐘",
-                    coords: [-17.9147, 25.8183]
-                },
-                "Boma Dinner & Drum Show": { 
-                    arrival_time: "18 min", 
-                    cost: "$8", 
-                    icon: "🥁",
-                    coords: [-17.9069, 25.8236]
-                },
-                "Victoria Falls Bridge": { 
-                    arrival_time: "15 min", 
-                    cost: "$7", 
-                    icon: "🌉",
-                    coords: [-17.9310, 25.8267]
-                }
+                "Victoria Falls Hotel": { arrival_time: "10 min", cost: "$5" },
+                "Zambezi National Park": { arrival_time: "15 min", cost: "$5" },
+                "Town Center": { arrival_time: "5 min", cost: "$3" }
             };
 
-            // Driver simulation
-            const drivers = [
-                { id: 1, name: "Tendai", vehicle: "Toyota Corolla", plate: "VF1234", rating: 4.8, phone: "0771234567", coords: [-17.9315, 25.8310] },
-                { id: 2, name: "Blessing", vehicle: "Honda Fit", plate: "VF2345", rating: 4.5, phone: "0772345678", coords: [-17.9300, 25.8290] },
-                { id: 3, name: "Farai", vehicle: "Nissan Sunny", plate: "VF3456", rating: 4.9, phone: "0773456789", coords: [-17.9320, 25.8320] },
-                { id: 4, name: "Tatenda", vehicle: "Toyota RAV4", plate: "VF4567", rating: 4.7, phone: "0774567890", coords: [-17.9290, 25.8280] },
-                { id: 5, name: "Nyasha", vehicle: "Mazda Demio", plate: "VF5678", rating: 4.6, phone: "0775678901", coords: [-17.9330, 25.8330] }
-            ];
-
-            // UI Elements
             const startLocationSelect = document.getElementById('startLocation');
             const endLocationSelect = document.getElementById('endLocation');
             const planTripBtn = document.getElementById('planTripBtn');
             const resultsDiv = document.getElementById('results');
             const resultsContainer = document.getElementById('results-container');
-            const messageArea = document.getElementById('message-area');
-            const useCurrentLocationBtn = document.getElementById('useCurrentLocation');
-            const swapLocationsBtn = document.getElementById('swapLocations');
-            const rideDetailsDiv = document.getElementById('ride-details');
-            const activeRideDiv = document.getElementById('active-ride');
-            const authSection = document.getElementById('auth-section');
-            const mainApp = document.getElementById('main-app');
-            const loginForm = document.getElementById('login-form');
-            const registerForm = document.getElementById('register-form');
-            const loginTab = document.getElementById('login-tab');
-            const registerTab = document.getElementById('register-tab');
-            const profileBtn = document.getElementById('profile-btn');
-            const profileModal = document.getElementById('profile-modal');
-            const closeProfile = document.getElementById('close-profile');
-            const historyBtn = document.getElementById('history-btn');
-            const historyModal = document.getElementById('history-modal');
-            const closeHistory = document.getElementById('close-history');
-            const paymentMethodsBtn = document.getElementById('payment-methods');
-            const paymentModal = document.getElementById('payment-modal');
-            const closePayment = document.getElementById('close-payment');
-            const skipAuth = document.getElementById('skip-auth');
-            const rideTypeBtns = document.querySelectorAll('.ride-type-btn');
-            const backToSearch = document.getElementById('back-to-search');
-            const backToResults = document.getElementById('back-to-results');
-            const confirmRideBtn = document.getElementById('confirm-ride');
-            const cancelRideBtn = document.getElementById('cancel-ride');
-            const completeRideBtn = document.getElementById('complete-ride');
-            const callDriverBtns = document.querySelectorAll('[id^="call-driver"], [id^="active-call-driver"]');
 
-            // State
-            let currentUser = null;
-            let selectedRideType = 'standard';
-            let selectedDriver = null;
-            let activeRide = null;
-            let rideProgressInterval = null;
-            let map = null;
-            let driverMarkers = [];
-
-            // Initialize the app
-            function initApp() {
-                // Check if user is logged in (in a real app, this would check localStorage or a cookie)
-                const isLoggedIn = false; // Change to true to test logged in state
-                
-                if (isLoggedIn) {
-                    currentUser = {
-                        name: "John Doe",
-                        email: "john@example.com",
-                        phone: "0779876543"
-                    };
-                    showMainApp();
-                } else {
-                    showAuthSection();
-                }
-                
-                populateLocations();
-                setupEventListeners();
-            }
-
-            function showAuthSection() {
-                authSection.classList.remove('hidden');
-                mainApp.classList.add('hidden');
-                loginForm.classList.remove('hidden');
-                registerForm.classList.add('hidden');
-                loginTab.classList.add('border-indigo-500', 'text-indigo-600');
-                registerTab.classList.remove('border-indigo-500', 'text-indigo-600');
-            }
-
-            function showMainApp() {
-                authSection.classList.add('hidden');
-                mainApp.classList.remove('hidden');
-                resultsDiv.classList.add('hidden');
-                rideDetailsDiv.classList.add('hidden');
-                activeRideDiv.classList.add('hidden');
-                
-                if (currentUser) {
-                    document.getElementById('profile-name').textContent = currentUser.name;
-                    document.getElementById('profile-email').textContent = currentUser.email;
-                }
-            }
-
+            // Populate location options
             function populateLocations() {
                 const locations = Object.keys(localTransportData);
-                startLocationSelect.innerHTML = '';
-                endLocationSelect.innerHTML = '';
-                
                 locations.forEach(location => {
-                    const optionStart = document.createElement('option');
-                    optionStart.value = location;
-                    optionStart.textContent = location;
-                    startLocationSelect.appendChild(optionStart);
-
-                    const optionEnd = document.createElement('option');
-                    optionEnd.value = location;
-                    optionEnd.textContent = location;
-                    endLocationSelect.appendChild(optionEnd);
-                });
-
-                if (locations.length > 1) {
-                    endLocationSelect.selectedIndex = 1;
-                }
-            }
-
-            function setupEventListeners() {
-                // Authentication
-                loginTab.addEventListener('click', () => {
-                    loginForm.classList.remove('hidden');
-                    registerForm.classList.add('hidden');
-                    loginTab.classList.add('border-indigo-500', 'text-indigo-600');
-                    registerTab.classList.remove('border-indigo-500', 'text-indigo-600');
-                });
-                
-                registerTab.addEventListener('click', () => {
-                    registerForm.classList.remove('hidden');
-                    loginForm.classList.add('hidden');
-                    registerTab.classList.add('border-indigo-500', 'text-indigo-600');
-                    loginTab.classList.remove('border-indigo-500', 'text-indigo-600');
-                });
-                
-                skipAuth.addEventListener('click', showMainApp);
-                
-                // Ride type selection
-                rideTypeBtns.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        rideTypeBtns.forEach(b => b.classList.remove('border-indigo-500', 'bg-indigo-50'));
-                        btn.classList.add('border-indigo-500', 'bg-indigo-50');
-                        selectedRideType = btn.dataset.type;
-                    });
-                });
-                
-                // Main app
-                planTripBtn.addEventListener('click', planTrip);
-                useCurrentLocationBtn.addEventListener('click', handleCurrentLocation);
-                swapLocationsBtn.addEventListener('click', handleSwapLocations);
-                backToSearch.addEventListener('click', () => {
-                    resultsDiv.classList.add('hidden');
-                    rideDetailsDiv.classList.add('hidden');
-                });
-                backToResults.addEventListener('click', () => {
-                    rideDetailsDiv.classList.add('hidden');
-                    resultsDiv.classList.remove('hidden');
-                });
-                confirmRideBtn.addEventListener('click', confirmRide);
-                cancelRideBtn.addEventListener('click', cancelRide);
-                completeRideBtn.addEventListener('click', completeRide);
-                
-                // Modals
-                profileBtn.addEventListener('click', () => profileModal.classList.remove('hidden'));
-                closeProfile.addEventListener('click', () => profileModal.classList.add('hidden'));
-                historyBtn.addEventListener('click', () => historyModal.classList.remove('hidden'));
-                closeHistory.addEventListener('click', () => historyModal.classList.add('hidden'));
-                paymentMethodsBtn.addEventListener('click', () => paymentModal.classList.remove('hidden'));
-                closePayment.addEventListener('click', () => paymentModal.classList.add('hidden'));
-                
-                // Call driver buttons
-                callDriverBtns.forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        if (selectedDriver || activeRide) {
-                            const driver = selectedDriver || activeRide.driver;
-                            alert(`Calling driver ${driver.name} at ${driver.phone}`);
-                        }
-                    });
+                    const optionStart = new Option(location, location);
+                    const optionEnd = new Option(location, location);
+                    startLocationSelect.add(optionStart);
+                    endLocationSelect.add(optionEnd);
                 });
             }
 
-            function handleCurrentLocation() {
-                if (!navigator.geolocation) {
-                    showMessage('Geolocation is not supported by your browser.', 'error');
-                    return;
-                }
-
-                showMessage('Getting your location...', 'info');
-
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        messageArea.classList.add('hidden');
-                        if (!startLocationSelect.querySelector('option[value="Current Location"]')) {
-                            const currentLocOption = document.createElement('option');
-                            currentLocOption.value = "Current Location";
-                            currentLocOption.textContent = "📍 My Current Location";
-                            startLocationSelect.prepend(currentLocOption);
-                        }
-                        startLocationSelect.value = "Current Location";
-                    },
-                    () => {
-                        showMessage('Unable to retrieve your location. Please select one manually.', 'error');
-                    }
-                );
-            }
-
-            function handleSwapLocations() {
-                const startValue = startLocationSelect.value;
-                const startText = startLocationSelect.options[startLocationSelect.selectedIndex].text;
-                const endValue = endLocationSelect.value;
-                const endText = endLocationSelect.options[endLocationSelect.selectedIndex].text;
-                
-                startLocationSelect.value = endValue;
-                if (startLocationSelect.options[startLocationSelect.selectedIndex].text !== endText) {
-                    for (let i = 0; i < startLocationSelect.options.length; i++) {
-                        if (startLocationSelect.options[i].text === endText) {
-                            startLocationSelect.selectedIndex = i;
-                            break;
-                        }
-                    }
-                }
-                
-                endLocationSelect.value = startValue;
-                if (endLocationSelect.options[endLocationSelect.selectedIndex].text !== startText) {
-                    for (let i = 0; i < endLocationSelect.options.length; i++) {
-                        if (endLocationSelect.options[i].text === startText) {
-                            endLocationSelect.selectedIndex = i;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            function showMessage(text, type = 'error') {
-                messageArea.textContent = text;
-                messageArea.className = `mt-4 text-center p-3 rounded-lg ${type === 'error' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'}`;
-                messageArea.classList.remove('hidden');
-            }
-
+            // Plan trip function
             function planTrip() {
                 const startLocation = startLocationSelect.value;
                 const endLocation = endLocationSelect.value;
 
-                resultsDiv.classList.add('hidden');
-                rideDetailsDiv.classList.add('hidden');
-                messageArea.classList.add('hidden');
-                resultsContainer.innerHTML = '';
-
                 if (startLocation === endLocation) {
-                    showMessage('Start and destination cannot be the same. Please choose a different destination.', 'error');
+                    alert("Start and destination cannot be the same.");
                     return;
                 }
 
-                // Simulate API call delay
-                showMessage('Finding available rides...', 'info');
-                
-                setTimeout(() => {
-                    messageArea.classList.add('hidden');
-                    displayRideOptions(startLocation, endLocation);
-                    resultsDiv.classList.remove('hidden');
-                }, 1500);
+                // Simulate fetching ride data
+                resultsContainer.innerHTML = '';
+                const rideInfo = localTransportData[endLocation];
+                if (rideInfo) {
+                    resultsContainer.innerHTML = `
+                        <div>
+                            <h3>${endLocation}</h3>
+                            <p>Arrival Time: ${rideInfo.arrival_time}</p>
+                            <p>Cost: ${rideInfo.cost}</p>
+                        </div>
+                    `;
+                }
+                resultsDiv.classList.remove('hidden');
             }
 
-            function displayRideOptions(startLocation, endLocation) {
-                resultsContainer.innerHTML = '';
-                
-                // Standard ride
-                const standardDriver = drivers[0];
-                const standardTime = Math.floor(10 + Math.random() * 5);
-                const standardPrice = calculatePrice(startLocation, endLocation, 'standard');
-                
-                const standardCard = document.createElement('div');
-                standardCard.className = 'card p-6';
-                standardCard.innerHTML = `
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <h3 class="text-lg font-bold">Standard Ride</h3>
-                            <p class="text-gray-600">${standardDriver.vehicle} • ${standardDriver.plate}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xl font-bold">$${standardPrice}</p>
-                            <p class="text-gray-600">${standardTime} min away</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center mr-3">
-                                <i class="fas fa-user text-indigo-600"></i>
-                            </div>
-                            <div>
-                                <p class="font-medium">${standardDriver.name}</p>
-                                <div class="flex items-center">
-                                    <i class="fas fa-star text-yellow-400 mr-1"></i>
-                                    <span>${standardDriver.rating}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="p-2 rounded-full bg-gray-100 hover:bg-gray-200" data-driver-id="${standardDriver.id}">
-                            <i class="fas fa-
-                             </script>
+            // Event listeners
+            planTripBtn.addEventListener('click', planTrip);
+            populateLocations();
+        });
+    </script>
 </body>
 </html>
