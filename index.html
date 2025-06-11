@@ -6,100 +6,195 @@
     <title>Victoria Falls Transit Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
         }
-        /* Add your custom styles here */
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #4f46e5;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+        }
     </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
 </head>
 <body class="bg-gray-100">
-    <div id="app" class="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-200">
+    <div id="app" class="min-h-screen flex flex-col items-center justify-center p-4">
         <div class="w-full max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6">
             <header class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-800">Victoria Falls Transit</h1>
-                <p class="text-gray-600 mt-2">Your complete transportation solution in Vic Falls, Zimbabwe</p>
+                <h1 class="text-3xl font-bold text-gray-800">Victoria Falls Transit Planner</h1>
+                <p class="text-gray-600 mt-2">Your guide to getting around in Vic Falls, Zimbabwe.</p>
             </header>
 
-            <div id="main-app">
-                <h2 class="text-xl font-bold text-gray-800">Plan Your Trip</h2>
+            <div id="auth-section" class="mb-6">
+                <h2 class="text-xl font-bold">Sign Up / Login</h2>
+                <input type="text" id="username" placeholder="Username" class="border p-2 w-full mb-2">
+                <input type="password" id="password" placeholder="Password" class="border p-2 w-full mb-4">
+                <button id="loginBtn" class="btn-primary w-full">Login</button>
+                <button id="signupBtn" class="btn-primary w-full hidden">Sign Up</button>
+            </div>
+
+            <div id="main-app" class="hidden">
+                <h2 class="text-xl font-bold">Plan Your Trip</h2>
                 <div class="flex items-center justify-between mb-6">
-                    <div class="flex-1">
-                        <label for="startLocation">Start Location</label>
-                        <select id="startLocation" class="w-full p-3 border border-gray-300 rounded-lg"></select>
-                    </div>
-                    <button id="swapLocations">Swap</button>
-                    <div class="flex-1">
-                        <label for="endLocation">Destination</label>
-                        <select id="endLocation" class="w-full p-3 border border-gray-300 rounded-lg"></select>
-                    </div>
+                    <select id="startLocation" class="border p-2 w-1/2"></select>
+                    <button id="swapLocations" class="btn-primary">Swap</button>
+                    <select id="endLocation" class="border p-2 w-1/2"></select>
+                </div>
+                <button id="planTripBtn" class="btn-primary w-full">Plan My Trip</button>
+
+                <div id="results" class="hidden mt-4">
+                    <h2>Your Trip Options</h2>
+                    <div id="results-container" class="mt-4"></div>
                 </div>
 
-                <button id="planTripBtn" class="btn-primary py-2 px-4 rounded">Find Rides</button>
-
-                <div id="results" class="hidden">
-                    <h2>Available Rides</h2>
-                    <div id="results-container"></div>
+                <div id="ride-history" class="hidden mt-4">
+                    <h2>Your Ride History</h2>
+                    <div id="history-container" class="mt-4"></div>
                 </div>
+
+                <div id="map" class="hidden mt-4"></div>
             </div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const localTransportData = {
-                "Victoria Falls Hotel": { arrival_time: "10 min", cost: "$5" },
-                "Zambezi National Park": { arrival_time: "15 min", cost: "$5" },
-                "Town Center": { arrival_time: "5 min", cost: "$3" }
-            };
+        const localTransportData = {
+            "Victoria Falls Hotel": { arrival_time: "10 min", cost: "$5", icon: "🏨", coords: [-17.9333, 25.8267] },
+            "Zambezi National Park": { arrival_time: "15 min", cost: "$5", icon: "🐘", coords: [-17.8833, 25.6167] },
+            "Town Center": { arrival_time: "5 min", cost: "$3", icon: "🏙️", coords: [-17.9319, 25.8306] },
+            "Victoria Falls Airport": { arrival_time: "20 min", cost: "$10", icon: "✈️", coords: [-18.0956, 25.8392] },
+            "Curio Market": { arrival_time: "7 min", cost: "$2", icon: "🛍️", coords: [-17.9325, 25.8328] },
+        };
 
-            const startLocationSelect = document.getElementById('startLocation');
-            const endLocationSelect = document.getElementById('endLocation');
-            const planTripBtn = document.getElementById('planTripBtn');
-            const resultsDiv = document.getElementById('results');
-            const resultsContainer = document.getElementById('results-container');
+        const drivers = [
+            { id: 1, name: "Driver 1", location: "Victoria Falls Hotel", coords: [-17.9333, 25.8267] },
+            { id: 2, name: "Driver 2", location: "Town Center", coords: [-17.9319, 25.8306] },
+            { id: 3, name: "Driver 3", location: "Zambezi National Park", coords: [-17.8833, 25.6167] }
+        ];
 
-            // Populate location options
-            function populateLocations() {
-                const locations = Object.keys(localTransportData);
-                locations.forEach(location => {
-                    const optionStart = new Option(location, location);
-                    const optionEnd = new Option(location, location);
-                    startLocationSelect.add(optionStart);
-                    endLocationSelect.add(optionEnd);
-                });
+        const startLocationSelect = document.getElementById('startLocation');
+        const endLocationSelect = document.getElementById('endLocation');
+        const planTripBtn = document.getElementById('planTripBtn');
+        const resultsDiv = document.getElementById('results');
+        const resultsContainer = document.getElementById('results-container');
+        const authSection = document.getElementById('auth-section');
+        const mainApp = document.getElementById('main-app');
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
+        const historyContainer = document.getElementById('history-container');
+
+        let rideHistory = [];
+
+        // Populate locations in the dropdowns
+        function populateLocations() {
+            Object.keys(localTransportData).forEach(location => {
+                const optionStart = new Option(location, location);
+                const optionEnd = new Option(location, location);
+                startLocationSelect.add(optionStart);
+                endLocationSelect.add(optionEnd);
+            });
+        }
+
+        // Plan a trip
+        function planTrip() {
+            const startLocation = startLocationSelect.value;
+            const endLocation = endLocationSelect.value;
+
+            if (startLocation === endLocation) {
+                alert('Start and destination cannot be the same.');
+                return;
             }
 
-            // Plan trip function
-            function planTrip() {
-                const startLocation = startLocationSelect.value;
-                const endLocation = endLocationSelect.value;
+            resultsContainer.innerHTML = '';
+            const rideInfo = localTransportData[endLocation];
+            const driver = drivers[Math.floor(Math.random() * drivers.length)];
 
-                if (startLocation === endLocation) {
-                    alert("Start and destination cannot be the same.");
-                    return;
-                }
+            resultsContainer.innerHTML = `
+                <div class="card p-4">
+                    <h3>${rideInfo.icon} ${endLocation}</h3>
+                    <p>Arrival Time: ${rideInfo.arrival_time}</p>
+                    <p>Cost: ${rideInfo.cost}</p>
+                    <p>Driver: ${driver.name}</p>
+                    <button class="btn-primary" onclick="confirmRide('${endLocation}', '${rideInfo.cost}', '${driver.name}', ${rideInfo.coords})">Confirm Ride</button>
+                </div>
+            `;
+            resultsDiv.classList.remove('hidden');
+            initMap(rideInfo.coords, driver.coords);
+        }
 
-                // Simulate fetching ride data
-                resultsContainer.innerHTML = '';
-                const rideInfo = localTransportData[endLocation];
-                if (rideInfo) {
-                    resultsContainer.innerHTML = `
-                        <div>
-                            <h3>${endLocation}</h3>
-                            <p>Arrival Time: ${rideInfo.arrival_time}</p>
-                            <p>Cost: ${rideInfo.cost}</p>
-                        </div>
-                    `;
-                }
-                resultsDiv.classList.remove('hidden');
-            }
+        // Confirm the ride and store it
+        function confirmRide(destination, cost, driver, coords) {
+            rideHistory.push({ destination, cost, driver, time: new Date().toLocaleString() });
+            alert(`Ride confirmed to ${destination} with ${driver}. Cost: ${cost}`);
+            displayRideHistory();
+        }
 
-            // Event listeners
-            planTripBtn.addEventListener('click', planTrip);
+        // Display ride history
+        function displayRideHistory() {
+            historyContainer.innerHTML = '';
+            rideHistory.forEach(ride => {
+                historyContainer.innerHTML += `
+                    <div class="card p-4 mb-4">
+                        <p>Destination: ${ride.destination}</p>
+                        <p>Cost: ${ride.cost}</p>
+                        <p>Driver: ${ride.driver}</p>
+                        <p>Time: ${ride.time}</p>
+                    </div>
+                `;
+            });
+            document.getElementById('ride-history').classList.remove('hidden');
+        }
+
+        // Initialize the map
+        function initMap(destinationCoords, driverCoords) {
+            const map = new google.maps.Map(document.getElementById("map"), {
+                center: destinationCoords,
+                zoom: 14,
+            });
+
+            new google.maps.Marker({
+                position: destinationCoords,
+                map: map,
+                title: "Destination",
+            });
+
+            new google.maps.Marker({
+                position: driverCoords,
+                map: map,
+                title: "Driver Location",
+            });
+
+            mapDiv.classList.remove('hidden');
+        }
+
+        // Handle user login
+        function login() {
+            authSection.classList.add('hidden');
+            mainApp.classList.remove('hidden');
             populateLocations();
-        });
+        }
+
+        // Event listeners
+        loginBtn.addEventListener('click', login);
+        planTripBtn.addEventListener('click', planTrip);
+
+        // Initial Setup
+        populateLocations();
     </script>
 </body>
 </html>
