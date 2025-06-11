@@ -74,6 +74,7 @@
             </div>
 
             <div id="driver-registration" class="mb-6 hidden">
+                <button id="backToLoginAdmin" class="btn-primary mb-4">Back to Login</button>
                 <h2 class="text-xl font-bold">Driver Registration</h2>
                 <input type="text" id="driverName" placeholder="Driver Name" class="border p-2 w-full mb-2">
                 <input type="text" id="driverPhone" placeholder="Phone Number" class="border p-2 w-full mb-2">
@@ -83,6 +84,7 @@
             </div>
 
             <div id="main-app" class="hidden">
+                <button id="backToLogin" class="btn-primary mb-4">Back to Login</button>
                 <h2 class="text-xl font-bold">Plan Your Trip</h2>
                 <div class="flex items-center justify-between mb-6">
                     <select id="startLocation" class="border p-2 w-1/2"></select>
@@ -173,6 +175,14 @@
             return fare.toFixed(2);
         }
 
+        // Find the closest available drivers based on passenger capacity
+        function findClosestDrivers(passengerCount) {
+            return drivers.filter(driver => 
+                driver.capacity >= passengerCount && 
+                driver.available !== false
+            ).slice(0, 3); // Show top 3 available drivers
+        }
+
         // Plan a trip
         function planTrip() {
             const startLocation = startLocationSelect.value;
@@ -186,30 +196,36 @@
 
             resultsContainer.innerHTML = '';
             const rideInfo = localTransportData[endLocation];
-            const closestDrivers = findClosestDrivers(passengerCount); // Find the closest drivers
+            const closestDrivers = findClosestDrivers(passengerCount);
 
-            closestDrivers.forEach(driver => {
-                const fare = calculateFare(driver.coords, rideInfo.coords);
-                resultsContainer.innerHTML += `
+            if (closestDrivers.length === 0) {
+                resultsContainer.innerHTML = `
                     <div class="card p-4 mb-4">
-                        <h3>${rideInfo.icon} ${endLocation}</h3>
-                        <p>Arrival Time: ${rideInfo.arrival_time}</p>
-                        <p>Driver: ${driver.name}</p>
-                        <p>Phone: ${driver.phone}</p>
-                        <p>Car Reg: ${driver.carReg}</p>
-                        <p>Estimated Fare: $${fare}</p>
-                        <button class="btn-primary" onclick="confirmRide('${endLocation}', '${fare}', '${driver.name}', ${rideInfo.coords})">Confirm Ride</button>
+                        <h3>No available drivers found for your request</h3>
+                        <p>Please try again later or adjust your passenger count</p>
                     </div>
                 `;
-            });
+            } else {
+                closestDrivers.forEach(driver => {
+                    const fare = calculateFare(driver.coords, rideInfo.coords);
+                    resultsContainer.innerHTML += `
+                        <div class="card p-4 mb-4">
+                            <h3>${rideInfo.icon} ${endLocation}</h3>
+                            <p>Arrival Time: ${rideInfo.arrival_time}</p>
+                            <p>Driver: ${driver.name}</p>
+                            <p>Phone: ${driver.phone}</p>
+                            <p>Car Reg: ${driver.carReg}</p>
+                            <p>Capacity: ${driver.capacity}</p>
+                            <p>Status: ${driver.available ? 'Available' : 'Not Available'}</p>
+                            <p>Estimated Fare: $${fare}</p>
+                            <button class="btn-primary" onclick="confirmRide('${endLocation}', '${fare}', '${driver.name}', ${rideInfo.coords})">Confirm Ride</button>
+                        </div>
+                    `;
+                });
+            }
 
             resultsDiv.classList.remove('hidden');
             initMap(rideInfo.coords, closestDrivers);
-        }
-
-        // Find the closest drivers based on passenger capacity
-        function findClosestDrivers(passengerCount) {
-            return drivers.filter(driver => driver.capacity >= passengerCount).slice(0, 3); // Replace with actual closest driver logic
         }
 
         // Confirm the ride and store it
@@ -288,7 +304,8 @@
                 whatsApp: `https://wa.me/${driverPhone.replace(/-/g, '')}`,
                 carReg: driverCarReg,
                 capacity: driverCapacity,
-                coords: [-17.9319, 25.8306] // Sample coordinates, replace with actual
+                coords: [-17.9319, 25.8306], // Sample coordinates, replace with actual
+                available: true // Driver is available by default
             };
 
             drivers.push(newDriver);
@@ -297,7 +314,28 @@
             mainApp.classList.remove('hidden');
 
             // Show driver on the map
-            initMap(localTransportData["Town Center"].coords, [newDriver]); // Example placement
+            initMap(localTransportData["Town Center"].coords, [newDriver]);
+        }
+
+        // Handle back to login button
+        function setupBackButtons() {
+            document.getElementById('backToLogin').addEventListener('click', function() {
+                mainApp.classList.add('hidden');
+                authSection.classList.remove('hidden');
+                document.getElementById('passenger-login').classList.remove('hidden');
+                document.getElementById('admin-login').classList.add('hidden');
+                document.querySelector('.login-tab[data-tab="passenger"]').classList.add('active');
+                document.querySelector('.login-tab[data-tab="admin"]').classList.remove('active');
+            });
+
+            document.getElementById('backToLoginAdmin').addEventListener('click', function() {
+                driverRegistration.classList.add('hidden');
+                authSection.classList.remove('hidden');
+                document.getElementById('passenger-login').classList.add('hidden');
+                document.getElementById('admin-login').classList.remove('hidden');
+                document.querySelector('.login-tab[data-tab="passenger"]').classList.remove('active');
+                document.querySelector('.login-tab[data-tab="admin"]').classList.add('active');
+            });
         }
 
         // Handle login tab switching
@@ -323,7 +361,7 @@
                 alert('Admin logged in successfully!');
                 isAdmin = true;
                 authSection.classList.add('hidden');
-                driverRegistration.classList.remove('hidden'); // Show driver registration for admin
+                driverRegistration.classList.remove('hidden');
             } else {
                 alert('Invalid admin credentials!');
             }
@@ -334,7 +372,6 @@
             const username = document.getElementById('passengerUsername').value;
             const password = document.getElementById('passengerPassword').value;
 
-            // Simple validation - in a real app, you'd check against a database
             if (username && password) {
                 alert('Passenger logged in successfully!');
                 isAdmin = false;
@@ -352,6 +389,7 @@
 
         // Initial Setup
         setupLoginTabs();
+        setupBackButtons();
     </script>
 </body>
 </html>
