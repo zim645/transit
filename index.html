@@ -233,7 +233,7 @@
             "Victoria Falls Post Office": { arrival_time: "7 min", icon: "📮", coords: [-17.9333, 25.8333] },
             "Victoria Falls Border Post": { arrival_time: "15 min", icon: "🛂", coords: [-17.9333, 25.8333] },
             "Victoria Falls Craft Market": { arrival_time: "8 min", icon: "🛍️", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Bus Terminal": { arrival_time: "10 min", icon: "🚌", coords: [-17.9333, 25.8333] },
+            "Victoria Falls Bus Terminal": { arrival_time: "10 min", icon: "�", coords: [-17.9333, 25.8333] },
             "Victoria Falls Railway Station": { arrival_time: "12 min", icon: "🚂", coords: [-17.9333, 25.8333] },
             "Victoria Falls Golf Club": { arrival_time: "15 min", icon: "⛳", coords: [-17.9333, 25.8333] },
             "Victoria Falls Reptile Park": { arrival_time: "20 min", icon: "🐍", coords: [-17.9333, 25.8333] },
@@ -369,7 +369,7 @@
                         drivers = []; // Clear drivers on error
                     }
                 } else {
-                    console.error("LLM response structure unexpected:", result);
+                    console.error("LLM response structure unexpected:", result, "Full LLM response:", JSON.stringify(result, null, 2));
                     showMessageBox("Failed to fetch drivers: Unexpected LLM response structure. Check console for details.", 4000);
                     drivers = []; // Clear drivers on error
                 }
@@ -433,7 +433,7 @@
                         showMessageBox("Failed to register driver: LLM returned invalid JSON for status. Check console for details.", 4000);
                     }
                 } else {
-                    console.error("LLM response structure unexpected for insert:", result);
+                    console.error("LLM response structure unexpected for insert:", result, "Full LLM response:", JSON.stringify(result, null, 2));
                     showMessageBox("Failed to register driver: Unexpected LLM response structure. Check console for details.", 4000);
                 }
             } catch (error) {
@@ -497,7 +497,7 @@
                         showMessageBox("Failed to delete driver: LLM returned invalid JSON for status. Check console for details.", 4000);
                     }
                 } else {
-                    console.error("LLM response structure unexpected for delete:", result);
+                    console.error("LLM response structure unexpected for delete:", result, "Full LLM response:", JSON.stringify(result, null, 2));
                     showMessageBox("Failed to delete driver: Unexpected LLM response structure. Check console for details.", 4000);
                 }
             } catch (error) {
@@ -714,8 +714,8 @@
                     }
 
                     // map.setView(userCoords, 14); // Keep map centered on user
-                }, () => {
-                    showMessageBox('Unable to retrieve your location.', 3000);
+                }, (error) => { // Removed showMessageBox
+                    console.warn('Geolocation error:', error.message);
                 });
             } else if (isAdmin && userMarker) { // If admin logs in and userMarker exists from prior passenger session, remove it
                 userMarker.remove();
@@ -898,3 +898,4 @@
         initMap(localTransportData["Town Center"].coords, []); // Initialize map with no drivers initially, they'll be fetched.
     </script>
 </body>
+</html>
