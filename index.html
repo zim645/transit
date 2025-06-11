@@ -40,59 +40,9 @@
             color: #4f46e5;
             font-weight: 600;
         }
-        /* Style for the message box */
-        #message-box {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #333;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            z-index: 1000;
-            display: none; /* Hidden by default */
-            font-size: 1.1rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 1.5rem;
-            z-index: 10000;
-            display: none; /* Hidden by default */
-        }
-        .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #fff;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body class="bg-gray-100">
-    <!-- Message Box -->
-    <div id="message-box" class="fixed"></div>
-    <!-- Loading Overlay -->
-    <div id="loading-overlay" class="loading-overlay">
-        <div class="spinner"></div>
-        <p class="ml-4">Loading...</p>
-    </div>
-
     <div id="app" class="min-h-screen flex flex-col items-center justify-center p-4">
         <div class="w-full max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6">
             <header class="text-center mb-8">
@@ -109,73 +59,57 @@
                 <!-- Passenger Login -->
                 <div id="passenger-login" class="auth-form">
                     <h2 class="text-xl font-bold mb-4">Passenger Login</h2>
-                    <input type="text" id="passengerUsername" placeholder="Username" class="border p-2 w-full mb-2 rounded-md">
-                    <input type="password" id="passengerPassword" placeholder="Password" class="border p-2 w-full mb-4 rounded-md">
-                    <button id="passengerLoginBtn" class="btn-primary w-full rounded-md">Login as Passenger</button>
+                    <input type="text" id="passengerUsername" placeholder="Username" class="border p-2 w-full mb-2">
+                    <input type="password" id="passengerPassword" placeholder="Password" class="border p-2 w-full mb-4">
+                    <button id="passengerLoginBtn" class="btn-primary w-full">Login as Passenger</button>
                 </div>
 
                 <!-- Admin Login -->
                 <div id="admin-login" class="auth-form hidden">
                     <h2 class="text-xl font-bold mb-4">Admin Login</h2>
-                    <input type="text" id="adminUsername" placeholder="Username" class="border p-2 w-full mb-2 rounded-md">
-                    <input type="password" id="adminPassword" placeholder="Password" class="border p-2 w-full mb-4 rounded-md">
-                    <button id="adminLoginBtn" class="btn-primary w-full rounded-md">Login as Admin</button>
+                    <input type="text" id="adminUsername" placeholder="Username" class="border p-2 w-full mb-2">
+                    <input type="password" id="adminPassword" placeholder="Password" class="border p-2 w-full mb-4">
+                    <button id="adminLoginBtn" class="btn-primary w-full">Login as Admin</button>
                 </div>
             </div>
 
-            <div id="admin-dashboard" class="hidden">
-                <div class="flex justify-center space-x-4 mb-4">
-                    <div class="login-tab active" data-tab="register-driver">Register Driver</div>
-                    <div class="login-tab" data-tab="manage-drivers">Manage Drivers</div>
-                </div>
-
-                <!-- Driver Registration -->
-                <div id="driver-registration" class="auth-form">
-                    <button id="backToLoginAdmin" class="btn-primary mb-4 rounded-md">Back to Login</button>
-                    <h2 class="text-xl font-bold mb-4">Driver Registration</h2>
-                    <input type="text" id="driverName" placeholder="Driver Name" class="border p-2 w-full mb-2 rounded-md">
-                    <input type="text" id="driverPhone" placeholder="Phone Number (e.g., +263771234567)" class="border p-2 w-full mb-2 rounded-md">
-                    <input type="text" id="driverCarReg" placeholder="Car Registration Number" class="border p-2 w-full mb-2 rounded-md">
-                    <!-- Removed driverCapacity, driverLatitude, driverLongitude inputs -->
-                    <button id="registerDriverBtn" class="btn-primary w-full rounded-md">Register Driver</button>
-                </div>
-
-                <!-- Manage Drivers -->
-                <div id="manage-drivers" class="auth-form hidden">
-                    <button id="backToLoginAdmin2" class="btn-primary mb-4 rounded-md">Back to Login</button>
-                    <h2 class="text-xl font-bold mb-4">Manage Registered Drivers</h2>
-                    <div id="driver-list-container" class="mt-4"></div>
-                    <button id="refreshDriversBtn" class="btn-primary w-full mt-4 rounded-md">Refresh Drivers</button>
-                </div>
+            <div id="driver-registration" class="mb-6 hidden">
+                <button id="backToLoginAdmin" class="btn-primary mb-4">Back to Login</button>
+                <h2 class="text-xl font-bold">Driver Registration</h2>
+                <input type="text" id="driverName" placeholder="Driver Name" class="border p-2 w-full mb-2">
+                <input type="text" id="driverPhone" placeholder="Phone Number" class="border p-2 w-full mb-2">
+                <input type="text" id="driverCarReg" placeholder="Car Registration Number" class="border p-2 w-full mb-2">
+                <input type="number" id="driverCapacity" placeholder="Passenger Capacity" class="border p-2 w-full mb-2">
+                <button id="registerDriverBtn" class="btn-primary w-full">Register Driver</button>
             </div>
 
             <div id="main-app" class="hidden">
-                <button id="backToLogin" class="btn-primary mb-4 rounded-md">Back to Login</button>
-                <h2 class="text-xl font-bold mb-4">Plan Your Trip</h2>
+                <button id="backToLogin" class="btn-primary mb-4">Back to Login</button>
+                <h2 class="text-xl font-bold">Plan Your Trip</h2>
                 <div class="flex items-center justify-between mb-6">
-                    <select id="startLocation" class="border p-2 w-1/2 rounded-md"></select>
-                    <button id="swapLocations" class="btn-primary mx-2 p-2 rounded-md">Swap</button>
-                    <select id="endLocation" class="border p-2 w-1/2 rounded-md"></select>
+                    <select id="startLocation" class="border p-2 w-1/2"></select>
+                    <button id="swapLocations" class="btn-primary">Swap</button>
+                    <select id="endLocation" class="border p-2 w-1/2"></select>
                 </div>
-                <input type="number" id="passengerCount" placeholder="Number of Passengers" class="border p-2 w-full mb-4 rounded-md">
-                <button id="planTripBtn" class="btn-primary w-full rounded-md">Plan My Trip</button>
+                <input type="number" id="passengerCount" placeholder="Number of Passengers" class="border p-2 w-full mb-4">
+                <button id="planTripBtn" class="btn-primary w-full">Plan My Trip</button>
 
                 <div id="paymentOptions" class="hidden mt-4">
-                    <h2 class="text-xl font-bold mb-2">Select Payment Method</h2>
-                    <select id="paymentMethod" class="border p-2 w-full mb-4 rounded-md">
+                    <h2>Select Payment Method</h2>
+                    <select id="paymentMethod" class="border p-2 w-full mb-4">
                         <option value="cash">Cash</option>
                         <option value="transfer">Bank Transfer</option>
                     </select>
-                    <button id="confirmPaymentBtn" class="btn-primary w-full rounded-md">Confirm Payment</button>
+                    <button id="confirmPaymentBtn" class="btn-primary w-full">Confirm Payment</button>
                 </div>
 
                 <div id="results" class="hidden mt-4">
-                    <h2 class="text-xl font-bold mb-2">Your Trip Options</h2>
+                    <h2>Your Trip Options</h2>
                     <div id="results-container" class="mt-4"></div>
                 </div>
 
                 <div id="ride-history" class="hidden mt-4">
-                    <h2 class="text-xl font-bold mb-2">Your Ride History</h2>
+                    <h2>Your Ride History</h2>
                     <div id="history-container" class="mt-4"></div>
                 </div>
 
@@ -185,22 +119,6 @@
     </div>
 
     <script>
-        // --- IMPORTANT SECURITY WARNING ---
-        // For a real-world production application, directly calling an LLM API
-        // with database credentials in client-side JavaScript is a major security risk.
-        // All database interactions should be handled by a secure backend server (Node.js, Python, etc.)
-        // that validates requests and uses its own environment variables for credentials.
-        // This implementation uses the Gemini API as a conceptual backend for demonstration purposes within Canvas.
-
-        const API_KEY = ""; // Canvas will automatically provide this. DO NOT hardcode your API key here.
-        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
-        
-        // Replace with your MongoDB Atlas connection details
-        // In a real app, this connection string would NEVER be in client-side code.
-        // It would be securely stored on your backend server.
-        const MONGODB_ATLAS_URI = "mongodb+srv://<user>:<password>@<cluster>.mongodb.net/<database>?retryWrites=true&w=majority"; 
-        const MONGODB_DATABASE_NAME = "<database>"; // The actual database name you want to use in Atlas
-
         const localTransportData = {
             "Victoria Falls Hotel": { arrival_time: "10 min", icon: "🏨", coords: [-17.9333, 25.8267] },
             "Zambezi National Park": { arrival_time: "15 min", icon: "🐘", coords: [-17.8833, 25.6167] },
@@ -233,7 +151,7 @@
             "Victoria Falls Post Office": { arrival_time: "7 min", icon: "📮", coords: [-17.9333, 25.8333] },
             "Victoria Falls Border Post": { arrival_time: "15 min", icon: "🛂", coords: [-17.9333, 25.8333] },
             "Victoria Falls Craft Market": { arrival_time: "8 min", icon: "🛍️", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Bus Terminal": { arrival_time: "10 min", icon: "�", coords: [-17.9333, 25.8333] },
+            "Victoria Falls Bus Terminal": { arrival_time: "10 min", icon: "🚌", coords: [-17.9333, 25.8333] },
             "Victoria Falls Railway Station": { arrival_time: "12 min", icon: "🚂", coords: [-17.9333, 25.8333] },
             "Victoria Falls Golf Club": { arrival_time: "15 min", icon: "⛳", coords: [-17.9333, 25.8333] },
             "Victoria Falls Reptile Park": { arrival_time: "20 min", icon: "🐍", coords: [-17.9333, 25.8333] },
@@ -266,7 +184,7 @@
             "Victoria Falls CBD": { arrival_time: "5 min", icon: "🏙️", coords: [-17.9333, 25.8333] }
         };
 
-        let drivers = []; // This will now be populated from MongoDB
+        const drivers = [];
         const startLocationSelect = document.getElementById('startLocation');
         const endLocationSelect = document.getElementById('endLocation');
         const planTripBtn = document.getElementById('planTripBtn');
@@ -276,238 +194,10 @@
         const mainApp = document.getElementById('main-app');
         const historyContainer = document.getElementById('history-container');
         const driverRegistration = document.getElementById('driver-registration');
-        const adminDashboard = document.getElementById('admin-dashboard');
-        const driverListContainer = document.getElementById('driver-list-container');
 
         let rideHistory = [];
         let userMarker;  // For user's location
         let isAdmin = false;
-
-        // --- Utility Functions ---
-
-        // Function to show custom message box instead of alert()
-        function showMessageBox(message, duration = 3000) {
-            const msgBox = document.getElementById('message-box');
-            msgBox.textContent = message;
-            msgBox.style.display = 'block';
-            setTimeout(() => {
-                msgBox.style.display = 'none';
-            }, duration);
-        }
-
-        // Function to show/hide loading overlay
-        function showLoading(show) {
-            document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
-        }
-
-        // Generate a UUID (Universally Unique Identifier)
-        function generateUUID() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
-        }
-
-        // --- MongoDB Atlas Interaction (Simulated via LLM) ---
-        // SECURITY WARNING: In a real app, this logic would be on a secure backend server.
-        // Direct client-side calls to a database API with credentials are not secure.
-
-        async function fetchDrivers() {
-            showLoading(true);
-            // Updated prompt for clarity and robustness for the LLM
-            const prompt = `Fetch all documents from the 'drivers' collection in the specified MongoDB Atlas database.
-                            MongoDB Atlas URI: ${MONGODB_ATLAS_URI}
-                            Database Name: ${MONGODB_DATABASE_NAME}
-                            Collection Name: 'drivers'.
-                            Ensure the response is a JSON array where each object has '_id', 'name', 'phone', 'carReg', 'capacity' (number), 'coords' ([number, number]), and 'available' (boolean).
-                            If the collection is empty, return an empty JSON array [].`;
-            let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-            const payload = { 
-                contents: chatHistory,
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "ARRAY",
-                        items: {
-                            type: "OBJECT",
-                            properties: {
-                                "_id": { "type": "STRING" },
-                                "name": { "type": "STRING" },
-                                "phone": { "type": "STRING" },
-                                "carReg": { "type": "STRING" },
-                                "capacity": { "type": "NUMBER" },
-                                "coords": { "type": "ARRAY", "items": { "type": "NUMBER" } },
-                                "available": { "type": "BOOLEAN" }
-                            },
-                            "propertyOrdering": ["_id", "name", "phone", "carReg", "capacity", "coords", "available"]
-                        }
-                    }
-                }
-            };
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const jsonString = result.candidates[0].content.parts[0].text;
-                    // Safely parse JSON, handling potential non-JSON responses from LLM
-                    try {
-                        drivers = JSON.parse(jsonString); // Update global drivers array
-                        console.log("Fetched drivers:", drivers); // For debugging
-                        displayAdminDrivers(); // Refresh admin list
-                        showMessageBox("Drivers loaded successfully!", 2000);
-                    } catch (e) {
-                        console.error("JSON parsing error for fetched drivers:", e, "Raw LLM response:", jsonString);
-                        showMessageBox("Failed to parse drivers data. LLM returned invalid JSON. Check console for details.", 4000);
-                        drivers = []; // Clear drivers on error
-                    }
-                } else {
-                    console.error("LLM response structure unexpected:", result, "Full LLM response:", JSON.stringify(result, null, 2));
-                    showMessageBox("Failed to fetch drivers: Unexpected LLM response structure. Check console for details.", 4000);
-                    drivers = []; // Clear drivers on error
-                }
-            } catch (error) {
-                console.error("Error fetching drivers:", error);
-                showMessageBox("Error connecting to database to fetch drivers. Check console for details.", 4000);
-                drivers = []; // Clear drivers on error
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        async function insertDriver(driverData) {
-            showLoading(true);
-            // Updated prompt for clarity and robustness for the LLM
-            const prompt = `Insert the following document into the 'drivers' collection in the specified MongoDB Atlas database.
-                            MongoDB Atlas URI: ${MONGODB_ATLAS_URI}
-                            Database Name: ${MONGODB_DATABASE_NAME}
-                            Collection Name: 'drivers'.
-                            Document to insert: ${JSON.stringify(driverData)}.
-                            Return a JSON object with 'status': "success" or "error", and a 'message'.`;
-            let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-            const payload = { 
-                contents: chatHistory,
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            "status": { "type": "STRING" },
-                            "message": { "type": "STRING" }
-                        },
-                        "propertyOrdering": ["status", "message"]
-                    }
-                }
-            };
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const jsonString = result.candidates[0].content.parts[0].text;
-                    try {
-                        const parsedResult = JSON.parse(jsonString);
-                        if (parsedResult.status === "success") {
-                            showMessageBox(`Driver ${driverData.name} registered successfully!`, 2000);
-                            await fetchDrivers(); // Refresh the list after successful insertion
-                        } else {
-                            showMessageBox(`Failed to register driver: ${parsedResult.message}. Check console for details.`, 4000);
-                            console.error("LLM returned error status for insert:", parsedResult);
-                        }
-                    } catch (e) {
-                        console.error("JSON parsing error for insert driver response:", e, "Raw LLM response:", jsonString);
-                        showMessageBox("Failed to register driver: LLM returned invalid JSON for status. Check console for details.", 4000);
-                    }
-                } else {
-                    console.error("LLM response structure unexpected for insert:", result, "Full LLM response:", JSON.stringify(result, null, 2));
-                    showMessageBox("Failed to register driver: Unexpected LLM response structure. Check console for details.", 4000);
-                }
-            } catch (error) {
-                console.error("Error inserting driver:", error);
-                showMessageBox("Error connecting to database to register driver. Check console for details.", 4000);
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        async function deleteDriver(driverId, driverName) {
-            if (!confirm(`Are you sure you want to delete driver ${driverName}?`)) {
-                return; // User cancelled deletion
-            }
-            showLoading(true);
-            // Updated prompt for clarity and robustness for the LLM
-            const prompt = `Delete the document with _id "${driverId}" from the 'drivers' collection in the specified MongoDB Atlas database.
-                            MongoDB Atlas URI: ${MONGODB_ATLAS_URI}
-                            Database Name: ${MONGODB_DATABASE_NAME}
-                            Collection Name: 'drivers'.
-                            Return a JSON object with 'status': "success" or "error", and a 'message'.`;
-            let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-            const payload = { 
-                contents: chatHistory,
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            "status": { "type": "STRING" },
-                            "message": { "type": "STRING" }
-                        },
-                        "propertyOrdering": ["status", "message"]
-                    }
-                }
-            };
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const jsonString = result.candidates[0].content.parts[0].text;
-                    try {
-                        const parsedResult = JSON.parse(jsonString);
-                        if (parsedResult.status === "success") {
-                            showMessageBox(`Driver ${driverName} deleted successfully!`, 2000);
-                            await fetchDrivers(); // Refresh the list after successful deletion
-                        } else {
-                            showMessageBox(`Failed to delete driver: ${parsedResult.message}. Check console for details.`, 4000);
-                            console.error("LLM returned error status for delete:", parsedResult);
-                        }
-                    } catch (e) {
-                        console.error("JSON parsing error for delete driver response:", e, "Raw LLM response:", jsonString);
-                        showMessageBox("Failed to delete driver: LLM returned invalid JSON for status. Check console for details.", 4000);
-                    }
-                } else {
-                    console.error("LLM response structure unexpected for delete:", result, "Full LLM response:", JSON.stringify(result, null, 2));
-                    showMessageBox("Failed to delete driver: Unexpected LLM response structure. Check console for details.", 4000);
-                }
-            } catch (error) {
-                console.error("Error deleting driver:", error);
-                showMessageBox("Error connecting to database to delete driver. Check console for details.", 4000);
-            } finally {
-                showLoading(false);
-            }
-        }
-
 
         // Haversine formula to calculate distance between two coordinates
         function haversineDistance(coords1, coords2) {
@@ -515,8 +205,7 @@
             const dLat = (coords2[0] - coords1[0]) * Math.PI / 180;
             const dLon = (coords2[1] - coords1[1]) * Math.PI / 180;
             const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                      Math.cos(coords1[0] * Math.PI / 180) *
-                      Math.cos(coords2[0] * Math.PI / 180) *
+                      Math.cos(coords1[0] * Math.PI / 180) * Math.cos(coords2[0] * Math.PI / 180) *
                       Math.sin(dLon / 2) * Math.sin(dLon / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             return R * c; // Distance in km
@@ -570,12 +259,11 @@
             });
         }
 
-        // Find the closest available drivers based on passenger count
+        // Find the closest available drivers based on passenger capacity
         function findClosestDrivers(passengerCount) {
-            // Capacity filter removed as per new requirements, assuming all drivers can handle any capacity.
-            // If capacity is to be re-introduced as a filter, it needs to be stored for each driver.
             return drivers.filter(driver => 
-                driver.available !== false // Only filter by availability
+                driver.capacity >= passengerCount && 
+                driver.available !== false
             ).slice(0, 3); // Show top 3 available drivers
         }
 
@@ -585,26 +273,16 @@
             const endLocation = endLocationSelect.value;
             const passengerCount = document.getElementById('passengerCount').value;
 
-            if (!startLocation || !endLocation || !passengerCount) {
-                showMessageBox('Please select start/end locations and number of passengers.', 3000);
-                return;
-            }
-
             if (startLocation === endLocation) {
-                showMessageBox('Start and destination cannot be the same.', 3000);
+                alert('Start and destination cannot be the same.');
                 return;
             }
 
             resultsContainer.innerHTML = '';
             const rideInfo = localTransportData[endLocation];
-            const startCoords = localTransportData[startLocation].coords; // Get start coordinates
+            const closestDrivers = findClosestDrivers(passengerCount);
 
-            // Filter drivers by availability
-            const availableDrivers = drivers.filter(driver => 
-                driver.available
-            );
-
-            if (availableDrivers.length === 0) {
+            if (closestDrivers.length === 0) {
                 resultsContainer.innerHTML = `
                     <div class="card p-4 mb-4">
                         <h3>No available drivers found for your request</h3>
@@ -612,16 +290,8 @@
                     </div>
                 `;
             } else {
-                // Sort drivers by proximity to start location
-                availableDrivers.sort((a, b) => {
-                    const distA = haversineDistance(startCoords, a.coords);
-                    const distB = haversineDistance(startCoords, b.coords);
-                    return distA - distB;
-                });
-
-                // Display top 3 drivers
-                availableDrivers.slice(0, 3).forEach(driver => {
-                    const fare = calculateFare(startCoords, rideInfo.coords); // Calculate fare from start to end
+                closestDrivers.forEach(driver => {
+                    const fare = calculateFare(driver.coords, rideInfo.coords);
                     resultsContainer.innerHTML += `
                         <div class="card p-4 mb-4">
                             <h3>${rideInfo.icon} ${endLocation}</h3>
@@ -629,80 +299,67 @@
                             <p>Driver: ${driver.name}</p>
                             <p>Phone: ${driver.phone}</p>
                             <p>Car Reg: ${driver.carReg}</p>
-                            <p>Capacity: ${driver.capacity || 'N/A'}</p> <!-- Display capacity if it exists -->
+                            <p>Capacity: ${driver.capacity}</p>
                             <p>Status: ${driver.available ? 'Available' : 'Not Available'}</p>
                             <p>Estimated Fare: $${fare}</p>
-                            <button class="btn-primary rounded-md" onclick="confirmRide('${endLocation}', '${fare}', '${driver.name}', '${driver.phone}', ${rideInfo.coords})">Confirm Ride</button>
+                            <button class="btn-primary" onclick="confirmRide('${endLocation}', '${fare}', '${driver.name}', ${rideInfo.coords})">Confirm Ride</button>
                         </div>
                     `;
                 });
             }
 
             resultsDiv.classList.remove('hidden');
-            initMap(localTransportData["Town Center"].coords, drivers); 
+            initMap(rideInfo.coords, closestDrivers);
         }
 
         // Confirm the ride and store it
-        function confirmRide(destination, cost, driverName, driverPhone, destinationCoords) {
-            rideHistory.push({ destination, cost, driverName, driverPhone, time: new Date().toLocaleString() });
-            showMessageBox(`Ride confirmed to ${destination} with ${driverName}. Driver has been notified via WhatsApp.`, 4000);
-            
-            // Optionally open WhatsApp
-            const whatsappUrl = `https://wa.me/${driverPhone.replace(/[^0-9]/g, '')}?text=New%20booking%20to%20${encodeURIComponent(destination)}%20for%20$${cost}.%20Please%20confirm.`;
-            window.open(whatsappUrl, '_blank');
-
+        function confirmRide(destination, cost, driver) {
+            rideHistory.push({ destination, cost, driver, time: new Date().toLocaleString() });
+            alert(`Ride confirmed to ${destination} with ${driver}.`);
+            alert(`Driver ${driver} has been notified of the booking.`);
             displayRideHistory();
         }
 
         // Display ride history
         function displayRideHistory() {
             historyContainer.innerHTML = '';
-            if (rideHistory.length === 0) {
-                historyContainer.innerHTML = '<p>No ride history yet.</p>';
-            } else {
-                rideHistory.forEach(ride => {
-                    historyContainer.innerHTML += `
-                        <div class="card p-4 mb-4">
-                            <p>Destination: ${ride.destination}</p>
-                            <p>Cost: $${ride.cost}</p>
-                            <p>Driver: ${ride.driverName}</p>
-                            <p>Time: ${ride.time}</p>
-                            <a href="https://wa.me/${ride.driverPhone.replace(/[^0-9]/g, '')}?text=Regarding%20your%20ride%20to%20${encodeURIComponent(ride.destination)}." target="_blank" class="btn-primary mt-2 inline-block rounded-md">Message Driver</a>
-                        </div>
-                    `;
-                });
-            }
+            rideHistory.forEach(ride => {
+                historyContainer.innerHTML += `
+                    <div class="card p-4 mb-4">
+                        <p>Destination: ${ride.destination}</p>
+                        <p>Cost: $${ride.cost}</p>
+                        <p>Driver: ${ride.driver}</p>
+                        <p>Time: ${ride.time}</p>
+                    </div>
+                `;
+            });
             document.getElementById('ride-history').classList.remove('hidden');
         }
 
         // Initialize the map
-        function initMap(centerCoords, markersData) {
-            // Check if map already initialized
-            let mapElement = document.getElementById('map');
-            if (mapElement._leaflet_id) { // If Leaflet has initialized it
-                mapElement._leaflet_id = null; // Clear old map to reinitialize
-                mapElement.innerHTML = '';
-            }
-
-            const map = L.map('map').setView(centerCoords, 14);
+        function initMap(destinationCoords, closestDrivers) {
+            const map = L.map('map').setView(destinationCoords, 14);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '© OpenStreetMap'
             }).addTo(map);
 
-            // Add all predefined locations to the map
+            // Destination marker
+            L.marker(destinationCoords).addTo(map).bindPopup("Destination").openPopup();
+
+            // Driver markers
+            closestDrivers.forEach(driver => {
+                const driverMarker = L.marker(driver.coords).addTo(map).bindPopup("Driver Location: " + driver.name);
+            });
+
+            // Add all locations to the map
             Object.entries(localTransportData).forEach(([location, data]) => {
                 L.marker(data.coords).addTo(map).bindPopup(location);
             });
 
-            // Add driver markers
-            markersData.forEach(driver => {
-                L.marker(driver.coords).addTo(map).bindPopup(`Driver: ${driver.name} (Car: ${driver.carReg})`);
-            });
-
-            // Live user's location (only for passenger view, admin doesn't need personal location on map)
-            if (!isAdmin && navigator.geolocation) { // Only attempt to get user location if not admin
+            // Live user's location
+            if (navigator.geolocation) {
                 navigator.geolocation.watchPosition(position => {
                     const userCoords = [position.coords.latitude, position.coords.longitude];
 
@@ -713,70 +370,43 @@
                         userMarker = L.marker(userCoords).addTo(map).bindPopup("Your Location").openPopup();
                     }
 
-                    // map.setView(userCoords, 14); // Keep map centered on user
-                }, (error) => { // Removed showMessageBox
-                    console.warn('Geolocation error:', error.message);
+                    map.setView(userCoords, 14);
+                }, () => {
+                    alert('Unable to retrieve your location.');
                 });
-            } else if (isAdmin && userMarker) { // If admin logs in and userMarker exists from prior passenger session, remove it
-                userMarker.remove();
-                userMarker = null;
             }
 
             document.getElementById('map').classList.remove('hidden');
         }
 
         // Handle driver registration
-        async function registerDriver() {
+        function registerDriver() {
             const driverName = document.getElementById('driverName').value;
             const driverPhone = document.getElementById('driverPhone').value;
             const driverCarReg = document.getElementById('driverCarReg').value;
-            // Removed driverCapacity, driverLatitude, driverLongitude inputs from HTML
-
-            if (!driverName || !driverPhone || !driverCarReg) {
-                showMessageBox('Please fill in all driver details (Name, Phone Number, Car Registration).', 3000);
-                return;
-            }
+            const driverCapacity = document.getElementById('driverCapacity').value;
 
             const newDriver = {
-                _id: generateUUID(), // MongoDB uses _id, let's generate client-side
+                id: drivers.length + 1,
                 name: driverName,
                 phone: driverPhone,
+                whatsApp: `https://wa.me/${driverPhone.replace(/-/g, '')}`,
                 carReg: driverCarReg,
-                capacity: 4, // Default capacity since it's not provided by admin
-                coords: [-17.9319, 25.8306], // Default coordinates for Victoria Falls Town Center
-                available: true // Default status
+                capacity: driverCapacity,
+                coords: [-17.9319, 25.8306], // Sample coordinates, replace with actual
+                available: true // Driver is available by default
             };
 
-            await insertDriver(newDriver); // Insert into MongoDB via LLM
-            
-            // Clear form fields after submission
-            document.getElementById('driverName').value = '';
-            document.getElementById('driverPhone').value = '';
-            document.getElementById('driverCarReg').value = '';
+            drivers.push(newDriver);
+            alert(`Driver ${driverName} registered successfully!`);
+            driverRegistration.classList.add('hidden');
+            mainApp.classList.remove('hidden');
+
+            // Show driver on the map
+            initMap(localTransportData["Town Center"].coords, [newDriver]);
         }
 
-        // Display drivers in admin dashboard
-        function displayAdminDrivers() {
-            driverListContainer.innerHTML = '';
-            if (drivers.length === 0) {
-                driverListContainer.innerHTML = '<p>No drivers registered yet.</p>';
-                return;
-            }
-            drivers.forEach(driver => {
-                driverListContainer.innerHTML += `
-                    <div class="card p-4 mb-2 flex justify-between items-center">
-                        <div>
-                            <h4 class="font-semibold">${driver.name} (Car: ${driver.carReg})</h4>
-                            <p>Phone: ${driver.phone} | Status: ${driver.available ? 'Available' : 'Not Available'}</p>
-                            <!-- Removed display of Coords and Capacity for simplicity -->
-                        </div>
-                        <button class="btn-primary bg-red-600 hover:bg-red-700 rounded-md" onclick="deleteDriver('${driver._id}', '${driver.name}')">Delete</button>
-                    </div>
-                `;
-            });
-        }
-
-        // Handle back to login buttons
+        // Handle back to login button
         function setupBackButtons() {
             document.getElementById('backToLogin').addEventListener('click', function() {
                 mainApp.classList.add('hidden');
@@ -788,27 +418,18 @@
             });
 
             document.getElementById('backToLoginAdmin').addEventListener('click', function() {
-                adminDashboard.classList.add('hidden'); // Hide admin dashboard
-                authSection.classList.remove('hidden'); // Show auth section
-                document.getElementById('passenger-login').classList.add('hidden'); // Ensure admin login is visible
-                document.getElementById('admin-login').classList.remove('hidden');
-                document.querySelector('.login-tab[data-tab="passenger"]').classList.remove('active');
-                document.querySelector('.login-tab[data-tab="admin"]').classList.add('active');
-            });
-
-            document.getElementById('backToLoginAdmin2').addEventListener('click', function() {
-                adminDashboard.classList.add('hidden'); // Hide admin dashboard
-                authSection.classList.remove('hidden'); // Show auth section
-                document.getElementById('passenger-login').classList.add('hidden'); // Ensure admin login is visible
+                driverRegistration.classList.add('hidden');
+                authSection.classList.remove('hidden');
+                document.getElementById('passenger-login').classList.add('hidden');
                 document.getElementById('admin-login').classList.remove('hidden');
                 document.querySelector('.login-tab[data-tab="passenger"]').classList.remove('active');
                 document.querySelector('.login-tab[data-tab="admin"]').classList.add('active');
             });
         }
 
-        // Handle login tab switching (Admin/Passenger)
+        // Handle login tab switching
         function setupLoginTabs() {
-            const tabs = document.querySelectorAll('#auth-section .login-tab');
+            const tabs = document.querySelectorAll('.login-tab');
             tabs.forEach(tab => {
                 tab.addEventListener('click', function() {
                     tabs.forEach(t => t.classList.remove('active'));
@@ -818,22 +439,6 @@
                     document.getElementById('admin-login').classList.toggle('hidden', this.dataset.tab !== 'admin');
                 });
             });
-
-            // Admin Dashboard tab switching (Register Driver/Manage Drivers)
-            const adminTabs = document.querySelectorAll('#admin-dashboard .login-tab');
-            adminTabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    adminTabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-
-                    document.getElementById('driver-registration').classList.toggle('hidden', this.dataset.tab !== 'register-driver');
-                    document.getElementById('manage-drivers').classList.toggle('hidden', this.dataset.tab !== 'manage-drivers');
-                    
-                    if (this.dataset.tab === 'manage-drivers') {
-                        fetchDrivers(); // Refresh drivers when manage tab is opened
-                    }
-                });
-            });
         }
 
         // Admin login functionality
@@ -841,61 +446,39 @@
             const username = document.getElementById('adminUsername').value;
             const password = document.getElementById('adminPassword').value;
 
-            // Using hardcoded credentials for demo. In production, connect to a real auth system.
             if (username === 'Munkuli$1996' && password === 'PickGod') {
-                showMessageBox('Admin logged in successfully!', 2000);
+                alert('Admin logged in successfully!');
                 isAdmin = true;
                 authSection.classList.add('hidden');
-                adminDashboard.classList.remove('hidden'); // Show admin dashboard
-                // Default to register driver tab
-                document.querySelector('#admin-dashboard .login-tab[data-tab="register-driver"]').click(); 
-                // When admin logs in, remove any existing user marker on the map
-                if (userMarker) {
-                    userMarker.remove();
-                    userMarker = null;
-                }
+                driverRegistration.classList.remove('hidden');
             } else {
-                showMessageBox('Invalid admin credentials!', 3000);
+                alert('Invalid admin credentials!');
             }
         });
 
         // Passenger login functionality
-        document.getElementById('passengerLoginBtn').addEventListener('click', async function() {
+        document.getElementById('passengerLoginBtn').addEventListener('click', function() {
             const username = document.getElementById('passengerUsername').value;
             const password = document.getElementById('passengerPassword').value;
 
-            // Using simple client-side check for demo. In production, use real auth.
             if (username && password) {
-                showMessageBox('Passenger logged in successfully!', 2000);
+                alert('Passenger logged in successfully!');
                 isAdmin = false;
                 authSection.classList.add('hidden');
                 mainApp.classList.remove('hidden');
                 populateLocations();
-                await fetchDrivers(); // Fetch drivers for trip planning
-                // The map's geolocation watchPosition will handle the user's location automatically
             } else {
-                showMessageBox('Please enter both username and password.', 3000);
+                alert('Please enter both username and password');
             }
         });
 
         // Event listeners
         document.getElementById('registerDriverBtn').addEventListener('click', registerDriver);
         planTripBtn.addEventListener('click', planTrip);
-        document.getElementById('refreshDriversBtn').addEventListener('click', fetchDrivers); // Refresh button for admin
 
         // Initial Setup
         setupLoginTabs();
         setupBackButtons();
-
-        // Initial fetch of drivers when the page loads (for passenger view or immediate admin access)
-        document.addEventListener('DOMContentLoaded', async () => {
-            await fetchDrivers(); // Fetch initial list of drivers
-            // If admin logs in first, it will trigger another fetch.
-            // If passenger logs in first, this initial fetch ensures drivers are available.
-        });
-
-        // Initial map setup (centered on Vic Falls Town Center) - adjust if needed
-        initMap(localTransportData["Town Center"].coords, []); // Initialize map with no drivers initially, they'll be fetched.
     </script>
 </body>
-</html>
+</html>   
