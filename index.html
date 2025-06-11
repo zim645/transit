@@ -136,9 +136,7 @@
                     <input type="text" id="driverName" placeholder="Driver Name" class="border p-2 w-full mb-2 rounded-md">
                     <input type="text" id="driverPhone" placeholder="Phone Number (e.g., +263771234567)" class="border p-2 w-full mb-2 rounded-md">
                     <input type="text" id="driverCarReg" placeholder="Car Registration Number" class="border p-2 w-full mb-2 rounded-md">
-                    <input type="number" id="driverCapacity" placeholder="Passenger Capacity" class="border p-2 w-full mb-2 rounded-md">
-                    <input type="number" id="driverLatitude" placeholder="Driver Latitude (e.g., -17.93)" step="any" class="border p-2 w-full mb-2 rounded-md">
-                    <input type="number" id="driverLongitude" placeholder="Driver Longitude (e.g., 25.83)" step="any" class="border p-2 w-full mb-2 rounded-md">
+                    <!-- Removed driverCapacity, driverLatitude, driverLongitude inputs -->
                     <button id="registerDriverBtn" class="btn-primary w-full rounded-md">Register Driver</button>
                 </div>
 
@@ -214,7 +212,7 @@
             "Boma Dinner & Drum Show": { arrival_time: "18 min", icon: "🥁", coords: [-17.9069, 25.8236] },
             "Victoria Falls Bridge": { arrival_time: "15 min", icon: "🌉", coords: [-17.9310, 25.8267] },
             "Rainbow Falls": { arrival_time: "25 min", icon: "🌈", coords: [-17.9267, 25.8536] },
-            "Devil's Pool": { arrival_time: "30 min", icon: "😈", coords: [-17.9278, 25.8542] },
+            "Devil's Pool": { arrival_time: "30 min", icon: "�", coords: [-17.9278, 25.8542] },
             "Livingstone Island": { arrival_time: "35 min", icon: "🏝️", coords: [-17.9283, 25.8550] },
             "Victoria Falls National Park": { arrival_time: "12 min", icon: "🌳", coords: [-17.9281, 25.8408] },
             "Chinotimba Township": { arrival_time: "10 min", icon: "🏘️", coords: [-17.9236, 25.8167] },
@@ -241,7 +239,7 @@
             "Victoria Falls Reptile Park": { arrival_time: "20 min", icon: "🐍", coords: [-17.9333, 25.8333] },
             "Victoria Falls Crocodile Farm": { arrival_time: "25 min", icon: "🐊", coords: [-17.9333, 25.8333] },
             "Victoria Falls Snake Park": { arrival_time: "22 min", icon: "🐍", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Lion Encounter": { arrival_time: "30 min", icon: "�", coords: [-17.9333, 25.8333] },
+            "Victoria Falls Lion Encounter": { arrival_time: "30 min", icon: "🦁", coords: [-17.9333, 25.8333] },
             "Victoria Falls Elephant Sanctuary": { arrival_time: "35 min", icon: "🐘", coords: [-17.9333, 25.8333] },
             "Victoria Falls Giraffe Encounter": { arrival_time: "32 min", icon: "🦒", coords: [-17.9333, 25.8333] },
             "Victoria Falls Cheetah Encounter": { arrival_time: "28 min", icon: "🐆", coords: [-17.9333, 25.8333] },
@@ -321,7 +319,7 @@
                 The MongoDB Atlas connection URI is: ${MONGODB_ATLAS_URI}
                 The database name is: ${MONGODB_DATABASE_NAME}
                 The collection name is: 'drivers'.
-                Return the data as a JSON array of driver objects. Each driver object should have _id, name, phone, carReg, capacity, coords (an array of two numbers), and available (boolean). If the collection is empty, return an empty JSON array.
+                Return the data as a JSON array of driver objects. Each driver object should have _id, name, phone, carReg, capacity (default 4), coords (default [-17.9319, 25.8306]), and available (boolean, default true). If the collection is empty, return an empty JSON array.
                 Example structure: [{"_id": "...", "name": "...", "phone": "...", "carReg": "...", "capacity": 4, "coords": [-17.9319, 25.8306], "available": true}]
             `;
             let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
@@ -557,11 +555,12 @@
             });
         }
 
-        // Find the closest available drivers based on passenger capacity
+        // Find the closest available drivers based on passenger capacity (now a default capacity)
         function findClosestDrivers(passengerCount) {
+            // Since capacity is no longer input by admin, we assume a default or remove capacity filtering.
+            // Keeping a default capacity of 4 as per prior versions for trip planning.
             return drivers.filter(driver => 
-                driver.capacity >= passengerCount && 
-                driver.available !== false
+                driver.available !== false // Only filter by availability
             ).slice(0, 3); // Show top 3 available drivers
         }
 
@@ -585,9 +584,9 @@
             const rideInfo = localTransportData[endLocation];
             const startCoords = localTransportData[startLocation].coords; // Get start coordinates
 
-            // Filter drivers by availability and capacity
+            // Filter drivers by availability (capacity filter removed as per new requirements)
             const availableDrivers = drivers.filter(driver => 
-                driver.available && driver.capacity >= passengerCount
+                driver.available
             );
 
             if (availableDrivers.length === 0) {
@@ -598,7 +597,7 @@
                     </div>
                 `;
             } else {
-                // Sort drivers by proximity to start location (optional, but good for "closest")
+                // Sort drivers by proximity to start location
                 availableDrivers.sort((a, b) => {
                     const distA = haversineDistance(startCoords, a.coords);
                     const distB = haversineDistance(startCoords, b.coords);
@@ -615,7 +614,7 @@
                             <p>Driver: ${driver.name}</p>
                             <p>Phone: ${driver.phone}</p>
                             <p>Car Reg: ${driver.carReg}</p>
-                            <p>Capacity: ${driver.capacity}</p>
+                            <p>Capacity: ${driver.capacity || 'N/A'}</p> <!-- Display capacity if it exists -->
                             <p>Status: ${driver.available ? 'Available' : 'Not Available'}</p>
                             <p>Estimated Fare: $${fare}</p>
                             <button class="btn-primary rounded-md" onclick="confirmRide('${endLocation}', '${fare}', '${driver.name}', '${driver.phone}', ${rideInfo.coords})">Confirm Ride</button>
@@ -625,7 +624,6 @@
             }
 
             resultsDiv.classList.remove('hidden');
-            // Init map with all locations for passenger view, including drivers
             initMap(localTransportData["Town Center"].coords, drivers); 
         }
 
@@ -688,8 +686,8 @@
                 L.marker(driver.coords).addTo(map).bindPopup(`Driver: ${driver.name} (Car: ${driver.carReg})`);
             });
 
-            // Live user's location
-            if (navigator.geolocation) {
+            // Live user's location (only for passenger view, admin doesn't need personal location on map)
+            if (!isAdmin && navigator.geolocation) { // Only attempt to get user location if not admin
                 navigator.geolocation.watchPosition(position => {
                     const userCoords = [position.coords.latitude, position.coords.longitude];
 
@@ -704,6 +702,9 @@
                 }, () => {
                     showMessageBox('Unable to retrieve your location.', 3000);
                 });
+            } else if (isAdmin && userMarker) { // If admin logs in and userMarker exists from prior passenger session, remove it
+                userMarker.remove();
+                userMarker = null;
             }
 
             document.getElementById('map').classList.remove('hidden');
@@ -714,12 +715,10 @@
             const driverName = document.getElementById('driverName').value;
             const driverPhone = document.getElementById('driverPhone').value;
             const driverCarReg = document.getElementById('driverCarReg').value;
-            const driverCapacity = parseInt(document.getElementById('driverCapacity').value, 10);
-            const driverLatitude = parseFloat(document.getElementById('driverLatitude').value);
-            const driverLongitude = parseFloat(document.getElementById('driverLongitude').value);
+            // Removed driverCapacity, driverLatitude, driverLongitude inputs
 
-            if (!driverName || !driverPhone || !driverCarReg || isNaN(driverCapacity) || driverCapacity <= 0 || isNaN(driverLatitude) || isNaN(driverLongitude)) {
-                showMessageBox('Please fill in all driver details and valid coordinates correctly.', 3000);
+            if (!driverName || !driverPhone || !driverCarReg) {
+                showMessageBox('Please fill in all driver details (Name, Phone Number, Car Registration).', 3000);
                 return;
             }
 
@@ -728,9 +727,9 @@
                 name: driverName,
                 phone: driverPhone,
                 carReg: driverCarReg,
-                capacity: driverCapacity,
-                coords: [driverLatitude, driverLongitude], // Use provided coordinates
-                available: true
+                capacity: 4, // Default capacity since it's not provided by admin
+                coords: [-17.9319, 25.8306], // Default coordinates for Victoria Falls Town Center
+                available: true // Default status
             };
 
             await insertDriver(newDriver); // Insert into MongoDB via LLM
@@ -739,12 +738,6 @@
             document.getElementById('driverName').value = '';
             document.getElementById('driverPhone').value = '';
             document.getElementById('driverCarReg').value = '';
-            document.getElementById('driverCapacity').value = '';
-            document.getElementById('driverLatitude').value = ''; // Clear new fields
-            document.getElementById('driverLongitude').value = ''; // Clear new fields
-
-            // Optionally, update the map to show the newly registered driver
-            // initMap(newDriver.coords, [newDriver]); // Center map on new driver
         }
 
         // Display drivers in admin dashboard
@@ -759,8 +752,8 @@
                     <div class="card p-4 mb-2 flex justify-between items-center">
                         <div>
                             <h4 class="font-semibold">${driver.name} (Car: ${driver.carReg})</h4>
-                            <p>Phone: ${driver.phone} | Capacity: ${driver.capacity}</p>
-                            <p>Coords: [${driver.coords[0].toFixed(4)}, ${driver.coords[1].toFixed(4)}] | Status: ${driver.available ? 'Available' : 'Not Available'}</p>
+                            <p>Phone: ${driver.phone} | Status: ${driver.available ? 'Available' : 'Not Available'}</p>
+                            <!-- Removed display of Coords and Capacity for simplicity -->
                         </div>
                         <button class="btn-primary bg-red-600 hover:bg-red-700 rounded-md" onclick="deleteDriver('${driver._id}', '${driver.name}')">Delete</button>
                     </div>
@@ -841,6 +834,11 @@
                 adminDashboard.classList.remove('hidden'); // Show admin dashboard
                 // Default to register driver tab
                 document.querySelector('#admin-dashboard .login-tab[data-tab="register-driver"]').click(); 
+                // When admin logs in, remove any existing user marker on the map
+                if (userMarker) {
+                    userMarker.remove();
+                    userMarker = null;
+                }
             } else {
                 showMessageBox('Invalid admin credentials!', 3000);
             }
@@ -859,6 +857,7 @@
                 mainApp.classList.remove('hidden');
                 populateLocations();
                 await fetchDrivers(); // Fetch drivers for trip planning
+                // The map's geolocation watchPosition will handle the user's location automatically
             } else {
                 showMessageBox('Please enter both username and password.', 3000);
             }
