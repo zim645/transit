@@ -212,7 +212,7 @@
             "Boma Dinner & Drum Show": { arrival_time: "18 min", icon: "🥁", coords: [-17.9069, 25.8236] },
             "Victoria Falls Bridge": { arrival_time: "15 min", icon: "🌉", coords: [-17.9310, 25.8267] },
             "Rainbow Falls": { arrival_time: "25 min", icon: "🌈", coords: [-17.9267, 25.8536] },
-            "Devil's Pool": { arrival_time: "30 min", icon: "�", coords: [-17.9278, 25.8542] },
+            "Devil's Pool": { arrival_time: "30 min", icon: "😈", coords: [-17.9278, 25.8542] },
             "Livingstone Island": { arrival_time: "35 min", icon: "🏝️", coords: [-17.9283, 25.8550] },
             "Victoria Falls National Park": { arrival_time: "12 min", icon: "🌳", coords: [-17.9281, 25.8408] },
             "Chinotimba Township": { arrival_time: "10 min", icon: "🏘️", coords: [-17.9236, 25.8167] },
@@ -314,14 +314,13 @@
 
         async function fetchDrivers() {
             showLoading(true);
-            const prompt = `
-                Fetch all documents from the 'drivers' collection in a MongoDB Atlas database.
-                MongoDB Atlas URI: ${MONGODB_ATLAS_URI}
-                Database Name: ${MONGODB_DATABASE_NAME}
-                Collection Name: 'drivers'.
-                Expected document structure: { _id: "string", name: "string", phone: "string", carReg: "string", capacity: "number", coords: [number, number], available: "boolean" }.
-                Return the data as a JSON array of driver objects. If the collection is empty, return an empty JSON array [].
-            `;
+            // Updated prompt for clarity and robustness for the LLM
+            const prompt = `Fetch all documents from the 'drivers' collection in the specified MongoDB Atlas database.
+                            MongoDB Atlas URI: ${MONGODB_ATLAS_URI}
+                            Database Name: ${MONGODB_DATABASE_NAME}
+                            Collection Name: 'drivers'.
+                            Ensure the response is a JSON array where each object has '_id', 'name', 'phone', 'carReg', 'capacity' (number), 'coords' ([number, number]), and 'available' (boolean).
+                            If the collection is empty, return an empty JSON array [].`;
             let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
             const payload = { 
                 contents: chatHistory,
@@ -366,17 +365,17 @@
                         showMessageBox("Drivers loaded successfully!", 2000);
                     } catch (e) {
                         console.error("JSON parsing error for fetched drivers:", e, "Raw LLM response:", jsonString);
-                        showMessageBox("Failed to parse drivers data. LLM returned invalid JSON.", 3000);
+                        showMessageBox("Failed to parse drivers data. LLM returned invalid JSON. Check console for details.", 4000);
                         drivers = []; // Clear drivers on error
                     }
                 } else {
                     console.error("LLM response structure unexpected:", result);
-                    showMessageBox("Failed to fetch drivers: Unexpected LLM response structure.", 3000);
+                    showMessageBox("Failed to fetch drivers: Unexpected LLM response structure. Check console for details.", 4000);
                     drivers = []; // Clear drivers on error
                 }
             } catch (error) {
                 console.error("Error fetching drivers:", error);
-                showMessageBox("Error connecting to database to fetch drivers.", 3000);
+                showMessageBox("Error connecting to database to fetch drivers. Check console for details.", 4000);
                 drivers = []; // Clear drivers on error
             } finally {
                 showLoading(false);
@@ -385,22 +384,13 @@
 
         async function insertDriver(driverData) {
             showLoading(true);
-            const prompt = `
-                Insert a new document into the 'drivers' collection in a MongoDB Atlas database.
-                MongoDB Atlas URI: ${MONGODB_ATLAS_URI}
-                Database Name: ${MONGODB_DATABASE_NAME}
-                Collection Name: 'drivers'.
-                The document details to insert are:
-                _id: "${driverData._id}"
-                name: "${driverData.name}"
-                phone: "${driverData.phone}"
-                carReg: "${driverData.carReg}"
-                capacity: ${driverData.capacity}
-                coords: [${driverData.coords[0]}, ${driverData.coords[1]}]
-                available: ${driverData.available}
-                Return a JSON object with 'status' as "success" or "error" and a 'message'.
-                Example: {"status": "success", "message": "Driver inserted"}
-            `;
+            // Updated prompt for clarity and robustness for the LLM
+            const prompt = `Insert the following document into the 'drivers' collection in the specified MongoDB Atlas database.
+                            MongoDB Atlas URI: ${MONGODB_ATLAS_URI}
+                            Database Name: ${MONGODB_DATABASE_NAME}
+                            Collection Name: 'drivers'.
+                            Document to insert: ${JSON.stringify(driverData)}.
+                            Return a JSON object with 'status': "success" or "error", and a 'message'.`;
             let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
             const payload = { 
                 contents: chatHistory,
@@ -435,19 +425,20 @@
                             showMessageBox(`Driver ${driverData.name} registered successfully!`, 2000);
                             await fetchDrivers(); // Refresh the list after successful insertion
                         } else {
-                            showMessageBox(`Failed to register driver: ${parsedResult.message}`, 3000);
+                            showMessageBox(`Failed to register driver: ${parsedResult.message}. Check console for details.`, 4000);
+                            console.error("LLM returned error status for insert:", parsedResult);
                         }
                     } catch (e) {
                         console.error("JSON parsing error for insert driver response:", e, "Raw LLM response:", jsonString);
-                        showMessageBox("Failed to register driver: LLM returned invalid JSON for status.", 3000);
+                        showMessageBox("Failed to register driver: LLM returned invalid JSON for status. Check console for details.", 4000);
                     }
                 } else {
-                    console.error("LLM response structure unexpected:", result);
-                    showMessageBox("Failed to register driver: Unexpected LLM response structure.", 3000);
+                    console.error("LLM response structure unexpected for insert:", result);
+                    showMessageBox("Failed to register driver: Unexpected LLM response structure. Check console for details.", 4000);
                 }
             } catch (error) {
                 console.error("Error inserting driver:", error);
-                showMessageBox("Error connecting to database to register driver.", 3000);
+                showMessageBox("Error connecting to database to register driver. Check console for details.", 4000);
             } finally {
                 showLoading(false);
             }
@@ -458,15 +449,12 @@
                 return; // User cancelled deletion
             }
             showLoading(true);
-            const prompt = `
-                Delete a document from the 'drivers' collection in a MongoDB Atlas database.
-                MongoDB Atlas URI: ${MONGODB_ATLAS_URI}
-                Database Name: ${MONGODB_DATABASE_NAME}
-                Collection Name: 'drivers'.
-                The query to delete the document is: {"_id": "${driverId}"}.
-                Return a JSON object with 'status' as "success" or "error" and a 'message'.
-                Example: {"status": "success", "message": "Driver deleted"}
-            `;
+            // Updated prompt for clarity and robustness for the LLM
+            const prompt = `Delete the document with _id "${driverId}" from the 'drivers' collection in the specified MongoDB Atlas database.
+                            MongoDB Atlas URI: ${MONGODB_ATLAS_URI}
+                            Database Name: ${MONGODB_DATABASE_NAME}
+                            Collection Name: 'drivers'.
+                            Return a JSON object with 'status': "success" or "error", and a 'message'.`;
             let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
             const payload = { 
                 contents: chatHistory,
@@ -501,19 +489,20 @@
                             showMessageBox(`Driver ${driverName} deleted successfully!`, 2000);
                             await fetchDrivers(); // Refresh the list after successful deletion
                         } else {
-                            showMessageBox(`Failed to delete driver: ${parsedResult.message}`, 3000);
+                            showMessageBox(`Failed to delete driver: ${parsedResult.message}. Check console for details.`, 4000);
+                            console.error("LLM returned error status for delete:", parsedResult);
                         }
                     } catch (e) {
                         console.error("JSON parsing error for delete driver response:", e, "Raw LLM response:", jsonString);
-                        showMessageBox("Failed to delete driver: LLM returned invalid JSON for status.", 3000);
+                        showMessageBox("Failed to delete driver: LLM returned invalid JSON for status. Check console for details.", 4000);
                     }
                 } else {
-                    console.error("LLM response structure unexpected:", result);
-                    showMessageBox("Failed to delete driver: Unexpected LLM response structure.", 3000);
+                    console.error("LLM response structure unexpected for delete:", result);
+                    showMessageBox("Failed to delete driver: Unexpected LLM response structure. Check console for details.", 4000);
                 }
             } catch (error) {
                 console.error("Error deleting driver:", error);
-                showMessageBox("Error connecting to database to delete driver.", 3000);
+                showMessageBox("Error connecting to database to delete driver. Check console for details.", 4000);
             } finally {
                 showLoading(false);
             }
@@ -909,4 +898,3 @@
         initMap(localTransportData["Town Center"].coords, []); // Initialize map with no drivers initially, they'll be fetched.
     </script>
 </body>
-</html>
