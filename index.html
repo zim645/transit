@@ -315,12 +315,12 @@
         async function fetchDrivers() {
             showLoading(true);
             const prompt = `
-                I need to fetch all documents from the 'drivers' collection in a MongoDB Atlas database.
-                The MongoDB Atlas connection URI is: ${MONGODB_ATLAS_URI}
-                The database name is: ${MONGODB_DATABASE_NAME}
-                The collection name is: 'drivers'.
-                Return the data as a JSON array of driver objects. Each driver object should have _id, name, phone, carReg, capacity (default 4), coords (default [-17.9319, 25.8306]), and available (boolean, default true). If the collection is empty, return an empty JSON array.
-                Example structure: [{"_id": "...", "name": "...", "phone": "...", "carReg": "...", "capacity": 4, "coords": [-17.9319, 25.8306], "available": true}]
+                Fetch all documents from the 'drivers' collection in a MongoDB Atlas database.
+                MongoDB Atlas URI: ${MONGODB_ATLAS_URI}
+                Database Name: ${MONGODB_DATABASE_NAME}
+                Collection Name: 'drivers'.
+                Expected document structure: { _id: "string", name: "string", phone: "string", carReg: "string", capacity: "number", coords: [number, number], available: "boolean" }.
+                Return the data as a JSON array of driver objects. If the collection is empty, return an empty JSON array [].
             `;
             let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
             const payload = { 
@@ -358,13 +358,20 @@
                     result.candidates[0].content && result.candidates[0].content.parts &&
                     result.candidates[0].content.parts.length > 0) {
                     const jsonString = result.candidates[0].content.parts[0].text;
-                    drivers = JSON.parse(jsonString); // Update global drivers array
-                    console.log("Fetched drivers:", drivers); // For debugging
-                    displayAdminDrivers(); // Refresh admin list
-                    showMessageBox("Drivers loaded successfully!", 2000);
+                    // Safely parse JSON, handling potential non-JSON responses from LLM
+                    try {
+                        drivers = JSON.parse(jsonString); // Update global drivers array
+                        console.log("Fetched drivers:", drivers); // For debugging
+                        displayAdminDrivers(); // Refresh admin list
+                        showMessageBox("Drivers loaded successfully!", 2000);
+                    } catch (e) {
+                        console.error("JSON parsing error for fetched drivers:", e, "Raw LLM response:", jsonString);
+                        showMessageBox("Failed to parse drivers data. LLM returned invalid JSON.", 3000);
+                        drivers = []; // Clear drivers on error
+                    }
                 } else {
                     console.error("LLM response structure unexpected:", result);
-                    showMessageBox("Failed to fetch drivers: Unexpected LLM response.", 3000);
+                    showMessageBox("Failed to fetch drivers: Unexpected LLM response structure.", 3000);
                     drivers = []; // Clear drivers on error
                 }
             } catch (error) {
@@ -379,12 +386,20 @@
         async function insertDriver(driverData) {
             showLoading(true);
             const prompt = `
-                I need to insert a new document into the 'drivers' collection in a MongoDB Atlas database.
-                The MongoDB Atlas connection URI is: ${MONGODB_ATLAS_URI}
-                The database name is: ${MONGODB_DATABASE_NAME}
-                The collection name is: 'drivers'.
-                The document to insert is: ${JSON.stringify(driverData)}.
-                Return a JSON object indicating success or failure. Example: {"status": "success", "message": "Driver inserted"} or {"status": "error", "message": "..."}.
+                Insert a new document into the 'drivers' collection in a MongoDB Atlas database.
+                MongoDB Atlas URI: ${MONGODB_ATLAS_URI}
+                Database Name: ${MONGODB_DATABASE_NAME}
+                Collection Name: 'drivers'.
+                The document details to insert are:
+                _id: "${driverData._id}"
+                name: "${driverData.name}"
+                phone: "${driverData.phone}"
+                carReg: "${driverData.carReg}"
+                capacity: ${driverData.capacity}
+                coords: [${driverData.coords[0]}, ${driverData.coords[1]}]
+                available: ${driverData.available}
+                Return a JSON object with 'status' as "success" or "error" and a 'message'.
+                Example: {"status": "success", "message": "Driver inserted"}
             `;
             let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
             const payload = { 
@@ -414,16 +429,21 @@
                     result.candidates[0].content && result.candidates[0].content.parts &&
                     result.candidates[0].content.parts.length > 0) {
                     const jsonString = result.candidates[0].content.parts[0].text;
-                    const parsedResult = JSON.parse(jsonString);
-                    if (parsedResult.status === "success") {
-                        showMessageBox(`Driver ${driverData.name} registered successfully!`, 2000);
-                        await fetchDrivers(); // Refresh the list after successful insertion
-                    } else {
-                        showMessageBox(`Failed to register driver: ${parsedResult.message}`, 3000);
+                    try {
+                        const parsedResult = JSON.parse(jsonString);
+                        if (parsedResult.status === "success") {
+                            showMessageBox(`Driver ${driverData.name} registered successfully!`, 2000);
+                            await fetchDrivers(); // Refresh the list after successful insertion
+                        } else {
+                            showMessageBox(`Failed to register driver: ${parsedResult.message}`, 3000);
+                        }
+                    } catch (e) {
+                        console.error("JSON parsing error for insert driver response:", e, "Raw LLM response:", jsonString);
+                        showMessageBox("Failed to register driver: LLM returned invalid JSON for status.", 3000);
                     }
                 } else {
                     console.error("LLM response structure unexpected:", result);
-                    showMessageBox("Failed to register driver: Unexpected LLM response.", 3000);
+                    showMessageBox("Failed to register driver: Unexpected LLM response structure.", 3000);
                 }
             } catch (error) {
                 console.error("Error inserting driver:", error);
@@ -439,12 +459,13 @@
             }
             showLoading(true);
             const prompt = `
-                I need to delete a document from the 'drivers' collection in a MongoDB Atlas database.
-                The MongoDB Atlas connection URI is: ${MONGODB_ATLAS_URI}
-                The database name is: ${MONGODB_DATABASE_NAME}
-                The collection name is: 'drivers'.
+                Delete a document from the 'drivers' collection in a MongoDB Atlas database.
+                MongoDB Atlas URI: ${MONGODB_ATLAS_URI}
+                Database Name: ${MONGODB_DATABASE_NAME}
+                Collection Name: 'drivers'.
                 The query to delete the document is: {"_id": "${driverId}"}.
-                Return a JSON object indicating success or failure. Example: {"status": "success", "message": "Driver deleted"} or {"status": "error", "message": "..."}.
+                Return a JSON object with 'status' as "success" or "error" and a 'message'.
+                Example: {"status": "success", "message": "Driver deleted"}
             `;
             let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
             const payload = { 
@@ -474,16 +495,21 @@
                     result.candidates[0].content && result.candidates[0].content.parts &&
                     result.candidates[0].content.parts.length > 0) {
                     const jsonString = result.candidates[0].content.parts[0].text;
-                    const parsedResult = JSON.parse(jsonString);
-                    if (parsedResult.status === "success") {
-                        showMessageBox(`Driver ${driverName} deleted successfully!`, 2000);
-                        await fetchDrivers(); // Refresh the list after successful deletion
-                    } else {
-                        showMessageBox(`Failed to delete driver: ${parsedResult.message}`, 3000);
+                    try {
+                        const parsedResult = JSON.parse(jsonString);
+                        if (parsedResult.status === "success") {
+                            showMessageBox(`Driver ${driverName} deleted successfully!`, 2000);
+                            await fetchDrivers(); // Refresh the list after successful deletion
+                        } else {
+                            showMessageBox(`Failed to delete driver: ${parsedResult.message}`, 3000);
+                        }
+                    } catch (e) {
+                        console.error("JSON parsing error for delete driver response:", e, "Raw LLM response:", jsonString);
+                        showMessageBox("Failed to delete driver: LLM returned invalid JSON for status.", 3000);
                     }
                 } else {
                     console.error("LLM response structure unexpected:", result);
-                    showMessageBox("Failed to delete driver: Unexpected LLM response.", 3000);
+                    showMessageBox("Failed to delete driver: Unexpected LLM response structure.", 3000);
                 }
             } catch (error) {
                 console.error("Error deleting driver:", error);
@@ -555,10 +581,10 @@
             });
         }
 
-        // Find the closest available drivers based on passenger capacity (now a default capacity)
+        // Find the closest available drivers based on passenger count
         function findClosestDrivers(passengerCount) {
-            // Since capacity is no longer input by admin, we assume a default or remove capacity filtering.
-            // Keeping a default capacity of 4 as per prior versions for trip planning.
+            // Capacity filter removed as per new requirements, assuming all drivers can handle any capacity.
+            // If capacity is to be re-introduced as a filter, it needs to be stored for each driver.
             return drivers.filter(driver => 
                 driver.available !== false // Only filter by availability
             ).slice(0, 3); // Show top 3 available drivers
@@ -584,7 +610,7 @@
             const rideInfo = localTransportData[endLocation];
             const startCoords = localTransportData[startLocation].coords; // Get start coordinates
 
-            // Filter drivers by availability (capacity filter removed as per new requirements)
+            // Filter drivers by availability
             const availableDrivers = drivers.filter(driver => 
                 driver.available
             );
@@ -715,7 +741,7 @@
             const driverName = document.getElementById('driverName').value;
             const driverPhone = document.getElementById('driverPhone').value;
             const driverCarReg = document.getElementById('driverCarReg').value;
-            // Removed driverCapacity, driverLatitude, driverLongitude inputs
+            // Removed driverCapacity, driverLatitude, driverLongitude inputs from HTML
 
             if (!driverName || !driverPhone || !driverCarReg) {
                 showMessageBox('Please fill in all driver details (Name, Phone Number, Car Registration).', 3000);
