@@ -158,6 +158,44 @@
             return R * c; // Distance in km
         }
 
+        // Updated fare calculation based on real-time distance and local rates
+        function calculateFare(startCoords, endCoords) {
+            const distance = haversineDistance(startCoords, endCoords);
+            
+            // Base fare in USD (Victoria Falls typical rates)
+            const baseFare = 3.00;
+            
+            // Per kilometer rate (typical local rate)
+            const perKmRate = 0.80;
+            
+            // Minimum fare
+            const minimumFare = 5.00;
+            
+            // Calculate fare
+            let fare = baseFare + (distance * perKmRate);
+            
+            // Apply minimum fare
+            fare = Math.max(fare, minimumFare);
+            
+            // Additional charges for popular tourist destinations
+            const touristDestinations = [
+                "Victoria Falls Hotel",
+                "Zambezi National Park",
+                "Victoria Falls Bridge",
+                "Boma Dinner & Drum Show"
+            ];
+            
+            const destination = endLocationSelect.value;
+            if (touristDestinations.includes(destination)) {
+                fare += 2.50; // Tourist destination surcharge
+            }
+            
+            // Round to nearest 0.50 for cash convenience
+            fare = Math.ceil(fare * 2) / 2;
+            
+            return fare.toFixed(2);
+        }
+
         // Populate locations in the dropdowns
         function populateLocations() {
             Object.keys(localTransportData).forEach(location => {
@@ -166,13 +204,6 @@
                 startLocationSelect.add(optionStart);
                 endLocationSelect.add(optionEnd);
             });
-        }
-
-        // Calculate fare based on distance
-        function calculateFare(startCoords, endCoords) {
-            const distance = haversineDistance(startCoords, endCoords);
-            const fare = distance * 1.5; // Example fare calculation
-            return fare.toFixed(2);
         }
 
         // Find the closest available drivers based on passenger capacity
@@ -243,7 +274,7 @@
                 historyContainer.innerHTML += `
                     <div class="card p-4 mb-4">
                         <p>Destination: ${ride.destination}</p>
-                        <p>Cost: ${ride.cost}</p>
+                        <p>Cost: $${ride.cost}</p>
                         <p>Driver: ${ride.driver}</p>
                         <p>Time: ${ride.time}</p>
                     </div>
