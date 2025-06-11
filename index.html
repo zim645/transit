@@ -31,6 +31,15 @@
             height: 400px;
             width: 100%;
         }
+        .login-tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+        .login-tab.active {
+            border-bottom: 2px solid #4f46e5;
+            color: #4f46e5;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -42,10 +51,35 @@
             </header>
 
             <div id="auth-section" class="mb-6">
-                <h2 class="text-xl font-bold">Sign Up</h2>
-                <input type="text" id="username" placeholder="Username" class="border p-2 w-full mb-2">
-                <input type="password" id="password" placeholder="Password" class="border p-2 w-full mb-4">
-                <button id="signupBtn" class="btn-primary w-full">Sign Up</button>
+                <div class="flex justify-center space-x-4 mb-4">
+                    <div class="login-tab active" data-tab="passenger">Passenger</div>
+                    <div class="login-tab" data-tab="admin">Admin</div>
+                </div>
+
+                <!-- Passenger Login -->
+                <div id="passenger-login" class="auth-form">
+                    <h2 class="text-xl font-bold mb-4">Passenger Login</h2>
+                    <input type="text" id="passengerUsername" placeholder="Username" class="border p-2 w-full mb-2">
+                    <input type="password" id="passengerPassword" placeholder="Password" class="border p-2 w-full mb-4">
+                    <button id="passengerLoginBtn" class="btn-primary w-full">Login as Passenger</button>
+                </div>
+
+                <!-- Admin Login -->
+                <div id="admin-login" class="auth-form hidden">
+                    <h2 class="text-xl font-bold mb-4">Admin Login</h2>
+                    <input type="text" id="adminUsername" placeholder="Username" class="border p-2 w-full mb-2">
+                    <input type="password" id="adminPassword" placeholder="Password" class="border p-2 w-full mb-4">
+                    <button id="adminLoginBtn" class="btn-primary w-full">Login as Admin</button>
+                </div>
+            </div>
+
+            <div id="driver-registration" class="mb-6 hidden">
+                <h2 class="text-xl font-bold">Driver Registration</h2>
+                <input type="text" id="driverName" placeholder="Driver Name" class="border p-2 w-full mb-2">
+                <input type="text" id="driverPhone" placeholder="Phone Number" class="border p-2 w-full mb-2">
+                <input type="text" id="driverCarReg" placeholder="Car Registration Number" class="border p-2 w-full mb-2">
+                <input type="number" id="driverCapacity" placeholder="Passenger Capacity" class="border p-2 w-full mb-2">
+                <button id="registerDriverBtn" class="btn-primary w-full">Register Driver</button>
             </div>
 
             <div id="main-app" class="hidden">
@@ -55,7 +89,17 @@
                     <button id="swapLocations" class="btn-primary">Swap</button>
                     <select id="endLocation" class="border p-2 w-1/2"></select>
                 </div>
+                <input type="number" id="passengerCount" placeholder="Number of Passengers" class="border p-2 w-full mb-4">
                 <button id="planTripBtn" class="btn-primary w-full">Plan My Trip</button>
+
+                <div id="paymentOptions" class="hidden mt-4">
+                    <h2>Select Payment Method</h2>
+                    <select id="paymentMethod" class="border p-2 w-full mb-4">
+                        <option value="cash">Cash</option>
+                        <option value="transfer">Bank Transfer</option>
+                    </select>
+                    <button id="confirmPaymentBtn" class="btn-primary w-full">Confirm Payment</button>
+                </div>
 
                 <div id="results" class="hidden mt-4">
                     <h2>Your Trip Options</h2>
@@ -74,23 +118,18 @@
 
     <script>
         const localTransportData = {
-            "Victoria Falls Hotel": { arrival_time: "10 min", cost: "$5", icon: "🏨", coords: [-17.9333, 25.8267] },
-            "Zambezi National Park": { arrival_time: "15 min", cost: "$5", icon: "🐘", coords: [-17.8833, 25.6167] },
-            "Town Center": { arrival_time: "5 min", cost: "$3", icon: "🏙️", coords: [-17.9319, 25.8306] },
-            "Victoria Falls Airport": { arrival_time: "20 min", cost: "$10", icon: "✈️", coords: [-18.0956, 25.8392] },
-            "Curio Market": { arrival_time: "7 min", cost: "$2", icon: "🛍️", coords: [-17.9325, 25.8328] },
-            "The Lookout Cafe": { arrival_time: "12 min", cost: "$6", icon: "☕", coords: [-17.9286, 25.8425] },
-            "Elephant's Walk Shopping Village": { arrival_time: "8 min", cost: "$4", icon: "🐘", coords: [-17.9147, 25.8183] },
-            "Boma Dinner & Drum Show": { arrival_time: "18 min", cost: "$8", icon: "🥁", coords: [-17.9069, 25.8236] },
-            "Victoria Falls Bridge": { arrival_time: "15 min", cost: "$7", icon: "🌉", coords: [-17.9310, 25.8267] }
+            "Victoria Falls Hotel": { arrival_time: "10 min", icon: "🏨", coords: [-17.9333, 25.8267] },
+            "Zambezi National Park": { arrival_time: "15 min", icon: "🐘", coords: [-17.8833, 25.6167] },
+            "Town Center": { arrival_time: "5 min", icon: "🏙️", coords: [-17.9319, 25.8306] },
+            "Victoria Falls Airport": { arrival_time: "20 min", icon: "✈️", coords: [-18.0956, 25.8392] },
+            "Curio Market": { arrival_time: "7 min", icon: "🛍️", coords: [-17.9325, 25.8328] },
+            "The Lookout Cafe": { arrival_time: "12 min", icon: "☕", coords: [-17.9286, 25.8425] },
+            "Elephant's Walk Shopping Village": { arrival_time: "8 min", icon: "🐘", coords: [-17.9147, 25.8183] },
+            "Boma Dinner & Drum Show": { arrival_time: "18 min", icon: "🥁", coords: [-17.9069, 25.8236] },
+            "Victoria Falls Bridge": { arrival_time: "15 min", icon: "🌉", coords: [-17.9310, 25.8267] }
         };
 
-        const drivers = [
-            { id: 1, name: "Driver 1", location: "Victoria Falls Hotel", coords: [-17.9333, 25.8267] },
-            { id: 2, name: "Driver 2", location: "Town Center", coords: [-17.9319, 25.8306] },
-            { id: 3, name: "Driver 3", location: "Zambezi National Park", coords: [-17.8833, 25.6167] }
-        ];
-
+        const drivers = [];
         const startLocationSelect = document.getElementById('startLocation');
         const endLocationSelect = document.getElementById('endLocation');
         const planTripBtn = document.getElementById('planTripBtn');
@@ -99,9 +138,23 @@
         const authSection = document.getElementById('auth-section');
         const mainApp = document.getElementById('main-app');
         const historyContainer = document.getElementById('history-container');
+        const driverRegistration = document.getElementById('driver-registration');
 
         let rideHistory = [];
         let userMarker;  // For user's location
+        let isAdmin = false;
+
+        // Haversine formula to calculate distance between two coordinates
+        function haversineDistance(coords1, coords2) {
+            const R = 6371; // Radius of the Earth in km
+            const dLat = (coords2[0] - coords1[0]) * Math.PI / 180;
+            const dLon = (coords2[1] - coords1[1]) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(coords1[0] * Math.PI / 180) * Math.cos(coords2[0] * Math.PI / 180) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; // Distance in km
+        }
 
         // Populate locations in the dropdowns
         function populateLocations() {
@@ -113,10 +166,18 @@
             });
         }
 
+        // Calculate fare based on distance
+        function calculateFare(startCoords, endCoords) {
+            const distance = haversineDistance(startCoords, endCoords);
+            const fare = distance * 1.5; // Example fare calculation
+            return fare.toFixed(2);
+        }
+
         // Plan a trip
         function planTrip() {
             const startLocation = startLocationSelect.value;
             const endLocation = endLocationSelect.value;
+            const passengerCount = document.getElementById('passengerCount').value;
 
             if (startLocation === endLocation) {
                 alert('Start and destination cannot be the same.');
@@ -125,25 +186,37 @@
 
             resultsContainer.innerHTML = '';
             const rideInfo = localTransportData[endLocation];
-            const driver = drivers[Math.floor(Math.random() * drivers.length)];
+            const closestDrivers = findClosestDrivers(passengerCount); // Find the closest drivers
 
-            resultsContainer.innerHTML = `
-                <div class="card p-4">
-                    <h3>${rideInfo.icon} ${endLocation}</h3>
-                    <p>Arrival Time: ${rideInfo.arrival_time}</p>
-                    <p>Cost: ${rideInfo.cost}</p>
-                    <p>Driver: ${driver.name}</p>
-                    <button class="btn-primary" onclick="confirmRide('${endLocation}', '${rideInfo.cost}', '${driver.name}', ${rideInfo.coords})">Confirm Ride</button>
-                </div>
-            `;
+            closestDrivers.forEach(driver => {
+                const fare = calculateFare(driver.coords, rideInfo.coords);
+                resultsContainer.innerHTML += `
+                    <div class="card p-4 mb-4">
+                        <h3>${rideInfo.icon} ${endLocation}</h3>
+                        <p>Arrival Time: ${rideInfo.arrival_time}</p>
+                        <p>Driver: ${driver.name}</p>
+                        <p>Phone: ${driver.phone}</p>
+                        <p>Car Reg: ${driver.carReg}</p>
+                        <p>Estimated Fare: $${fare}</p>
+                        <button class="btn-primary" onclick="confirmRide('${endLocation}', '${fare}', '${driver.name}', ${rideInfo.coords})">Confirm Ride</button>
+                    </div>
+                `;
+            });
+
             resultsDiv.classList.remove('hidden');
-            initMap(rideInfo.coords, driver.coords);
+            initMap(rideInfo.coords, closestDrivers);
+        }
+
+        // Find the closest drivers based on passenger capacity
+        function findClosestDrivers(passengerCount) {
+            return drivers.filter(driver => driver.capacity >= passengerCount).slice(0, 3); // Replace with actual closest driver logic
         }
 
         // Confirm the ride and store it
         function confirmRide(destination, cost, driver) {
             rideHistory.push({ destination, cost, driver, time: new Date().toLocaleString() });
-            alert(`Ride confirmed to ${destination} with ${driver}. Cost: ${cost}`);
+            alert(`Ride confirmed to ${destination} with ${driver}.`);
+            alert(`Driver ${driver} has been notified of the booking.`);
             displayRideHistory();
         }
 
@@ -164,7 +237,7 @@
         }
 
         // Initialize the map
-        function initMap(destinationCoords, driverCoords) {
+        function initMap(destinationCoords, closestDrivers) {
             const map = L.map('map').setView(destinationCoords, 14);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -174,8 +247,11 @@
 
             // Destination marker
             L.marker(destinationCoords).addTo(map).bindPopup("Destination").openPopup();
-            // Driver marker
-            const driverMarker = L.marker(driverCoords).addTo(map).bindPopup("Driver Location").openPopup();
+
+            // Driver markers
+            closestDrivers.forEach(driver => {
+                const driverMarker = L.marker(driver.coords).addTo(map).bindPopup("Driver Location: " + driver.name);
+            });
 
             // Live user's location
             if (navigator.geolocation) {
@@ -198,19 +274,84 @@
             document.getElementById('map').classList.remove('hidden');
         }
 
-        // Handle user signup
-        function signup() {
-            authSection.classList.add('hidden');
+        // Handle driver registration
+        function registerDriver() {
+            const driverName = document.getElementById('driverName').value;
+            const driverPhone = document.getElementById('driverPhone').value;
+            const driverCarReg = document.getElementById('driverCarReg').value;
+            const driverCapacity = document.getElementById('driverCapacity').value;
+
+            const newDriver = {
+                id: drivers.length + 1,
+                name: driverName,
+                phone: driverPhone,
+                whatsApp: `https://wa.me/${driverPhone.replace(/-/g, '')}`,
+                carReg: driverCarReg,
+                capacity: driverCapacity,
+                coords: [-17.9319, 25.8306] // Sample coordinates, replace with actual
+            };
+
+            drivers.push(newDriver);
+            alert(`Driver ${driverName} registered successfully!`);
+            driverRegistration.classList.add('hidden');
             mainApp.classList.remove('hidden');
-            populateLocations();
+
+            // Show driver on the map
+            initMap(localTransportData["Town Center"].coords, [newDriver]); // Example placement
         }
 
+        // Handle login tab switching
+        function setupLoginTabs() {
+            const tabs = document.querySelectorAll('.login-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    document.getElementById('passenger-login').classList.toggle('hidden', this.dataset.tab !== 'passenger');
+                    document.getElementById('admin-login').classList.toggle('hidden', this.dataset.tab !== 'admin');
+                });
+            });
+        }
+
+        // Admin login functionality
+        document.getElementById('adminLoginBtn').addEventListener('click', function() {
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+
+            if (username === 'Munkuli$1996' && password === 'PickGod') {
+                alert('Admin logged in successfully!');
+                isAdmin = true;
+                authSection.classList.add('hidden');
+                driverRegistration.classList.remove('hidden'); // Show driver registration for admin
+            } else {
+                alert('Invalid admin credentials!');
+            }
+        });
+
+        // Passenger login functionality
+        document.getElementById('passengerLoginBtn').addEventListener('click', function() {
+            const username = document.getElementById('passengerUsername').value;
+            const password = document.getElementById('passengerPassword').value;
+
+            // Simple validation - in a real app, you'd check against a database
+            if (username && password) {
+                alert('Passenger logged in successfully!');
+                isAdmin = false;
+                authSection.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+                populateLocations();
+            } else {
+                alert('Please enter both username and password');
+            }
+        });
+
         // Event listeners
-        signupBtn.addEventListener('click', signup);
+        document.getElementById('registerDriverBtn').addEventListener('click', registerDriver);
         planTripBtn.addEventListener('click', planTrip);
 
         // Initial Setup
-        populateLocations();
+        setupLoginTabs();
     </script>
 </body>
 </html>
