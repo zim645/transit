@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Victoria Falls Transit Planner</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -30,7 +32,6 @@
             width: 100%;
         }
     </style>
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
 </head>
 <body class="bg-gray-100">
     <div id="app" class="min-h-screen flex flex-col items-center justify-center p-4">
@@ -41,11 +42,10 @@
             </header>
 
             <div id="auth-section" class="mb-6">
-                <h2 class="text-xl font-bold">Sign Up / Login</h2>
+                <h2 class="text-xl font-bold">Sign Up</h2>
                 <input type="text" id="username" placeholder="Username" class="border p-2 w-full mb-2">
                 <input type="password" id="password" placeholder="Password" class="border p-2 w-full mb-4">
-                <button id="loginBtn" class="btn-primary w-full">Login</button>
-                <button id="signupBtn" class="btn-primary w-full hidden">Sign Up</button>
+                <button id="signupBtn" class="btn-primary w-full">Sign Up</button>
             </div>
 
             <div id="main-app" class="hidden">
@@ -79,6 +79,10 @@
             "Town Center": { arrival_time: "5 min", cost: "$3", icon: "🏙️", coords: [-17.9319, 25.8306] },
             "Victoria Falls Airport": { arrival_time: "20 min", cost: "$10", icon: "✈️", coords: [-18.0956, 25.8392] },
             "Curio Market": { arrival_time: "7 min", cost: "$2", icon: "🛍️", coords: [-17.9325, 25.8328] },
+            "The Lookout Cafe": { arrival_time: "12 min", cost: "$6", icon: "☕", coords: [-17.9286, 25.8425] },
+            "Elephant's Walk Shopping Village": { arrival_time: "8 min", cost: "$4", icon: "🐘", coords: [-17.9147, 25.8183] },
+            "Boma Dinner & Drum Show": { arrival_time: "18 min", cost: "$8", icon: "🥁", coords: [-17.9069, 25.8236] },
+            "Victoria Falls Bridge": { arrival_time: "15 min", cost: "$7", icon: "🌉", coords: [-17.9310, 25.8267] }
         };
 
         const drivers = [
@@ -94,11 +98,10 @@
         const resultsContainer = document.getElementById('results-container');
         const authSection = document.getElementById('auth-section');
         const mainApp = document.getElementById('main-app');
-        const loginBtn = document.getElementById('loginBtn');
-        const signupBtn = document.getElementById('signupBtn');
         const historyContainer = document.getElementById('history-container');
 
         let rideHistory = [];
+        let userMarker;  // For user's location
 
         // Populate locations in the dropdowns
         function populateLocations() {
@@ -138,7 +141,7 @@
         }
 
         // Confirm the ride and store it
-        function confirmRide(destination, cost, driver, coords) {
+        function confirmRide(destination, cost, driver) {
             rideHistory.push({ destination, cost, driver, time: new Date().toLocaleString() });
             alert(`Ride confirmed to ${destination} with ${driver}. Cost: ${cost}`);
             displayRideHistory();
@@ -162,35 +165,48 @@
 
         // Initialize the map
         function initMap(destinationCoords, driverCoords) {
-            const map = new google.maps.Map(document.getElementById("map"), {
-                center: destinationCoords,
-                zoom: 14,
-            });
+            const map = L.map('map').setView(destinationCoords, 14);
 
-            new google.maps.Marker({
-                position: destinationCoords,
-                map: map,
-                title: "Destination",
-            });
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
 
-            new google.maps.Marker({
-                position: driverCoords,
-                map: map,
-                title: "Driver Location",
-            });
+            // Destination marker
+            L.marker(destinationCoords).addTo(map).bindPopup("Destination").openPopup();
+            // Driver marker
+            const driverMarker = L.marker(driverCoords).addTo(map).bindPopup("Driver Location").openPopup();
 
-            mapDiv.classList.remove('hidden');
+            // Live user's location
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(position => {
+                    const userCoords = [position.coords.latitude, position.coords.longitude];
+
+                    // Update user's marker or create it if it doesn't exist
+                    if (userMarker) {
+                        userMarker.setLatLng(userCoords);
+                    } else {
+                        userMarker = L.marker(userCoords).addTo(map).bindPopup("Your Location").openPopup();
+                    }
+
+                    map.setView(userCoords, 14);
+                }, () => {
+                    alert('Unable to retrieve your location.');
+                });
+            }
+
+            document.getElementById('map').classList.remove('hidden');
         }
 
-        // Handle user login
-        function login() {
+        // Handle user signup
+        function signup() {
             authSection.classList.add('hidden');
             mainApp.classList.remove('hidden');
             populateLocations();
         }
 
         // Event listeners
-        loginBtn.addEventListener('click', login);
+        signupBtn.addEventListener('click', signup);
         planTripBtn.addEventListener('click', planTrip);
 
         // Initial Setup
