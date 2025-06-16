@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Vic</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #4f46e5;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+        .login-tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+        .login-tab.active {
+            border-bottom: 2px solid #4f46e5;
+            color: #4f46e5;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div id="app" class="min-h-screen flex flex-col items-center justify-center p-4">
+        <div class="w-full max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6">
+            <header class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800">Victoria Falls Transit Planner</h1>
+                <p class="text-gray-600 mt-2">Your guide to getting around in Vic Falls, Zimbabwe.</p>
+            </header>
+
+            <div id="auth-section" class="mb-6">
+                <div class="flex justify-center space-x-4 mb-4">
+                    <div class="login-tab active" data-tab="passenger">Passenger</div>
+                    <div class="login-tab" data-tab="admin">Admin</div>
+                </div>
+
+                <!-- Passenger Login -->
+                <div id="passenger-login" class="auth-form">
+                    <h2 class="text-xl font-bold mb-4">Passenger Login</h2>
+                    <input type="text" id="passengerUsername" placeholder="Username" class="border p-2 w-full mb-2">
+                    <input type="password" id="passengerPassword" placeholder="Password" class="border p-2 w-full mb-4">
+                    <button id="passengerLoginBtn" class="btn-primary w-full">Login as Passenger</button>
+                </div>
+
+                <!-- Admin Login -->
+                <div id="admin-login" class="auth-form hidden">
+                    <h2 class="text-xl font-bold mb-4">Admin Login</h2>
+                    <input type="text" id="adminUsername" placeholder="Username" class="border p-2 w-full mb-2">
+                    <input type="password" id="adminPassword" placeholder="Password" class="border p-2 w-full mb-4">
+                    <button id="adminLoginBtn" class="btn-primary w-full">Login as Admin</button>
+                </div>
+            </div>
+
+            <div id="driver-registration" class="mb-6 hidden">
+                <button id="backToLoginAdmin" class="btn-primary mb-4">Back to Login</button>
+                <h2 class="text-xl font-bold">Driver Registration</h2>
+                <input type="text" id="driverName" placeholder="Driver Name" class="border p-2 w-full mb-2">
+                <input type="text" id="driverPhone" placeholder="Phone Number" class="border p-2 w-full mb-2">
+                <input type="text" id="driverCarReg" placeholder="Car Registration Number" class="border p-2 w-full mb-2">
+                <input type="number" id="driverCapacity" placeholder="Passenger Capacity" class="border p-2 w-full mb-2">
+                <button id="registerDriverBtn" class="btn-primary w-full">Register Driver</button>
+            </div>
+
+            <div id="main-app" class="hidden">
+                <button id="backToLogin" class="btn-primary mb-4">Back to Login</button>
+                <h2 class="text-xl font-bold">Plan Your Trip</h2>
+                <div class="flex items-center justify-between mb-6">
+                    <select id="startLocation" class="border p-2 w-1/2"></select>
+                    <button id="swapLocations" class="btn-primary">Swap</button>
+                    <select id="endLocation" class="border p-2 w-1/2"></select>
+                </div>
+                <input type="number" id="passengerCount" placeholder="Number of Passengers" class="border p-2 w-full mb-4">
+                <button id="planTripBtn" class="btn-primary w-full">Plan My Trip</button>
+
+                <div id="paymentOptions" class="hidden mt-4">
+                    <h2>Select Payment Method</h2>
+                    <select id="paymentMethod" class="border p-2 w-full mb-4">
+                        <option value="cash">Cash</option>
+                        <option value="transfer">Bank Transfer</option>
+                    </select>
+                    <button id="confirmPaymentBtn" class="btn-primary w-full">Confirm Payment</button>
+                </div>
+
+                <div id="results" class="hidden mt-4">
+                    <h2>Your Trip Options</h2>
+                    <div id="results-container" class="mt-4"></div>
+                </div>
+
+                <div id="ride-history" class="hidden mt-4">
+                    <h2>Your Ride History</h2>
+                    <div id="history-container" class="mt-4"></div>
+                </div>
+
+                <div id="map" class="hidden mt-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const localTransportData = {
+            // ... (keep existing locations data)
+        };
+
+        let rideHistory = [];
+        let userMarker;  // For user's location
+        let isAdmin = false;
+
+        // Haversine formula to calculate distance between two coordinates
+        function haversineDistance(coords1, coords2) {
+            const R = 6371; // Radius of the Earth in km
+            const dLat = (coords2[0] - coords1[0]) * Math.PI / 180;
+            const dLon = (coords2[1] - coords1[1]) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(coords1[0] * Math.PI / 180) * Math.cos(coords2[0] * Math.PI / 180) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; // Distance in km
+        }
+
+        // Calculate fare
+        function calculateFare(startCoords, endCoords) {
+            const distance = haversineDistance(startCoords, endCoords);
+            const baseFare = 3.00;
+            const perKmRate = 0.80;
+            const minimumFare = 5.00;
+            let fare = baseFare + (distance * perKmRate);
+            fare = Math.max(fare, minimumFare);
+            return fare.toFixed(2);
+        }
+
+        // Populate locations in the dropdowns
+        function populateLocations() {
+            Object.keys(localTransportData).forEach(location => {
+                const optionStart = new Option(location, location);
+                const optionEnd = new Option(location, location);
+                startLocationSelect.add(optionStart);
+                endLocationSelect.add(optionEnd);
+            });
+        }
+
+        // Register a driver
+        function registerDriver() {
+            const driverName = document.getElementById('driverName').value;
+            const driverPhone = document.getElementById('driverPhone').value;
+            const driverCarReg = document.getElementById('driverCarReg').value;
+            const driverCapacity = document.getElementById('driverCapacity').value;
+
+            const newDriver = {
+                name: driverName,
+                phone: driverPhone,
+                carReg: driverCarReg,
+                capacity: driverCapacity,
+                coords: [-17.9319, 25.8306], // Sample coordinates
+                available: true // Driver is available by default
+            };
+
+            db.collection('drivers').add(newDriver)
+                .then(() => {
+                    alert(`Driver ${driverName} registered successfully!`);
+                    driverRegistration.classList.add('hidden');
+                    mainApp.classList.remove('hidden');
+                })
+                .catch(error => {
+                    console.error("Error adding driver: ", error);
+                });
+        }
+
+        // Plan a trip
+        function planTrip() {
+            const startLocation = startLocationSelect.value;
+            const endLocation = endLocationSelect.value;
+            const passengerCount = document.getElementById('passengerCount').value;
+
+            if (startLocation === endLocation) {
+                alert('Start and destination cannot be the same.');
+                return;
+            }
+
+            resultsContainer.innerHTML = '';
+            const rideInfo = localTransportData[endLocation];
+
+            // Fetch available drivers from Firestore
+            db.collection('drivers').where('available', '==', true).get()
+                .then(querySnapshot => {
+                    const closestDrivers = [];
+                    querySnapshot.forEach(doc => {
+                        const driver = doc.data();
+                        if (driver.capacity >= passengerCount) {
+                            closestDrivers.push({ id: doc.id, ...driver });
+                        }
+                    });
+
+                    if (closestDrivers.length === 0) {
+                        resultsContainer.innerHTML = `
+                            <div class="card p-4 mb-4">
+                                <h3>No available drivers found for your request</h3>
+                                <p>Please try again later or adjust your passenger count</p>
+                            </div>
+                        `;
+                    } else {
+                        closestDrivers.forEach(driver => {
+                            const fare = calculateFare(driver.coords, rideInfo.coords);
+                            resultsContainer.innerHTML += `
+                                <div class="card p-4 mb-4">
+                                    <h3>${rideInfo.icon} ${endLocation}</h3>
+                                    <p>Arrival Time: ${rideInfo.arrival_time}</p>
+                                    <p>Driver: ${driver.name}</p>
+                                    <p>Phone: ${driver.phone}</p>
+                                    <p>Car Reg: ${driver.carReg}</p>
+                                    <p>Capacity: ${driver.capacity}</p>
+                                    <p>Status: ${driver.available ? 'Available' : 'Not Available'}</p>
+                                    <p>Estimated Fare: $${fare}</p>
+                                    <button class="btn-primary" onclick="confirmRide('${endLocation}', '${fare}', '${driver.name}', '${driver.phone}', '${driver.id}')">Confirm Ride</button>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    resultsDiv.classList.remove('hidden');
+                    initMap(rideInfo.coords, closestDrivers);
+                })
+                .catch(error => {
+                    console.error("Error getting drivers: ", error);
+                });
+        }
+
+        // Confirm ride
+        function confirmRide(destination, cost, driverName, driverPhone, driverId) {
+            alert(`Ride confirmed to ${destination} with ${driverName}.`);
+            // Notify driver (you can integrate with a notification service here)
+            alert(`Driver ${driverName} has been notified of the booking.`);
+            // Update driver's availability
+            db.collection('drivers').doc(driverId).update({ available: false })
+                .then(() => {
+                    console.log(`Driver ${driverName} marked as unavailable.`);
+                })
+                .catch(error => {
+                    console.error("Error updating driver availability: ", error);
+                });
+            displayRideHistory();
+        }
+
+        // Display ride history
+        function displayRideHistory() {
+            historyContainer.innerHTML = '';
+            rideHistory.forEach(ride => {
+                historyContainer.innerHTML += `
+                    <div class="card p-4 mb-4">
+                        <p>Destination: ${ride.destination}</p>
+                        <p>Cost: $${ride.cost}</p>
+                        <p>Driver: ${ride.driver}</p>
+                        <p>Time: ${ride.time}</p>
+                    </div>
+                `;
+            });
+            document.getElementById('ride-history').classList.remove('hidden');
+        }
+
+        // Initialize the map
+        function initMap(destinationCoords, closestDrivers) {
+            const map = L.map('map').setView(destinationCoords, 14);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            // Destination marker
+            L.marker(destinationCoords).addTo(map).bindPopup("Destination").openPopup();
+
+            // Driver markers
+            closestDrivers.forEach(driver => {
+                L.marker(driver.coords).addTo(map).bindPopup("Driver Location: " + driver.name);
+            });
+
+            // Live user's location
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(position => {
+                    const userCoords = [position.coords.latitude, position.coords.longitude];
+                    if (userMarker) {
+                        userMarker.setLatLng(userCoords);
+                    } else {
+                        userMarker = L.marker(userCoords).addTo(map).bindPopup("Your Location").openPopup();
+                    }
+                    map.setView(userCoords, 14);
+                }, () => {
+                    alert('Unable to retrieve your location.');
+                });
+            }
+
+            document.getElementById('map').classList.remove('hidden');
+        }
+
+        // Handle login functionality
+        document.getElementById('adminLoginBtn').addEventListener('click', function() {
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            if (username === 'Munkuli$1996' && password === 'PickGod') {
+                alert('Admin logged in successfully!');
+                isAdmin = true;
+                authSection.classList.add('hidden');
+                driverRegistration.classList.remove('hidden');
+            } else {
+                alert('Invalid admin credentials!');
+            }
+        });
+
+        document.getElementById('passengerLoginBtn').addEventListener('click', function() {
+            const username = document.getElementById('passengerUsername').value;
+            const password = document.getElementById('passengerPassword').value;
+            if (username && password) {
+                alert('Passenger logged in successfully!');
+                isAdmin = false;
+                authSection.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+                populateLocations();
+            } else {
+                alert('Please enter both username and password');
+            }
+        });
+
+        // Event listeners
+        document.getElementById('registerDriverBtn').addEventListener('click', registerDriver);
+        document.getElementById('planTripBtn').addEventListener('click', planTrip);
+        
+        // Setup tab switching
+        const tabs = document.querySelectorAll('.login-tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('passenger-login').classList.toggle('hidden', this.dataset.tab !== 'passenger');
+                document.getElementById('admin-login').classList.toggle('hidden', this.dataset.tab !== 'admin');
+            });
+        });
+
+        // Back button setup
+        document.getElementById('backToLogin').addEventListener('click', function() {
+            mainApp.classList.add('hidden');
+            authSection.classList.remove('hidden');
+            document.getElementById('passenger-login').classList.remove('hidden');
+            document.getElementById('admin-login').classList.add('hidden');
+            document.querySelector('.login-tab[data-tab="passenger"]').classList.add('active');
+            document.querySelector('.login-tab[data-tab="admin"]').classList.remove('active');
+        });
+
+        document.getElementById('backToLoginAdmin').addEventListener('click', function() {
+            driverRegistration.classList.add('hidden');
+            authSection.classList.remove('hidden');
+            document.getElementById('passenger-login').classList.add('hidden');
+            document.getElementById('admin-login').classList.remove('hidden');
+            document.querySelector('.login-tab[data-tab="passenger"]').classList.remove('active');
+            document.querySelector('.login-tab[data-tab="admin"]').classList.add('active');
+        });
+    </script>
+</body>
+</html>
