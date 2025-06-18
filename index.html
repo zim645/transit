@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel Vic</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <title>Victoria Falls Transit Planner</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -27,9 +29,10 @@
         .btn-primary:hover {
             background-color: #4338ca;
         }
-        #map {
+        #map, #map-admin { /* Apply height to both maps */
             height: 400px;
             width: 100%;
+            border-radius: 0.75rem;
         }
         .login-tab {
             padding: 0.5rem 1rem;
@@ -40,9 +43,69 @@
             color: #4f46e5;
             font-weight: 600;
         }
+        #message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #333;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            z-index: 1001; /* Above map */
+            display: none;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        #rating-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            display: none;
+        }
+        #rating-modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        #rating-modal-content .stars button {
+            background: none;
+            border: none;
+            font-size: 2.5rem;
+            cursor: pointer;
+            color: #ccc;
+        }
+        #rating-modal-content .stars button.selected {
+            color: #f3da35;
+        }
+        .leaflet-div-icon {
+            background: transparent;
+            border: none;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
+    <div id="message-box" class="fixed"></div>
+    <div id="rating-modal">
+        <div id="rating-modal-content">
+            <h3 class="text-xl font-bold mb-4">Rate Your Driver</h3>
+            <div class="stars mb-4">
+                <button data-star="1">★</button> <button data-star="2">★</button> <button data-star="3">★</button> <button data-star="4">★</button> <button data-star="5">★</button>
+            </div>
+            <textarea id="rating-feedback" class="border p-2 w-full mb-4 rounded-md" placeholder="Optional feedback..."></textarea>
+            <button id="submit-rating-btn" class="btn-primary w-full rounded-md">Submit Rating</button>
+        </div>
+    </div>
+
     <div id="app" class="min-h-screen flex flex-col items-center justify-center p-4">
         <div class="w-full max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6">
             <header class="text-center mb-8">
@@ -55,430 +118,386 @@
                     <div class="login-tab active" data-tab="passenger">Passenger</div>
                     <div class="login-tab" data-tab="admin">Admin</div>
                 </div>
-
-                <!-- Passenger Login -->
                 <div id="passenger-login" class="auth-form">
                     <h2 class="text-xl font-bold mb-4">Passenger Login</h2>
-                    <input type="text" id="passengerUsername" placeholder="Username" class="border p-2 w-full mb-2">
-                    <input type="password" id="passengerPassword" placeholder="Password" class="border p-2 w-full mb-4">
-                    <button id="passengerLoginBtn" class="btn-primary w-full">Login as Passenger</button>
+                    <input type="text" id="passengerUsername" placeholder="Username" class="border p-2 w-full mb-2 rounded-md">
+                    <input type="password" id="passengerPassword" placeholder="Password" class="border p-2 w-full mb-4 rounded-md">
+                    <button id="passengerLoginBtn" class="btn-primary w-full rounded-md">Login</button>
+                    <button id="passengerRegisterBtn" class="btn-primary w-full mt-2 bg-gray-600 hover:bg-gray-700 rounded-md">Register</button>
                 </div>
-
-                <!-- Admin Login -->
                 <div id="admin-login" class="auth-form hidden">
                     <h2 class="text-xl font-bold mb-4">Admin Login</h2>
-                    <input type="text" id="adminUsername" placeholder="Username" class="border p-2 w-full mb-2">
-                    <input type="password" id="adminPassword" placeholder="Password" class="border p-2 w-full mb-4">
-                    <button id="adminLoginBtn" class="btn-primary w-full">Login as Admin</button>
+                    <input type="text" id="adminUsername" placeholder="Username" class="border p-2 w-full mb-2 rounded-md" value="Munkuli$1996">
+                    <input type="password" id="adminPassword" placeholder="Password" class="border p-2 w-full mb-4 rounded-md" value="PickGod">
+                    <button id="adminLoginBtn" class="btn-primary w-full rounded-md">Login</button>
                 </div>
             </div>
 
-            <div id="driver-registration" class="mb-6 hidden">
-                <button id="backToLoginAdmin" class="btn-primary mb-4">Back to Login</button>
-                <h2 class="text-xl font-bold">Driver Registration</h2>
-                <input type="text" id="driverName" placeholder="Driver Name" class="border p-2 w-full mb-2">
-                <input type="text" id="driverPhone" placeholder="Phone Number" class="border p-2 w-full mb-2">
-                <input type="text" id="driverCarReg" placeholder="Car Registration Number" class="border p-2 w-full mb-2">
-                <input type="number" id="driverCapacity" placeholder="Passenger Capacity" class="border p-2 w-full mb-2">
-                <button id="registerDriverBtn" class="btn-primary w-full">Register Driver</button>
+            <div id="admin-dashboard" class="hidden">
+                 <button id="backToLoginAdmin" class="btn-primary mb-4 rounded-md">Logout</button>
+                <div class="flex justify-center space-x-4 mb-4 border-b">
+                    <div class="login-tab active" data-tab="register-driver">Register Driver</div>
+                    <div class="login-tab" data-tab="manage-drivers">Manage Drivers</div>
+                    <div class="login-tab" data-tab="manage-users">Manage Users</div>
+                    <div class="login-tab" data-tab="admin-settings">Settings</div>
+                </div>
+                <div id="register-driver-section" class="admin-section">
+                    <h2 class="text-xl font-bold mb-4">Driver Registration</h2>
+                    <input type="text" id="driverName" placeholder="Driver Name" class="border p-2 w-full mb-2 rounded-md">
+                    <input type="text" id="driverPhone" placeholder="Phone (+263...)" class="border p-2 w-full mb-2 rounded-md">
+                    <input type="text" id="driverCarReg" placeholder="Car Registration" class="border p-2 w-full mb-2 rounded-md">
+                    <select id="driverVehicleType" class="border p-2 w-full mb-4 rounded-md">
+                        <option value="Standard">Standard</option> <option value="Premium">Premium</option> <option value="XL">XL</option>
+                    </select>
+                    <button id="registerDriverBtn" class="btn-primary w-full rounded-md">Register Driver</button>
+                </div>
+                <div id="manage-drivers-section" class="admin-section hidden">
+                    <h2 class="text-xl font-bold mb-4">Manage Drivers</h2>
+                    <div id="driver-list-container" class="mt-4 max-h-60 overflow-y-auto"></div>
+                </div>
+                <div id="manage-users-section" class="admin-section hidden">
+                    <h2 class="text-xl font-bold mb-4">Manage Passengers</h2>
+                    <div id="passenger-list-container" class="mt-4 max-h-60 overflow-y-auto"></div>
+                </div>
+                <div id="admin-settings-section" class="admin-section hidden">
+                    <h2 class="text-xl font-bold mb-4">Settings</h2>
+                    <label for="fareMultiplier" class="block">Global Fare Multiplier:</label>
+                    <input type="number" id="fareMultiplier" value="1.0" step="0.1" min="0.1" class="border p-2 w-full mb-4 rounded-md">
+                    <button id="updateFareMultiplierBtn" class="btn-primary w-full rounded-md">Update Multiplier</button>
+                </div>
             </div>
 
             <div id="main-app" class="hidden">
-                <button id="backToLogin" class="btn-primary mb-4">Back to Login</button>
-                <h2 class="text-xl font-bold">Plan Your Trip</h2>
-                <div class="flex items-center justify-between mb-6">
-                    <select id="startLocation" class="border p-2 w-1/2"></select>
-                    <button id="swapLocations" class="btn-primary">Swap</button>
-                    <select id="endLocation" class="border p-2 w-1/2"></select>
+                 <button id="backToLogin" class="btn-primary mb-4 rounded-md">Logout</button>
+                <div id="ride-planning-section">
+                    <h2 class="text-xl font-bold mb-4">Plan Your Trip</h2>
+                    <div class="flex items-center justify-between mb-6">
+                        <select id="startLocation" class="border p-2 w-1/2 rounded-md"></select>
+                        <select id="endLocation" class="border p-2 w-1/2 rounded-md"></select>
+                    </div>
+                    <button id="planTripBtn" class="btn-primary w-full rounded-md">Find My Ride</button>
                 </div>
-                <input type="number" id="passengerCount" placeholder="Number of Passengers" class="border p-2 w-full mb-4">
-                <button id="planTripBtn" class="btn-primary w-full">Plan My Trip</button>
-
-                <div id="paymentOptions" class="hidden mt-4">
-                    <h2>Select Payment Method</h2>
-                    <select id="paymentMethod" class="border p-2 w-full mb-4">
-                        <option value="cash">Cash</option>
-                        <option value="transfer">Bank Transfer</option>
-                    </select>
-                    <button id="confirmPaymentBtn" class="btn-primary w-full">Confirm Payment</button>
-                </div>
-
-                <div id="results" class="hidden mt-4">
-                    <h2>Your Trip Options</h2>
+                <div id="ride-results-section" class="hidden mt-4">
+                    <h2 class="text-xl font-bold mb-2">Available Drivers</h2>
                     <div id="results-container" class="mt-4"></div>
                 </div>
-
-                <div id="ride-history" class="hidden mt-4">
-                    <h2>Your Ride History</h2>
-                    <div id="history-container" class="mt-4"></div>
+                <div id="ride-history" class="mt-4">
+                    <h2 class="text-xl font-bold mb-2">Your Ride History</h2>
+                    <div id="history-container" class="mt-4 max-h-60 overflow-y-auto"></div>
                 </div>
-
                 <div id="map" class="hidden mt-4"></div>
             </div>
         </div>
     </div>
 
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
     <script>
-        const localTransportData = {
-            "Victoria Falls Hotel": { arrival_time: "10 min", icon: "🏨", coords: [-17.9333, 25.8267] },
-            "Zambezi National Park": { arrival_time: "15 min", icon: "🐘", coords: [-17.8833, 25.6167] },
-            "Town Center": { arrival_time: "5 min", icon: "🏙️", coords: [-17.9319, 25.8306] },
-            "Victoria Falls Airport": { arrival_time: "20 min", icon: "✈️", coords: [-18.0956, 25.8392] },
-            "Curio Market": { arrival_time: "7 min", icon: "🛍️", coords: [-17.9325, 25.8328] },
-            "The Lookout Cafe": { arrival_time: "12 min", icon: "☕", coords: [-17.9286, 25.8425] },
-            "Elephant's Walk Shopping Village": { arrival_time: "8 min", icon: "🐘", coords: [-17.9147, 25.8183] },
-            "Boma Dinner & Drum Show": { arrival_time: "18 min", icon: "🥁", coords: [-17.9069, 25.8236] },
-            "Victoria Falls Bridge": { arrival_time: "15 min", icon: "🌉", coords: [-17.9310, 25.8267] },
-            "Rainbow Falls": { arrival_time: "25 min", icon: "🌈", coords: [-17.9267, 25.8536] },
-            "Devil's Pool": { arrival_time: "30 min", icon: "😈", coords: [-17.9278, 25.8542] },
-            "Livingstone Island": { arrival_time: "35 min", icon: "🏝️", coords: [-17.9283, 25.8550] },
-            "Victoria Falls National Park": { arrival_time: "12 min", icon: "🌳", coords: [-17.9281, 25.8408] },
-            "Chinotimba Township": { arrival_time: "10 min", icon: "🏘️", coords: [-17.9236, 25.8167] },
-            "Chamabondo National Park": { arrival_time: "40 min", icon: "🌲", coords: [-17.8500, 25.7000] },
-            "Masuwe River Lodge": { arrival_time: "22 min", icon: "🏕️", coords: [-17.9000, 25.7833] },
-            "Victoria Falls Safari Lodge": { arrival_time: "15 min", icon: "🦁", coords: [-17.9167, 25.8000] },
-            "Ilala Lodge": { arrival_time: "8 min", icon: "🏡", coords: [-17.9300, 25.8283] },
-            "Stanley and Livingstone Hotel": { arrival_time: "25 min", icon: "🏛️", coords: [-17.9667, 25.8333] },
-            "Victoria Falls Backpackers": { arrival_time: "7 min", icon: "🎒", coords: [-17.9333, 25.8333] },
-            "Shearwater Explorers Village": { arrival_time: "12 min", icon: "⛺", coords: [-17.9167, 25.8167] },
-            "A'Zambezi River Lodge": { arrival_time: "18 min", icon: "🚣", coords: [-17.9333, 25.8000] },
-            "Victoria Falls Rest Camp": { arrival_time: "10 min", icon: "⛺", coords: [-17.9333, 25.8333] },
-            "The Kingdom Hotel": { arrival_time: "8 min", icon: "🏰", coords: [-17.9333, 25.8333] },
-            "Palm River Hotel": { arrival_time: "15 min", icon: "🌴", coords: [-17.9333, 25.8167] },
-            "Victoria Falls Rainbow Hotel": { arrival_time: "7 min", icon: "🏩", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Hospital": { arrival_time: "10 min", icon: "🏥", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Police Station": { arrival_time: "8 min", icon: "👮", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Post Office": { arrival_time: "7 min", icon: "📮", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Border Post": { arrival_time: "15 min", icon: "🛂", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Craft Market": { arrival_time: "8 min", icon: "🛍️", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Bus Terminal": { arrival_time: "10 min", icon: "🚌", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Railway Station": { arrival_time: "12 min", icon: "🚂", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Golf Club": { arrival_time: "15 min", icon: "⛳", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Reptile Park": { arrival_time: "20 min", icon: "🐍", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Crocodile Farm": { arrival_time: "25 min", icon: "🐊", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Snake Park": { arrival_time: "22 min", icon: "🐍", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Lion Encounter": { arrival_time: "30 min", icon: "🦁", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Elephant Sanctuary": { arrival_time: "35 min", icon: "🐘", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Giraffe Encounter": { arrival_time: "32 min", icon: "🦒", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Cheetah Encounter": { arrival_time: "28 min", icon: "🐆", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Rhino Encounter": { arrival_time: "40 min", icon: "🦏", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Cultural Village": { arrival_time: "18 min", icon: "🏺", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Traditional Village": { arrival_time: "20 min", icon: "🏡", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Art Gallery": { arrival_time: "12 min", icon: "🎨", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Museum": { arrival_time: "15 min", icon: "🏛️", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Library": { arrival_time: "10 min", icon: "📚", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Community Hall": { arrival_time: "8 min", icon: "🏛️", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Sports Club": { arrival_time: "12 min", icon: "⚽", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Tennis Club": { arrival_time: "15 min", icon: "🎾", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Swimming Pool": { arrival_time: "10 min", icon: "🏊", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Primary School": { arrival_time: "8 min", icon: "🏫", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Secondary School": { arrival_time: "10 min", icon: "🏫", coords: [-17.9333, 25.8333] },
-            "Victoria Falls College": { arrival_time: "12 min", icon: "🎓", coords: [-17.9333, 25.8333] },
-            "Victoria Falls University": { arrival_time: "15 min", icon: "🎓", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Technical College": { arrival_time: "18 min", icon: "🔧", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Business Center": { arrival_time: "10 min", icon: "🏢", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Industrial Area": { arrival_time: "15 min", icon: "🏭", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Residential Area": { arrival_time: "12 min", icon: "🏠", coords: [-17.9333, 25.8333] },
-            "Victoria Falls High Density Area": { arrival_time: "10 min", icon: "🏘️", coords: [-17.9333, 25.8333] },
-            "Victoria Falls Low Density Area": { arrival_time: "15 min", icon: "🏡", coords: [-17.9333, 25.8333] },
-            "Victoria Falls CBD": { arrival_time: "5 min", icon: "🏙️", coords: [-17.9333, 25.8333] }
-        };
+        document.addEventListener('DOMContentLoaded', () => {
+            // FIX: Corrected the object by removing duplicate and malformed entries.
+            const localTransportData = {
+                "Victoria Falls Hotel": { arrival_time: "10 min", icon: "🏨", coords: [-17.9333, 25.8267] },
+                "Zambezi National Park": { arrival_time: "15 min", icon: "🐘", coords: [-17.8833, 25.6167] },
+                "Town Center": { arrival_time: "5 min", icon: "🏙️", coords: [-17.9319, 25.8306] },
+                "Victoria Falls Airport": { arrival_time: "20 min", icon: "✈️", coords: [-18.0956, 25.8392] },
+                "Curio Market": { arrival_time: "7 min", icon: "🛍️", coords: [-17.9325, 25.8328] },
+                "The Lookout Cafe": { arrival_time: "12 min", icon: "☕", coords: [-17.9286, 25.8425] },
+                "Elephant's Walk Shopping Village": { arrival_time: "8 min", icon: "🐘", coords: [-17.9147, 25.8183] },
+                "Boma Dinner & Drum Show": { arrival_time: "18 min", icon: "🥁", coords: [-17.9069, 25.8236] },
+                "Victoria Falls Bridge": { arrival_time: "15 min", icon: "🌉", coords: [-17.9310, 25.8267] },
+                "Rainbow Falls": { arrival_time: "25 min", icon: "🌈", coords: [-17.9267, 25.8536] },
+                "Devil's Pool": { arrival_time: "30 min", icon: "😈", coords: [-17.9278, 25.8542] },
+                "Livingstone Island": { arrival_time: "35 min", icon: "🏝️", coords: [-17.9283, 25.8550] },
+                "Victoria Falls National Park": { arrival_time: "12 min", icon: "🌳", coords: [-17.9281, 25.8408] },
+                "Chinotimba Township": { arrival_time: "10 min", icon: "🏘️", coords: [-17.9236, 25.8167] },
+                "Chamabondo National Park": { arrival_time: "40 min", icon: "�", coords: [-17.8500, 25.7000] },
+                "Masuwe River Lodge": { arrival_time: "22 min", icon: "🏕️", coords: [-17.9000, 25.7833] },
+                "Victoria Falls Safari Lodge": { arrival_time: "15 min", icon: "🦁", coords: [-17.9167, 25.8000] },
+                "Ilala Lodge": { arrival_time: "8 min", icon: "🏡", coords: [-17.9300, 25.8283] },
+                "Stanley and Livingstone Hotel": { arrival_time: "25 min", icon: "🏛️", coords: [-17.9667, 25.8333] },
+                "Victoria Falls Backpackers": { arrival_time: "7 min", icon: "🎒", coords: [-17.9333, 25.8333] },
+                "Shearwater Explorers Village": { arrival_time: "12 min", icon: "⛺", coords: [-17.9167, 25.8167] },
+                "A'Zambezi River Lodge": { arrival_time: "18 min", icon: "🚣", coords: [-17.9333, 25.8000] },
+                "Victoria Falls Rest Camp": { arrival_time: "10 min", icon: "⛺", coords: [-17.9333, 25.8333] },
+                "The Kingdom Hotel": { arrival_time: "8 min", icon: "🏰", coords: [-17.9333, 25.8333] },
+                "Palm River Hotel": { arrival_time: "15 min", icon: "🌴", coords: [-17.9333, 25.8167] },
+                "Victoria Falls Rainbow Hotel": { arrival_time: "7 min", icon: "🏩", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Hospital": { arrival_time: "10 min", icon: "🏥", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Police Station": { arrival_time: "8 min", icon: "👮", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Post Office": { arrival_time: "7 min", icon: "📮", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Border Post": { arrival_time: "15 min", icon: "🛂", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Craft Market": { arrival_time: "8 min", icon: "🛍️", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Bus Terminal": { arrival_time: "10 min", icon: "🚌", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Railway Station": { arrival_time: "12 min", icon: "🚂", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Golf Club": { arrival_time: "15 min", icon: "⛳", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Reptile Park": { arrival_time: "20 min", icon: "🐍", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Crocodile Farm": { arrival_time: "25 min", icon: "🐊", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Snake Park": { arrival_time: "22 min", icon: "🐍", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Lion Encounter": { arrival_time: "30 min", icon: "🦁", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Elephant Sanctuary": { arrival_time: "35 min", icon: "🐘", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Giraffe Encounter": { arrival_time: "32 min", icon: "🦒", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Cheetah Encounter": { arrival_time: "28 min", icon: "🐆", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Rhino Encounter": { arrival_time: "40 min", icon: "🦏", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Cultural Village": { arrival_time: "18 min", icon: "🏺", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Traditional Village": { arrival_time: "20 min", icon: "🏡", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Art Gallery": { arrival_time: "12 min", icon: "🎨", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Museum": { arrival_time: "15 min", icon: "🏛️", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Library": { arrival_time: "10 min", icon: "📚", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Community Hall": { arrival_time: "8 min", icon: "🏛️", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Sports Club": { arrival_time: "12 min", icon: "⚽", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Tennis Club": { arrival_time: "15 min", icon: "🎾", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Swimming Pool": { arrival_time: "10 min", icon: "🏊", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Primary School": { arrival_time: "8 min", icon: "🏫", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Secondary School": { arrival_time: "10 min", icon: "🏫", coords: [-17.9333, 25.8333] },
+                "Victoria Falls College": { arrival_time: "12 min", icon: "🎓", coords: [-17.9333, 25.8333] },
+                "Victoria Falls University": { arrival_time: "15 min", icon: "🎓", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Technical College": { arrival_time: "18 min", icon: "🔧", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Business Center": { arrival_time: "10 min", icon: "🏢", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Industrial Area": { arrival_time: "15 min", icon: "🏭", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Residential Area": { arrival_time: "12 min", icon: "🏠", coords: [-17.9333, 25.8333] },
+                "Victoria Falls High Density Area": { arrival_time: "10 min", icon: "🏘️", coords: [-17.9333, 25.8333] },
+                "Victoria Falls Low Density Area": { arrival_time: "15 min", icon: "🏡", coords: [-17.9333, 25.8333] },
+                "Victoria Falls CBD": { arrival_time: "5 min", icon: "🏙️", coords: [-17.9333, 25.8333] }
+            };
 
-        const drivers = [];
-        const startLocationSelect = document.getElementById('startLocation');
-        const endLocationSelect = document.getElementById('endLocation');
-        const planTripBtn = document.getElementById('planTripBtn');
-        const resultsDiv = document.getElementById('results');
-        const resultsContainer = document.getElementById('results-container');
-        const authSection = document.getElementById('auth-section');
-        const mainApp = document.getElementById('main-app');
-        const historyContainer = document.getElementById('history-container');
-        const driverRegistration = document.getElementById('driver-registration');
-
-        let rideHistory = [];
-        let userMarker;  // For user's location
-        let isAdmin = false;
-
-        // Haversine formula to calculate distance between two coordinates
-        function haversineDistance(coords1, coords2) {
-            const R = 6371; // Radius of the Earth in km
-            const dLat = (coords2[0] - coords1[0]) * Math.PI / 180;
-            const dLon = (coords2[1] - coords1[1]) * Math.PI / 180;
-            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                      Math.cos(coords1[0] * Math.PI / 180) * Math.cos(coords2[0] * Math.PI / 180) *
-                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c; // Distance in km
-        }
-
-        // Updated fare calculation based on real-time distance and local rates
-        function calculateFare(startCoords, endCoords) {
-            const distance = haversineDistance(startCoords, endCoords);
-            
-            // Base fare in USD (Victoria Falls typical rates)
-            const baseFare = 3.00;
-            
-            // Per kilometer rate (typical local rate)
-            const perKmRate = 0.80;
-            
-            // Minimum fare
-            const minimumFare = 5.00;
-            
-            // Calculate fare
-            let fare = baseFare + (distance * perKmRate);
-            
-            // Apply minimum fare
-            fare = Math.max(fare, minimumFare);
-            
-            // Additional charges for popular tourist destinations
-            const touristDestinations = [
-                "Victoria Falls Hotel",
-                "Zambezi National Park",
-                "Victoria Falls Bridge",
-                "Boma Dinner & Drum Show"
+            let drivers = [
+                { _id: 'd1', name: 'John Doe', phone: '+263771234561', carReg: 'ABC 123 ZW', capacity: 4, coords: [-17.9350, 25.8280], available: true, vehicleType: 'Standard', marker: null },
+                { _id: 'd2', name: 'Jane Smith', phone: '+263771234562', carReg: 'XYZ 456 ZW', capacity: 7, coords: [-17.9200, 25.8400], available: true, vehicleType: 'XL', marker: null },
+                { _id: 'd3', name: 'Peter Jones', phone: '+263771234563', carReg: 'DEF 789 ZW', capacity: 4, coords: [-17.9100, 25.8150], available: true, vehicleType: 'Premium', marker: null }
             ];
             
-            const destination = endLocationSelect.value;
-            if (touristDestinations.includes(destination)) {
-                fare += 2.50; // Tourist destination surcharge
+            let users = [
+                { id: 'u1', username: 'passenger1', password: 'pass', type: 'passenger' },
+                { id: 'u2', username: 'Munkuli$1996', password: 'PickGod', type: 'admin' }
+            ];
+
+            const ui = {
+                startLocationSelect: document.getElementById('startLocation'),
+                endLocationSelect: document.getElementById('endLocation'),
+                planTripBtn: document.getElementById('planTripBtn'),
+                resultsContainer: document.getElementById('results-container'),
+                authSection: document.getElementById('auth-section'),
+                mainApp: document.getElementById('main-app'),
+                historyContainer: document.getElementById('history-container'),
+                adminDashboard: document.getElementById('admin-dashboard'),
+                driverListContainer: document.getElementById('driver-list-container'),
+                passengerListContainer: document.getElementById('passenger-list-container'),
+                ridePlanningSection: document.getElementById('ride-planning-section'),
+                rideResultsSection: document.getElementById('ride-results-section'),
+                fareMultiplierInput: document.getElementById('fareMultiplier'),
+                updateFareMultiplierBtn: document.getElementById('updateFareMultiplierBtn'),
+            };
+
+            let rideHistory = [];
+            let userMarker = null;
+            let loggedInUser = null;
+            let mapInstance = null;
+            let currentFareMultiplier = 1.0;
+            let geoWatchId = null;
+
+            const vehicleFareMultipliers = { 'Standard': 1.0, 'Premium': 1.5, 'XL': 1.3 };
+
+            const userIcon = new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
+            const driverIcon = new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
+
+            function showMessageBox(message, duration = 3000) {
+                const msgBox = document.getElementById('message-box');
+                if (msgBox) {
+                    msgBox.textContent = message;
+                    msgBox.style.display = 'block';
+                    setTimeout(() => { msgBox.style.display = 'none'; }, duration);
+                }
             }
+
+            function generateUUID() { return Math.random().toString(36).substring(2, 15); }
             
-            // Round to nearest 0.50 for cash convenience
-            fare = Math.ceil(fare * 2) / 2;
-            
-            return fare.toFixed(2);
-        }
-
-        // Populate locations in the dropdowns
-        function populateLocations() {
-            Object.keys(localTransportData).forEach(location => {
-                const optionStart = new Option(location, location);
-                const optionEnd = new Option(location, location);
-                startLocationSelect.add(optionStart);
-                endLocationSelect.add(optionEnd);
-            });
-        }
-
-        // Find the closest available drivers based on passenger capacity
-        function findClosestDrivers(passengerCount) {
-            return drivers.filter(driver => 
-                driver.capacity >= passengerCount && 
-                driver.available !== false
-            ).slice(0, 3); // Show top 3 available drivers
-        }
-
-        // Plan a trip
-        function planTrip() {
-            const startLocation = startLocationSelect.value;
-            const endLocation = endLocationSelect.value;
-            const passengerCount = document.getElementById('passengerCount').value;
-
-            if (startLocation === endLocation) {
-                alert('Start and destination cannot be the same.');
-                return;
+            function haversineDistance(coords1, coords2) {
+                const R = 6371, dLat = (coords2[0] - coords1[0]) * Math.PI / 180, dLon = (coords2[1] - coords1[1]) * Math.PI / 180;
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(coords1[0] * Math.PI / 180) * Math.cos(coords2[0] * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             }
 
-            resultsContainer.innerHTML = '';
-            const rideInfo = localTransportData[endLocation];
-            const closestDrivers = findClosestDrivers(passengerCount);
+            function calculateFare(startCoords, endCoords, vehicleType) {
+                const distance = haversineDistance(startCoords, endCoords);
+                let fare = 3.00 + (distance * 0.80);
+                fare *= (vehicleFareMultipliers[vehicleType] || 1.0);
+                fare *= currentFareMultiplier;
+                fare = Math.max(fare, 5.00);
+                return fare.toFixed(2);
+            }
 
-            if (closestDrivers.length === 0) {
-                resultsContainer.innerHTML = `
-                    <div class="card p-4 mb-4">
-                        <h3>No available drivers found for your request</h3>
-                        <p>Please try again later or adjust your passenger count</p>
-                    </div>
-                `;
-            } else {
-                closestDrivers.forEach(driver => {
-                    const fare = calculateFare(driver.coords, rideInfo.coords);
-                    resultsContainer.innerHTML += `
-                        <div class="card p-4 mb-4">
-                            <h3>${rideInfo.icon} ${endLocation}</h3>
-                            <p>Arrival Time: ${rideInfo.arrival_time}</p>
-                            <p>Driver: ${driver.name}</p>
-                            <p>Phone: ${driver.phone}</p>
-                            <p>Car Reg: ${driver.carReg}</p>
-                            <p>Capacity: ${driver.capacity}</p>
-                            <p>Status: ${driver.available ? 'Available' : 'Not Available'}</p>
-                            <p>Estimated Fare: $${fare}</p>
-                            <button class="btn-primary" onclick="confirmRide('${endLocation}', '${fare}', '${driver.name}', ${rideInfo.coords})">Confirm Ride</button>
-                        </div>
-                    `;
+            function initMap(centerCoords) {
+                if (mapInstance) { mapInstance.remove(); mapInstance = null; }
+                const mapContainer = document.getElementById('map');
+                if (!mapContainer) return;
+                
+                mapContainer.classList.remove('hidden');
+                mapInstance = L.map('map').setView(centerCoords, 14);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(mapInstance);
+
+                Object.entries(localTransportData).forEach(([location, data]) => {
+                    const emojiIcon = L.divIcon({ className: 'leaflet-div-icon', html: `<div style="font-size: 24px;">${data.icon}</div>`, iconSize: [30, 42], iconAnchor: [15, 42] });
+                    L.marker(data.coords, { icon: emojiIcon }).addTo(mapInstance).bindPopup(location);
                 });
-            }
 
-            resultsDiv.classList.remove('hidden');
-            initMap(rideInfo.coords, closestDrivers);
-        }
-
-        // Confirm the ride and store it
-        function confirmRide(destination, cost, driver) {
-            rideHistory.push({ destination, cost, driver, time: new Date().toLocaleString() });
-            alert(`Ride confirmed to ${destination} with ${driver}.`);
-            alert(`Driver ${driver} has been notified of the booking.`);
-            displayRideHistory();
-        }
-
-        // Display ride history
-        function displayRideHistory() {
-            historyContainer.innerHTML = '';
-            rideHistory.forEach(ride => {
-                historyContainer.innerHTML += `
-                    <div class="card p-4 mb-4">
-                        <p>Destination: ${ride.destination}</p>
-                        <p>Cost: $${ride.cost}</p>
-                        <p>Driver: ${ride.driver}</p>
-                        <p>Time: ${ride.time}</p>
-                    </div>
-                `;
-            });
-            document.getElementById('ride-history').classList.remove('hidden');
-        }
-
-        // Initialize the map
-        function initMap(destinationCoords, closestDrivers) {
-            const map = L.map('map').setView(destinationCoords, 14);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '© OpenStreetMap'
-            }).addTo(map);
-
-            // Destination marker
-            L.marker(destinationCoords).addTo(map).bindPopup("Destination").openPopup();
-
-            // Driver markers
-            closestDrivers.forEach(driver => {
-                const driverMarker = L.marker(driver.coords).addTo(map).bindPopup("Driver Location: " + driver.name);
-            });
-
-            // Add all locations to the map
-            Object.entries(localTransportData).forEach(([location, data]) => {
-                L.marker(data.coords).addTo(map).bindPopup(location);
-            });
-
-            // Live user's location
-            if (navigator.geolocation) {
-                navigator.geolocation.watchPosition(position => {
+                drivers.forEach(driver => {
+                    if (driver.marker) driver.marker.remove();
+                    driver.marker = L.marker(driver.coords, { icon: driverIcon, opacity: driver.available ? 1 : 0.5 }).addTo(mapInstance).bindPopup(`<b>${driver.name}</b><br>${driver.vehicleType}`);
+                });
+                
+                if (geoWatchId) navigator.geolocation.clearWatch(geoWatchId);
+                geoWatchId = navigator.geolocation.watchPosition(position => {
                     const userCoords = [position.coords.latitude, position.coords.longitude];
-
-                    // Update user's marker or create it if it doesn't exist
                     if (userMarker) {
                         userMarker.setLatLng(userCoords);
                     } else {
-                        userMarker = L.marker(userCoords).addTo(map).bindPopup("Your Location").openPopup();
+                        userMarker = L.marker(userCoords, { icon: userIcon }).addTo(mapInstance).bindPopup("Your Location").openPopup();
                     }
+                    mapInstance.setView(userCoords, 15);
+                }, () => { showMessageBox("Could not get your location."); });
+            }
 
-                    map.setView(userCoords, 14);
-                }, () => {
-                    alert('Unable to retrieve your location.');
+            function populateLocations() {
+                ui.startLocationSelect.innerHTML = ''; ui.endLocationSelect.innerHTML = '';
+                Object.keys(localTransportData).forEach(location => {
+                    ui.startLocationSelect.add(new Option(location, location));
+                    ui.endLocationSelect.add(new Option(location, location));
                 });
             }
 
-            document.getElementById('map').classList.remove('hidden');
-        }
-
-        // Handle driver registration
-        function registerDriver() {
-            const driverName = document.getElementById('driverName').value;
-            const driverPhone = document.getElementById('driverPhone').value;
-            const driverCarReg = document.getElementById('driverCarReg').value;
-            const driverCapacity = document.getElementById('driverCapacity').value;
-
-            const newDriver = {
-                id: drivers.length + 1,
-                name: driverName,
-                phone: driverPhone,
-                whatsApp: `https://wa.me/${driverPhone.replace(/-/g, '')}`,
-                carReg: driverCarReg,
-                capacity: driverCapacity,
-                coords: [-17.9319, 25.8306], // Sample coordinates, replace with actual
-                available: true // Driver is available by default
-            };
-
-            drivers.push(newDriver);
-            alert(`Driver ${driverName} registered successfully!`);
-            driverRegistration.classList.add('hidden');
-            mainApp.classList.remove('hidden');
-
-            // Show driver on the map
-            initMap(localTransportData["Town Center"].coords, [newDriver]);
-        }
-
-        // Handle back to login button
-        function setupBackButtons() {
-            document.getElementById('backToLogin').addEventListener('click', function() {
-                mainApp.classList.add('hidden');
-                authSection.classList.remove('hidden');
-                document.getElementById('passenger-login').classList.remove('hidden');
-                document.getElementById('admin-login').classList.add('hidden');
-                document.querySelector('.login-tab[data-tab="passenger"]').classList.add('active');
-                document.querySelector('.login-tab[data-tab="admin"]').classList.remove('active');
-            });
-
-            document.getElementById('backToLoginAdmin').addEventListener('click', function() {
-                driverRegistration.classList.add('hidden');
-                authSection.classList.remove('hidden');
-                document.getElementById('passenger-login').classList.add('hidden');
-                document.getElementById('admin-login').classList.remove('hidden');
-                document.querySelector('.login-tab[data-tab="passenger"]').classList.remove('active');
-                document.querySelector('.login-tab[data-tab="admin"]').classList.add('active');
-            });
-        }
-
-        // Handle login tab switching
-        function setupLoginTabs() {
-            const tabs = document.querySelectorAll('.login-tab');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    document.getElementById('passenger-login').classList.toggle('hidden', this.dataset.tab !== 'passenger');
-                    document.getElementById('admin-login').classList.toggle('hidden', this.dataset.tab !== 'admin');
+            function findClosestDrivers(userCoords) {
+                return drivers.filter(d => d.available).sort((a, b) => haversineDistance(userCoords, a.coords) - haversineDistance(userCoords, b.coords)).slice(0, 3);
+            }
+            
+            ui.planTripBtn.addEventListener('click', () => {
+                if (!userMarker) { showMessageBox("Waiting for your location..."); return; }
+                const userCoords = [userMarker.getLatLng().lat, userMarker.getLatLng().lng];
+                ui.resultsContainer.innerHTML = '';
+                ui.rideResultsSection.classList.remove('hidden');
+                const closestDrivers = findClosestDrivers(userCoords);
+                if (closestDrivers.length === 0) {
+                    ui.resultsContainer.innerHTML = `<div class="card p-4"><h3>No drivers available.</h3></div>`;
+                    return;
+                }
+                closestDrivers.forEach(driver => {
+                    const fare = calculateFare(localTransportData[ui.startLocationSelect.value].coords, localTransportData[ui.endLocationSelect.value].coords, driver.vehicleType);
+                    ui.resultsContainer.innerHTML += `<div class="card p-4 mb-4"><h3 class="font-bold">${driver.name} - ${driver.carReg} (${driver.vehicleType})</h3><p>Est. Fare: $${fare}</p><button class="btn-primary mt-2 request-ride-btn" data-driver-id="${driver._id}" data-fare="${fare}">Request Ride</button></div>`;
                 });
             });
-        }
 
-        // Admin login functionality
-        document.getElementById('adminLoginBtn').addEventListener('click', function() {
-            const username = document.getElementById('adminUsername').value;
-            const password = document.getElementById('adminPassword').value;
-
-            if (username === 'Munkuli$1996' && password === 'PickGod') {
-                alert('Admin logged in successfully!');
-                isAdmin = true;
-                authSection.classList.add('hidden');
-                driverRegistration.classList.remove('hidden');
-            } else {
-                alert('Invalid admin credentials!');
+            ui.resultsContainer.addEventListener('click', (event) => {
+                if (event.target.classList.contains('request-ride-btn')) {
+                    const driverId = event.target.dataset.driverId;
+                    const fare = event.target.dataset.fare;
+                    const driver = drivers.find(d => d._id === driverId);
+                    rideHistory.push({ id: generateUUID(), driverName: driver.name, driverCarReg: driver.carReg, driverVehicleType: driver.vehicleType, destination: ui.endLocationSelect.value, fare: fare, date: new Date().toLocaleString() });
+                    showMessageBox(`Ride with ${driver.name} confirmed!`);
+                    displayRideHistory();
+                    ui.rideResultsSection.classList.add('hidden');
+                }
+            });
+            
+            function displayRideHistory() {
+                ui.historyContainer.innerHTML = rideHistory.length === 0 ? '<p>No ride history yet.</p>' : rideHistory.map(ride => `<div class="card p-4 mb-4"><p><b>To:</b> ${ride.destination}</p><p><b>Driver:</b> ${ride.driverName} (${ride.driverVehicleType} - ${ride.driverCarReg})</p><p><b>Fare:</b> $${ride.fare}</p><p><b>Date:</b> ${ride.date}</p></div>`).join('');
             }
-        });
 
-        // Passenger login functionality
-        document.getElementById('passengerLoginBtn').addEventListener('click', function() {
-            const username = document.getElementById('passengerUsername').value;
-            const password = document.getElementById('passengerPassword').value;
-
-            if (username && password) {
-                alert('Passenger logged in successfully!');
-                isAdmin = false;
-                authSection.classList.add('hidden');
-                mainApp.classList.remove('hidden');
-                populateLocations();
-            } else {
-                alert('Please enter both username and password');
+            function displayAdminDrivers() {
+                ui.driverListContainer.innerHTML = drivers.map(d => `<div class="card p-2 mb-2 flex justify-between items-center"><div><h4 class="font-semibold">${d.name}</h4><p>${d.phone} | ${d.carReg}</p></div><button class="btn-primary bg-red-600 delete-btn" data-id="${d._id}" data-type="driver">Delete</button></div>`).join('');
             }
+            
+            function displayAdminPassengers() {
+                ui.passengerListContainer.innerHTML = users.filter(u => u.type === 'passenger').map(u => `<div class="card p-2 mb-2 flex justify-between items-center"><div><h4 class="font-semibold">${u.username}</h4></div><button class="btn-primary bg-red-600 delete-btn" data-id="${u.id}" data-type="user">Delete</button></div>`).join('');
+            }
+
+            ui.adminDashboard.addEventListener('click', (event) => {
+                if(event.target.classList.contains('delete-btn')) {
+                    const id = event.target.dataset.id;
+                    if (event.target.dataset.type === 'driver') {
+                        drivers = drivers.filter(d => d._id !== id);
+                        displayAdminDrivers();
+                    } else {
+                        users = users.filter(u => u.id !== id);
+                        displayAdminPassengers();
+                    }
+                }
+            });
+
+            document.getElementById('registerDriverBtn').addEventListener('click', () => {
+                const newDriver = { _id: generateUUID(), name: document.getElementById('driverName').value, phone: document.getElementById('driverPhone').value, carReg: document.getElementById('driverCarReg').value, vehicleType: document.getElementById('driverVehicleType').value, capacity: document.getElementById('driverVehicleType').value === 'XL' ? 7 : 4, coords: localTransportData["Town Center"].coords, available: true, marker: null };
+                if (!newDriver.name || !newDriver.phone) { showMessageBox('All fields required.'); return; }
+                drivers.push(newDriver);
+                showMessageBox('Driver registered.');
+                displayAdminDrivers();
+            });
+
+            ui.updateFareMultiplierBtn.addEventListener('click', () => {
+                const newMultiplier = parseFloat(ui.fareMultiplierInput.value);
+                if (!isNaN(newMultiplier) && newMultiplier > 0) {
+                    currentFareMultiplier = newMultiplier;
+                    showMessageBox(`Fare multiplier updated to ${newMultiplier.toFixed(1)}x`);
+                }
+            });
+
+            function setupLoginAndUI() {
+                document.querySelectorAll('#auth-section .login-tab').forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        document.querySelectorAll('#auth-section .login-tab').forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        document.getElementById('passenger-login').classList.toggle('hidden', this.dataset.tab !== 'passenger');
+                        document.getElementById('admin-login').classList.toggle('hidden', this.dataset.tab !== 'admin');
+                    });
+                });
+
+                document.querySelectorAll('#admin-dashboard .login-tab').forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        document.querySelectorAll('#admin-dashboard .login-tab').forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        document.querySelectorAll('.admin-section').forEach(sec => sec.classList.add('hidden'));
+                        document.getElementById(this.dataset.tab.replace(/-/g, '-') + '-section').classList.remove('hidden');
+                        if (this.dataset.tab === 'manage-drivers') displayAdminDrivers();
+                        if (this.dataset.tab === 'manage-users') displayAdminPassengers();
+                    });
+                });
+
+                document.getElementById('passengerLoginBtn').addEventListener('click', () => {
+                    const user = users.find(u => u.username === document.getElementById('passengerUsername').value && u.password === document.getElementById('passengerPassword').value);
+                    if (user && user.type === 'passenger') {
+                        loggedInUser = user; ui.authSection.classList.add('hidden'); ui.mainApp.classList.remove('hidden');
+                        initMap(localTransportData["Town Center"].coords);
+                        displayRideHistory();
+                    } else { showMessageBox('Invalid credentials.'); }
+                });
+
+                document.getElementById('passengerRegisterBtn').addEventListener('click', () => {
+                     const u = document.getElementById('passengerUsername').value, p = document.getElementById('passengerPassword').value;
+                    if (!u || !p) { showMessageBox('Username/password required.'); return; }
+                    if (users.some(usr => usr.username === u)) { showMessageBox('Username exists.'); return; }
+                    users.push({ id: generateUUID(), username: u, password: p, type: 'passenger'});
+                    showMessageBox('Registration successful. Please login.');
+                });
+
+                document.getElementById('adminLoginBtn').addEventListener('click', () => {
+                    const user = users.find(u => u.username === document.getElementById('adminUsername').value && u.password === document.getElementById('adminPassword').value);
+                    if (user && user.type === 'admin') {
+                        loggedInUser = user; ui.authSection.classList.add('hidden'); ui.adminDashboard.classList.remove('hidden');
+                        document.querySelector('#admin-dashboard .login-tab').click();
+                    } else { showMessageBox('Invalid admin credentials.'); }
+                });
+                
+                document.getElementById('backToLogin').addEventListener('click', () => {
+                    loggedInUser = null; ui.mainApp.classList.add('hidden'); ui.authSection.classList.remove('hidden');
+                    if (mapInstance) { mapInstance.remove(); mapInstance = null; }
+                    if (geoWatchId) navigator.geolocation.clearWatch(geoWatchId);
+                });
+                document.getElementById('backToLoginAdmin').addEventListener('click', () => {
+                    loggedInUser = null; ui.adminDashboard.classList.add('hidden'); ui.authSection.classList.remove('hidden');
+                });
+            }
+
+            populateLocations();
+            setupLoginAndUI();
         });
-
-        // Event listeners
-        document.getElementById('registerDriverBtn').addEventListener('click', registerDriver);
-        planTripBtn.addEventListener('click', planTrip);
-
-        // Initial Setup
-        setupLoginTabs();
-        setupBackButtons();
     </script>
 </body>
-</html>   
+</html>
