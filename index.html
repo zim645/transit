@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Binga Fish & Livestock Marketplace | Admin Control Panel</title>
+    <title>Binga Marketplace - Buy & Sell Fish, Livestock, Goods</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #1a5276;
@@ -11,9 +12,9 @@
             --accent: #27ae60;
             --danger: #e74c3c;
             --warning: #f39c12;
-            --light: #ecf0f1;
-            --dark: #2c3e50;
-            --tonga-brown: #8b4513;
+            --light: #f8f9fa;
+            --dark: #333333;
+            --border: #e0e0e0;
         }
         
         * {
@@ -24,123 +25,484 @@
         }
         
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        /* Login Screen */
-        .login-container {
-            max-width: 400px;
-            margin: 50px auto;
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            text-align: center;
-        }
-        
-        .login-icon {
-            font-size: 60px;
-            margin-bottom: 20px;
-            color: var(--primary);
-        }
-        
-        .login-input {
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 16px;
-        }
-        
-        .login-btn {
-            width: 100%;
-            padding: 15px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        
-        /* Main App Container */
-        .app-container {
-            display: none;
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
         }
         
         /* Header */
-        .app-header {
-            background: linear-gradient(to right, var(--primary), var(--tonga-brown));
+        .site-header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-top {
+            background: var(--primary);
             color: white;
-            padding: 20px;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        .user-info {
+        .header-top .header-container {
+            justify-content: space-between;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--primary);
+        }
+        
+        .logo-icon {
+            font-size: 32px;
+            color: var(--secondary);
+        }
+        
+        .logo-text h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .logo-text span {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* Auth in top-right corner */
+        .auth-container {
+            position: relative;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .auth-btn {
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+        }
+        
+        .auth-btn.login {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .auth-btn.register {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .auth-btn.logout {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .user-menu {
             display: flex;
             align-items: center;
             gap: 15px;
         }
         
-        .logout-btn {
-            background: var(--danger);
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
             color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        /* Auth Modal */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .auth-modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .auth-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
             cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .auth-tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .auth-form {
+            padding: 30px;
+        }
+        
+        .auth-form h3 {
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+        }
+        
+        .btn-primary:hover {
+            background: #154360;
         }
         
         /* Navigation */
-        .nav-tabs {
-            display: flex;
-            background: #f8f9fa;
-            border-bottom: 2px solid #e9ecef;
+        .main-nav {
+            background: white;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
         }
         
-        .nav-tab {
-            padding: 15px 25px;
-            cursor: pointer;
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-link {
+            padding: 15px 20px;
+            text-decoration: none;
+            color: var(--dark);
             font-weight: 600;
             border-bottom: 3px solid transparent;
         }
         
-        .nav-tab:hover {
-            background: #e9ecef;
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
         }
         
-        .nav-tab.active {
-            border-bottom: 3px solid var(--secondary);
+        .post-ad-btn {
+            margin-left: auto;
+            background: var(--accent);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        /* Main Content */
+        .main-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+        
+        /* Sidebar */
+        .sidebar {
             background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .sidebar-section {
+            margin-bottom: 30px;
+        }
+        
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--dark);
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .category-list, .location-list {
+            list-style: none;
+        }
+        
+        .category-item, .location-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .category-item a, .location-item a {
+            text-decoration: none;
+            color: #555;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .category-item a:hover, .location-item a:hover {
             color: var(--primary);
         }
         
-        /* Content Areas */
-        .content-area {
-            display: none;
+        .category-count, .location-count {
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+        
+        /* Products Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .product-image {
+            height: 180px;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 48px;
+            position: relative;
+        }
+        
+        .product-price {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .product-details {
+            padding: 15px;
+        }
+        
+        .product-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark);
+            font-size: 16px;
+            line-height: 1.4;
+        }
+        
+        .product-meta {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .product-location {
+            font-size: 12px;
+            color: #999;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .whatsapp-btn {
+            background: #25D366;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        /* Search Bar */
+        .search-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .search-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0 30px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        /* Footer */
+        .site-footer {
+            background: var(--dark);
+            color: white;
+            margin-top: 50px;
+            padding: 40px 0;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .footer-section h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #bbb;
+            text-decoration: none;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        /* Dashboard (when logged in) */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .dashboard-header {
+            background: white;
             padding: 30px;
-            min-height: 600px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         
-        .content-area.active {
-            display: block;
-        }
-        
-        /* Dashboard */
-        .stats-grid {
+        .dashboard-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
@@ -148,1233 +510,1492 @@
         }
         
         .stat-card {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 12px;
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 36px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-        
-        /* Forms */
-        .form-container {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .form-group {
-            margin-bottom: 25px;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-        
-        .file-input {
-            padding: 10px;
             background: white;
-            border: 2px dashed #ddd;
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-        }
-        
-        .submit-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            font-size: 18px;
-            cursor: pointer;
-            width: 100%;
-        }
-        
-        /* Product Grid */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
-        }
-        
-        .product-card {
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            overflow: hidden;
-            background: white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .product-image {
-            height: 200px;
-            background: linear-gradient(45deg, #1a5276, #27ae60);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 60px;
-            position: relative;
-        }
-        
-        .verification-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: var(--warning);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-        }
-        
-        .verified {
-            background: var(--accent);
-        }
-        
-        .product-details {
             padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         
-        .product-name {
-            font-size: 20px;
-            font-weight: 700;
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
             color: var(--primary);
             margin-bottom: 10px;
         }
         
-        .product-price {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--accent);
-            margin: 10px 0;
+        /* Admin Panel */
+        .admin-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
         
-        .whatsapp-btn {
-            background: #25D366;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 10px;
+        .admin-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+        
+        .admin-tab {
+            padding: 15px 30px;
+            cursor: pointer;
             font-weight: 600;
         }
         
-        /* Admin Controls */
-        .admin-controls {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .verify-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            flex: 1;
-        }
-        
-        .reject-btn {
-            background: var(--danger);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            flex: 1;
-        }
-        
-        .delete-btn {
-            background: var(--danger);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-        }
-        
-        /* Tables */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        
-        .data-table th {
-            background: var(--primary);
-            color: white;
-            padding: 15px;
-            text-align: left;
-        }
-        
-        .data-table td {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .status-pending { color: var(--warning); font-weight: 600; }
-        .status-verified { color: var(--accent); font-weight: 600; }
-        
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        
-        .close-modal {
-            float: right;
-            font-size: 28px;
-            cursor: pointer;
+        .admin-tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
         }
         
         /* Responsive */
         @media (max-width: 768px) {
-            .product-grid {
+            .main-container {
                 grid-template-columns: 1fr;
             }
             
-            .stats-grid {
-                grid-template-columns: 1fr;
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             }
             
-            .nav-tabs {
+            .nav-container {
                 flex-direction: column;
+                padding: 10px;
             }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .post-ad-btn {
+                margin: 10px 0 0 0;
+            }
+            
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 20px;
+            }
+            
+            .auth-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        /* Verification badge */
+        .verified-badge {
+            background: var(--accent);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        
+        /* No products message */
+        .no-products {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 8px;
+            grid-column: 1 / -1;
+        }
+        
+        /* Featured Products */
+        .featured-products {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Alert */
+        .alert {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div id="loginScreen" class="login-container">
-        <div class="login-icon">🐟🌊</div>
-        <h2>Binga Marketplace Admin</h2>
-        <p style="color: #666; margin-bottom: 30px;">Fishermen & Livestock Trade Platform</p>
-        
-        <input type="text" id="username" class="login-input" placeholder="Username" value="Munkuli$1996">
-        <input type="password" id="password" class="login-input" placeholder="Password" value="PickGod">
-        
-        <div style="text-align: left; margin: 15px 0; font-size: 14px;">
-            <label><input type="radio" name="userType" value="fisherman" checked> Fisherman/Livestock Seller</label><br>
-            <label><input type="radio" name="userType" value="admin"> Administrator</label>
-        </div>
-        
-        <button class="login-btn" onclick="login()">Login to Dashboard</button>
-        
-        <div style="margin-top: 30px; font-size: 14px; color: #666;">
-            <p>📱 WhatsApp Support: +263 77 123 4567</p>
-            <p>📍 Binga, Lake Kariba, Zimbabwe</p>
-        </div>
-    </div>
-    
-    <!-- Main Application (Hidden until login) -->
-    <div id="appContainer" class="app-container">
-        <!-- Header -->
-        <div class="app-header">
+    <!-- Top Bar -->
+    <div class="header-top">
+        <div class="header-container">
             <div>
-                <h2>Binga Fish & Livestock Marketplace</h2>
-                <p id="userRoleDisplay"></p>
+                <i class="fas fa-phone-alt"></i> +263 77 123 4567 | 
+                <i class="fas fa-map-marker-alt"></i> Binga, Lake Kariba
             </div>
-            <div class="user-info">
-                <span id="currentUser"></span>
-                <button class="logout-btn" onclick="logout()">Logout</button>
-            </div>
-        </div>
-        
-        <!-- Navigation -->
-        <div class="nav-tabs">
-            <div class="nav-tab active" onclick="switchTab('dashboard')">📊 Dashboard</div>
-            <div class="nav-tab" onclick="switchTab('addProduct')" id="addProductTab">➕ Add Product</div>
-            <div class="nav-tab" onclick="switchTab('myProducts')" id="myProductsTab">📦 My Products</div>
-            <div class="nav-tab" onclick="switchTab('marketplace')" id="marketplaceTab">🛒 Marketplace</div>
-            <div class="nav-tab" onclick="switchTab('adminPanel')" id="adminPanelTab">👑 Admin Panel</div>
-        </div>
-        
-        <!-- Dashboard Tab -->
-        <div id="dashboard" class="content-area active">
-            <h2>Dashboard Overview</h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value" id="totalProducts">0</div>
-                    <div class="stat-label">Total Products</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="verifiedProducts">0</div>
-                    <div class="stat-label">Verified Products</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="pendingVerification">0</div>
-                    <div class="stat-label">Pending Verification</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="totalUsers">0</div>
-                    <div class="stat-label">Registered Users</div>
-                </div>
-            </div>
-            
-            <div style="margin-top: 40px;">
-                <h3>📈 Recent Activity</h3>
-                <div id="recentActivity" style="margin-top: 20px;">
-                    <!-- Activity log will be populated here -->
-                </div>
-            </div>
-            
-            <div style="margin-top: 40px; background: #f8f9fa; padding: 25px; border-radius: 15px;">
-                <h3>📋 Quick Actions</h3>
-                <div style="display: flex; gap: 15px; margin-top: 20px;">
-                    <button onclick="switchTab('addProduct')" class="submit-btn" style="background: var(--accent);">➕ Add New Product</button>
-                    <button onclick="refreshData()" class="submit-btn" style="background: var(--primary);">🔄 Refresh Data</button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Add Product Tab -->
-        <div id="addProduct" class="content-area">
-            <h2>➕ Add New Product</h2>
-            <div class="form-container">
-                <div class="form-group">
-                    <label class="form-label">Product Type</label>
-                    <select id="productType" class="form-control" onchange="updateProductForm()">
-                        <option value="fish">🐟 Fish (Kapenta, Bream, Tigerfish)</option>
-                        <option value="goat">🐐 Goats</option>
-                        <option value="cow">🐄 Cattle</option>
-                        <option value="chicken">🐓 Poultry</option>
-                        <option value="sheep">🐑 Sheep</option>
-                        <option value="other">📦 Other Livestock</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" id="productNameLabel">Fish Name/Species</label>
-                    <input type="text" id="productName" class="form-control" placeholder="e.g., Fresh Kapenta, Live Goat">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Quantity/Weight</label>
-                    <input type="text" id="productQuantity" class="form-control" placeholder="e.g., 25kg, 3 goats, 1 cow">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Price (USD)</label>
-                    <input type="number" id="productPrice" class="form-control" placeholder="e.g., 150" step="0.01">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Description</label>
-                    <textarea id="productDescription" class="form-control" rows="4" placeholder="Describe your product..."></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Your Phone Number (for WhatsApp)</label>
-                    <input type="tel" id="sellerPhone" class="form-control" placeholder="+263 77 123 4567" required>
-                    <small style="color: #666;">Buyers will contact you via WhatsApp</small>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Location in Binga</label>
-                    <input type="text" id="productLocation" class="form-control" placeholder="e.g., Siachilaba, Kariyangwe, Binga Centre">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Product Image</label>
-                    <div class="file-input" onclick="document.getElementById('imageUpload').click()">
-                        📷 Click to upload product photo
-                    </div>
-                    <input type="file" id="imageUpload" accept="image/*" style="display: none;" onchange="previewImage(event)">
-                    <div id="imagePreview" style="margin-top: 10px; text-align: center;"></div>
-                </div>
-                
-                <button class="submit-btn" onclick="addProduct()">✅ Submit Product for Verification</button>
-                <p style="margin-top: 15px; color: #666; font-size: 14px;">Note: All products require admin verification before appearing in marketplace</p>
-            </div>
-        </div>
-        
-        <!-- My Products Tab -->
-        <div id="myProducts" class="content-area">
-            <h2>📦 My Products</h2>
-            <div id="myProductsList" class="product-grid">
-                <!-- Products will be loaded here -->
-            </div>
-        </div>
-        
-        <!-- Marketplace Tab -->
-        <div id="marketplace" class="content-area">
-            <h2>🛒 Verified Products Marketplace</h2>
-            <div style="margin-bottom: 20px;">
-                <input type="text" id="searchProducts" class="form-control" placeholder="🔍 Search products..." onkeyup="searchProducts()">
-            </div>
-            <div id="marketplaceProducts" class="product-grid">
-                <!-- Verified products will be loaded here -->
-            </div>
-        </div>
-        
-        <!-- Admin Panel Tab -->
-        <div id="adminPanel" class="content-area">
-            <h2>👑 Admin Control Panel</h2>
-            
-            <div style="display: flex; gap: 20px; margin-bottom: 30px;">
-                <button onclick="showPendingVerifications()" class="submit-btn" style="background: var(--warning);">⚠️ Pending Verifications</button>
-                <button onclick="showAllProducts()" class="submit-btn" style="background: var(--primary);">📋 All Products</button>
-                <button onclick="showAllUsers()" class="submit-btn" style="background: var(--accent);">👥 All Users</button>
-            </div>
-            
-            <div id="adminContent">
-                <!-- Admin content will be loaded here -->
+            <div>
+                <i class="fab fa-whatsapp"></i> WhatsApp: +263 78 456 7890
             </div>
         </div>
     </div>
     
-    <!-- Image Preview Modal -->
-    <div id="imageModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal()">&times;</span>
-            <h3>Image Preview</h3>
-            <img id="modalImage" src="" style="width: 100%; border-radius: 10px; margin-top: 20px;">
+    <!-- Main Header -->
+    <header class="site-header">
+        <div class="header-container">
+            <!-- Logo -->
+            <a href="#" class="logo">
+                <div class="logo-icon">🐟</div>
+                <div class="logo-text">
+                    <h1>Binga Marketplace</h1>
+                    <span>Buy & Sell Fish, Livestock & More</span>
+                </div>
+            </a>
+            
+            <!-- Auth Section (Top Right Corner) -->
+            <div class="auth-container">
+                <div class="auth-buttons" id="authButtons">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+                
+                <!-- User Menu (shown when logged in) -->
+                <div class="user-menu" id="userMenu" style="display: none;">
+                    <div class="user-avatar" id="userAvatar">JD</div>
+                    <div>
+                        <div class="user-name" id="userName">John Doe</div>
+                        <button class="auth-btn logout" onclick="logout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link active" onclick="showSection('home')">Home</a></li>
+                <li><a href="#" class="nav-link" onclick="showSection('fish')">Fish</a></li>
+                <li><a href="#" class="nav-link" onclick="showSection('livestock')">Livestock</a></li>
+                <li><a href="#" class="nav-link" onclick="showSection('agriculture')">Agriculture</a></li>
+                <li><a href="#" class="nav-link" onclick="showSection('services')">Services</a></li>
+                <li><a href="#" class="nav-link" onclick="showSection('property')">Property</a></li>
+                <li><a href="#" class="nav-link" onclick="showSection('vehicles')">Vehicles</a></li>
+            </ul>
+            
+            <a href="#" class="post-ad-btn" onclick="showPostAdForm()">
+                <i class="fas fa-plus-circle"></i> Post Free Ad
+            </a>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div id="mainContent">
+        <!-- Home/Marketplace Section (Default) -->
+        <div id="homeSection">
+            <!-- Search Bar -->
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" class="search-input" id="searchInput" placeholder="What are you looking for?">
+                    <select class="form-control" id="categorySelect" style="max-width: 200px;">
+                        <option value="">All Categories</option>
+                        <option value="fish">Fish</option>
+                        <option value="goat">Goats</option>
+                        <option value="cow">Cattle</option>
+                        <option value="poultry">Poultry</option>
+                        <option value="agriculture">Agriculture</option>
+                    </select>
+                    <select class="form-control" id="locationSelect" style="max-width: 200px;">
+                        <option value="">All Locations</option>
+                        <option value="Siachilaba">Siachilaba</option>
+                        <option value="Kariyangwe">Kariyangwe</option>
+                        <option value="Binga Centre">Binga Centre</option>
+                        <option value="Chete Island">Chete Island</option>
+                    </select>
+                    <button class="search-btn" onclick="searchProducts()">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Featured Products -->
+            <div class="featured-products">
+                <h2 class="section-title">
+                    <i class="fas fa-fire"></i> Featured Products
+                </h2>
+                
+                <div class="products-grid" id="featuredProducts">
+                    <!-- Featured products will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Recent Products -->
+            <div class="main-container">
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">Categories</h3>
+                        <ul class="category-list" id="categoryList">
+                            <!-- Categories will be loaded here -->
+                        </ul>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">Locations</h3>
+                        <ul class="location-list" id="locationList">
+                            <!-- Locations will be loaded here -->
+                        </ul>
+                    </div>
+                    
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title">Sell Fast Tips</h3>
+                        <ul style="list-style: none; color: #666; font-size: 14px;">
+                            <li style="margin-bottom: 10px;">✅ Use clear photos</li>
+                            <li style="margin-bottom: 10px;">✅ Set fair prices</li>
+                            <li style="margin-bottom: 10px;">✅ Include WhatsApp number</li>
+                            <li style="margin-bottom: 10px;">✅ Be honest about condition</li>
+                            <li>✅ Respond quickly to buyers</li>
+                        </ul>
+                    </div>
+                </aside>
+                
+                <!-- Products Grid -->
+                <div>
+                    <h2 class="section-title">
+                        <i class="fas fa-clock"></i> Recent Listings
+                    </h2>
+                    
+                    <div class="products-grid" id="recentProducts">
+                        <!-- Recent products will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Section (for logged in users) -->
+        <div id="dashboardSection" class="dashboard-container" style="display: none;">
+            <div class="dashboard-header">
+                <h2>My Dashboard</h2>
+                <p>Manage your products and account</p>
+            </div>
+            
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="myProductsCount">0</div>
+                    <div>My Products</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="myViewsCount">0</div>
+                    <div>Total Views</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="myMessagesCount">0</div>
+                    <div>Messages</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="myRating">0.0</div>
+                    <div>My Rating</div>
+                </div>
+            </div>
+            
+            <div class="admin-panel" id="userDashboard">
+                <!-- User dashboard content will be loaded here -->
+            </div>
+        </div>
+        
+        <!-- Admin Panel Section -->
+        <div id="adminSection" class="dashboard-container" style="display: none;">
+            <div class="dashboard-header">
+                <h2><i class="fas fa-crown"></i> Admin Control Panel</h2>
+                <p>Manage the entire marketplace</p>
+            </div>
+            
+            <div class="admin-panel">
+                <div class="admin-tabs">
+                    <div class="admin-tab active" onclick="showAdminTab('pending')">Pending Ads</div>
+                    <div class="admin-tab" onclick="showAdminTab('reported')">Reported Ads</div>
+                    <div class="admin-tab" onclick="showAdminTab('users')">Users</div>
+                    <div class="admin-tab" onclick="showAdminTab('stats')">Statistics</div>
+                </div>
+                
+                <div id="adminContent">
+                    <!-- Admin content will be loaded here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Post Ad Form -->
+        <div id="postAdSection" class="dashboard-container" style="display: none;">
+            <div class="dashboard-header">
+                <h2>Post Free Advertisement</h2>
+                <p>Reach thousands of buyers in Binga</p>
+            </div>
+            
+            <div class="admin-panel">
+                <div id="postAdForm">
+                    <!-- Post ad form will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Binga Marketplace</h3>
+                <p>The largest online marketplace in Binga. Buy and sell fish, livestock, agricultural products, services, and more.</p>
+                <p style="margin-top: 15px;">
+                    <i class="fas fa-phone"></i> +263 77 123 4567<br>
+                    <i class="fas fa-envelope"></i> info@bingamarket.co.zw
+                </p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#" onclick="showSection('home')">Home</a></li>
+                    <li><a href="#" onclick="showSection('fish')">Fish Market</a></li>
+                    <li><a href="#" onclick="showSection('livestock')">Livestock</a></li>
+                    <li><a href="#" onclick="showSection('services')">Services</a></li>
+                    <li><a href="#" onclick="showPostAdForm()">Post Free Ad</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Help & Support</h3>
+                <ul class="footer-links">
+                    <li><a href="#" onclick="alert('FAQs coming soon')">FAQs</a></li>
+                    <li><a href="#" onclick="alert('Safety tips coming soon')">Safety Tips</a></li>
+                    <li><a href="#" onclick="alert('Contact us at +263 77 123 4567')">Contact Us</a></li>
+                    <li><a href="#" onclick="alert('Terms & Conditions coming soon')">Terms & Conditions</a></li>
+                    <li><a href="#" onclick="alert('Privacy Policy coming soon')">Privacy Policy</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div style="display: flex; gap: 15px; margin-top: 15px;">
+                    <a href="#" style="color: white; font-size: 24px;"><i class="fab fa-facebook"></i></a>
+                    <a href="#" style="color: white; font-size: 24px;"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" style="color: white; font-size: 24px;"><i class="fab fa-twitter"></i></a>
+                </div>
+                <p style="margin-top: 20px; color: #bbb; font-size: 14px;">
+                    © 2024 Binga Marketplace. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-modal-content">
+            <div class="auth-tabs">
+                <div class="auth-tab active" onclick="showAuthForm('login')">Login</div>
+                <div class="auth-tab" onclick="showAuthForm('register')">Register</div>
+            </div>
+            
+            <div class="auth-form">
+                <div id="loginForm">
+                    <h3>Login to Your Account</h3>
+                    <div class="form-group">
+                        <label class="form-label">Email or Phone</label>
+                        <input type="text" class="form-control" id="loginEmail" placeholder="Email or phone number">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="loginPassword" placeholder="Password">
+                    </div>
+                    <button class="btn btn-primary" onclick="login()">Login</button>
+                    <p style="text-align: center; margin-top: 15px; color: #666;">
+                        <a href="#" style="color: var(--primary);" onclick="alert('Please contact admin to reset password')">Forgot Password?</a>
+                    </p>
+                </div>
+                
+                <div id="registerForm" style="display: none;">
+                    <h3>Create New Account</h3>
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="registerName" placeholder="Full name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="registerPhone" placeholder="+263 77 123 4567">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email (Optional)</label>
+                        <input type="email" class="form-control" id="registerEmail" placeholder="Email address">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="registerPassword" placeholder="Create password">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Location in Binga</label>
+                        <select class="form-control" id="registerLocation">
+                            <option value="">Select Location</option>
+                            <option>Siachilaba</option>
+                            <option>Kariyangwe</option>
+                            <option>Binga Centre</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="register()">Create Account</button>
+                </div>
+            </div>
         </div>
     </div>
     
     <script>
-        // Database Simulation using localStorage
-        const DB = {
-            // Initialize databases if they don't exist
+        // Database for storing users and products
+        const BINGA_MARKETPLACE_DB = {
+            // Initialize local storage databases
             init: function() {
-                if (!localStorage.getItem('binga_users')) {
-                    localStorage.setItem('binga_users', JSON.stringify([]));
+                // Initialize users database
+                if (!localStorage.getItem('binga_marketplace_users')) {
+                    // Create default admin user
+                    const defaultUsers = [
+                        {
+                            id: 1,
+                            username: 'Munkuli$1996',
+                            password: 'PickGod',
+                            name: 'Administrator',
+                            phone: '+263771234567',
+                            email: 'admin@bingamarket.co.zw',
+                            location: 'Binga Centre',
+                            type: 'admin',
+                            registered: new Date().toISOString(),
+                            products: [],
+                            rating: 5.0
+                        }
+                    ];
+                    localStorage.setItem('binga_marketplace_users', JSON.stringify(defaultUsers));
                 }
-                if (!localStorage.getItem('binga_products')) {
-                    localStorage.setItem('binga_products', JSON.stringify([]));
+                
+                // Initialize products database
+                if (!localStorage.getItem('binga_marketplace_products')) {
+                    // Create sample products
+                    const sampleProducts = [
+                        {
+                            id: 1,
+                            title: 'Fresh Kapenta - 20kg',
+                            description: 'Sun-dried kapenta from Lake Kariba. High quality, perfect for restaurants.',
+                            category: 'fish',
+                            price: 80,
+                            location: 'Siachilaba',
+                            sellerId: 2,
+                            sellerName: 'John Fisherman',
+                            sellerPhone: '+263772223344',
+                            images: [],
+                            status: 'active',
+                            verified: true,
+                            views: 124,
+                            createdAt: '2024-03-10T10:00:00Z',
+                            whatsappLink: 'https://wa.me/263772223344?text=Hi! I saw your Fresh Kapenta - 20kg on Binga Marketplace'
+                        },
+                        {
+                            id: 2,
+                            title: 'Healthy Goats - 3 Available',
+                            description: '1-year old male goats. Good for breeding or meat. Vaccinated.',
+                            category: 'goat',
+                            price: 120,
+                            location: 'Kariyangwe',
+                            sellerId: 3,
+                            sellerName: 'Mary Farmer',
+                            sellerPhone: '+263773334455',
+                            images: [],
+                            status: 'active',
+                            verified: true,
+                            views: 89,
+                            createdAt: '2024-03-12T14:30:00Z',
+                            whatsappLink: 'https://wa.me/263773334455?text=Hi! I saw your Healthy Goats - 3 Available on Binga Marketplace'
+                        },
+                        {
+                            id: 3,
+                            title: 'Lake Bream - Fresh Catch',
+                            description: 'Fresh bream caught today. 2-3kg each. Perfect for grilling.',
+                            category: 'fish',
+                            price: 15,
+                            location: 'Binga Centre',
+                            sellerId: 4,
+                            sellerName: 'David Fisher',
+                            sellerPhone: '+263774445566',
+                            images: [],
+                            status: 'active',
+                            verified: false,
+                            views: 45,
+                            createdAt: '2024-03-15T08:15:00Z',
+                            whatsappLink: 'https://wa.me/263774445566?text=Hi! I saw your Lake Bream - Fresh Catch on Binga Marketplace'
+                        },
+                        {
+                            id: 4,
+                            title: 'Fertilizer - 50kg bag',
+                            description: 'Compound D fertilizer. Perfect for maize farming.',
+                            category: 'agriculture',
+                            price: 35,
+                            location: 'Siachilaba',
+                            sellerId: 5,
+                            sellerName: 'Agricultural Supplies',
+                            sellerPhone: '+263775556677',
+                            images: [],
+                            status: 'active',
+                            verified: true,
+                            views: 67,
+                            createdAt: '2024-03-14T11:20:00Z',
+                            whatsappLink: 'https://wa.me/263775556677?text=Hi! I saw your Fertilizer - 50kg bag on Binga Marketplace'
+                        }
+                    ];
+                    localStorage.setItem('binga_marketplace_products', JSON.stringify(sampleProducts));
                 }
-                if (!localStorage.getItem('binga_activity')) {
-                    localStorage.setItem('binga_activity', JSON.stringify([]));
+                
+                // Initialize categories
+                if (!localStorage.getItem('binga_marketplace_categories')) {
+                    const categories = [
+                        {id: 'fish', name: 'Fish & Seafood', count: 45, icon: '🐟'},
+                        {id: 'goat', name: 'Goats', count: 32, icon: '🐐'},
+                        {id: 'cow', name: 'Cattle', count: 18, icon: '🐄'},
+                        {id: 'poultry', name: 'Poultry', count: 27, icon: '🐓'},
+                        {id: 'agriculture', name: 'Agriculture', count: 39, icon: '🌾'},
+                        {id: 'services', name: 'Services', count: 52, icon: '🔧'},
+                        {id: 'property', name: 'Property', count: 23, icon: '🏠'},
+                        {id: 'vehicles', name: 'Vehicles', count: 15, icon: '🚗'}
+                    ];
+                    localStorage.setItem('binga_marketplace_categories', JSON.stringify(categories));
+                }
+                
+                // Initialize locations
+                if (!localStorage.getItem('binga_marketplace_locations')) {
+                    const locations = [
+                        {id: 'Siachilaba', name: 'Siachilaba', count: 42},
+                        {id: 'Kariyangwe', name: 'Kariyangwe', count: 38},
+                        {id: 'Binga Centre', name: 'Binga Centre', count: 67},
+                        {id: 'Chete Island', name: 'Chete Island', count: 15},
+                        {id: 'Other', name: 'Other Areas', count: 23}
+                    ];
+                    localStorage.setItem('binga_marketplace_locations', JSON.stringify(locations));
                 }
             },
             
             // User operations
             users: {
-                add: function(user) {
-                    const users = JSON.parse(localStorage.getItem('binga_users'));
-                    users.push(user);
-                    localStorage.setItem('binga_users', JSON.stringify(users));
-                    return user;
+                getAll: function() {
+                    return JSON.parse(localStorage.getItem('binga_marketplace_users')) || [];
                 },
                 
-                getAll: function() {
-                    return JSON.parse(localStorage.getItem('binga_users'));
+                add: function(user) {
+                    const users = this.getAll();
+                    const newUser = {
+                        id: Date.now(),
+                        ...user,
+                        registered: new Date().toISOString(),
+                        products: [],
+                        rating: 0
+                    };
+                    users.push(newUser);
+                    localStorage.setItem('binga_marketplace_users', JSON.stringify(users));
+                    return newUser;
                 },
                 
                 find: function(username) {
-                    const users = JSON.parse(localStorage.getItem('binga_users'));
+                    const users = this.getAll();
                     return users.find(u => u.username === username);
+                },
+                
+                findById: function(id) {
+                    const users = this.getAll();
+                    return users.find(u => u.id === id);
+                },
+                
+                update: function(id, updates) {
+                    const users = this.getAll();
+                    const index = users.findIndex(u => u.id === id);
+                    if (index !== -1) {
+                        users[index] = {...users[index], ...updates};
+                        localStorage.setItem('binga_marketplace_users', JSON.stringify(users));
+                    }
                 }
             },
             
             // Product operations
             products: {
-                add: function(product) {
-                    const products = JSON.parse(localStorage.getItem('binga_products'));
-                    products.push(product);
-                    localStorage.setItem('binga_products', JSON.stringify(products));
-                    return product;
+                getAll: function() {
+                    return JSON.parse(localStorage.getItem('binga_marketplace_products')) || [];
                 },
                 
-                getAll: function() {
-                    return JSON.parse(localStorage.getItem('binga_products'));
+                getActive: function() {
+                    return this.getAll().filter(p => p.status === 'active');
+                },
+                
+                getByCategory: function(category) {
+                    return this.getActive().filter(p => p.category === category);
+                },
+                
+                getBySeller: function(sellerId) {
+                    return this.getAll().filter(p => p.sellerId === sellerId);
+                },
+                
+                add: function(product) {
+                    const products = this.getAll();
+                    const newProduct = {
+                        id: Date.now(),
+                        ...product,
+                        views: 0,
+                        status: 'pending', // pending, active, sold, removed
+                        verified: false,
+                        createdAt: new Date().toISOString()
+                    };
+                    products.push(newProduct);
+                    localStorage.setItem('binga_marketplace_products', JSON.stringify(products));
+                    return newProduct;
                 },
                 
                 update: function(id, updates) {
-                    const products = JSON.parse(localStorage.getItem('binga_products'));
+                    const products = this.getAll();
                     const index = products.findIndex(p => p.id === id);
                     if (index !== -1) {
                         products[index] = {...products[index], ...updates};
-                        localStorage.setItem('binga_products', JSON.stringify(products));
+                        localStorage.setItem('binga_marketplace_products', JSON.stringify(products));
                     }
                 },
                 
                 delete: function(id) {
-                    const products = JSON.parse(localStorage.getItem('binga_products'));
+                    const products = this.getAll();
                     const filtered = products.filter(p => p.id !== id);
-                    localStorage.setItem('binga_products', JSON.stringify(filtered));
+                    localStorage.setItem('binga_marketplace_products', JSON.stringify(filtered));
                 }
             },
             
-            // Activity log
-            activity: {
-                log: function(action, user) {
-                    const activities = JSON.parse(localStorage.getItem('binga_activity'));
-                    activities.unshift({
-                        id: Date.now(),
-                        action: action,
-                        user: user,
-                        timestamp: new Date().toLocaleString()
-                    });
-                    // Keep only last 50 activities
-                    if (activities.length > 50) activities.pop();
-                    localStorage.setItem('binga_activity', JSON.stringify(activities));
-                },
-                
+            // Category operations
+            categories: {
                 getAll: function() {
-                    return JSON.parse(localStorage.getItem('binga_activity'));
+                    return JSON.parse(localStorage.getItem('binga_marketplace_categories')) || [];
+                }
+            },
+            
+            // Location operations
+            locations: {
+                getAll: function() {
+                    return JSON.parse(localStorage.getItem('binga_marketplace_locations')) || [];
                 }
             }
         };
         
         // Initialize database
-        DB.init();
+        BINGA_MARKETPLACE_DB.init();
         
         // Current user state
         let currentUser = null;
-        let currentUserType = null;
+        
+        // Initialize the application
+        function initApp() {
+            // Check if user is already logged in
+            const savedUser = localStorage.getItem('binga_current_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateAuthUI();
+            } else {
+                showAuthButtons();
+            }
+            
+            // Load marketplace data
+            loadMarketplace();
+            loadCategories();
+            loadLocations();
+            
+            // Set active navigation
+            setActiveNav('home');
+        }
+        
+        // Show auth buttons (login/register)
+        function showAuthButtons() {
+            document.getElementById('authButtons').innerHTML = `
+                <button class="auth-btn login" onclick="openAuthModal()">Login</button>
+                <button class="auth-btn register" onclick="openAuthModal('register')">Register</button>
+            `;
+            document.getElementById('userMenu').style.display = 'none';
+        }
+        
+        // Update auth UI after login
+        function updateAuthUI() {
+            if (currentUser) {
+                document.getElementById('authButtons').style.display = 'none';
+                document.getElementById('userMenu').style.display = 'flex';
+                
+                // Set user info
+                document.getElementById('userName').textContent = currentUser.name;
+                document.getElementById('userAvatar').textContent = 
+                    currentUser.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                
+                // Update user dashboard if visible
+                if (document.getElementById('dashboardSection').style.display !== 'none') {
+                    loadUserDashboard();
+                }
+            } else {
+                showAuthButtons();
+            }
+        }
+        
+        // Open auth modal
+        function openAuthModal(form = 'login') {
+            document.getElementById('authModal').style.display = 'flex';
+            showAuthForm(form);
+        }
+        
+        // Close auth modal
+        function closeAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+        }
+        
+        // Show login or register form
+        function showAuthForm(form) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const tabs = document.querySelectorAll('.auth-tab');
+            
+            if (form === 'login') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                tabs[0].classList.remove('active');
+                tabs[1].classList.add('active');
+            }
+        }
         
         // Login function
         function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const userType = document.querySelector('input[name="userType"]:checked').value;
+            const emailOrPhone = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
             
-            // Check admin credentials
-            if (userType === 'admin' && username === 'Munkuli$1996' && password === 'PickGod') {
-                currentUser = {
-                    username: username,
-                    name: 'Administrator',
-                    type: 'admin',
-                    phone: '+263 77 123 4567'
-                };
-                currentUserType = 'admin';
-                
-                // Check if admin user exists in DB, if not create
-                let adminUser = DB.users.find(username);
-                if (!adminUser) {
-                    adminUser = DB.users.add({
-                        username: username,
-                        name: 'Administrator',
-                        type: 'admin',
-                        phone: '+263 77 123 4567',
-                        registered: new Date().toISOString()
-                    });
-                }
-                
-                // Log activity
-                DB.activity.log('Admin logged in', username);
-                
-                // Show app
-                showApp();
-            } 
-            // Regular user login (simplified for demo - in production would have proper registration)
-            else if (userType === 'fisherman') {
-                currentUser = {
-                    username: username,
-                    name: username,
-                    type: 'fisherman',
-                    phone: '+263 77 000 0000' // Default, will be updated when adding product
-                };
-                currentUserType = 'fisherman';
-                
-                // Check if user exists in DB, if not create
-                let user = DB.users.find(username);
-                if (!user) {
-                    user = DB.users.add({
-                        username: username,
-                        name: username,
-                        type: 'fisherman',
-                        phone: '+263 77 000 0000',
-                        registered: new Date().toISOString()
-                    });
-                }
-                
-                // Log activity
-                DB.activity.log('User logged in', username);
-                
-                // Show app
-                showApp();
-            } else {
-                alert('Invalid credentials!');
-                return;
-            }
-        }
-        
-        // Show main application
-        function showApp() {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('appContainer').style.display = 'block';
-            document.getElementById('currentUser').textContent = currentUser.name;
-            document.getElementById('userRoleDisplay').textContent = currentUserType === 'admin' ? 'Administrator Control Panel' : 'Fisherman/Livestock Seller';
-            
-            // Show/hide tabs based on user type
-            if (currentUserType === 'admin') {
-                document.getElementById('addProductTab').style.display = 'none';
-                document.getElementById('myProductsTab').style.display = 'none';
-                document.getElementById('marketplaceTab').style.display = 'block';
-                document.getElementById('adminPanelTab').style.display = 'block';
-                switchTab('adminPanel');
-            } else {
-                document.getElementById('addProductTab').style.display = 'block';
-                document.getElementById('myProductsTab').style.display = 'block';
-                document.getElementById('marketplaceTab').style.display = 'block';
-                document.getElementById('adminPanelTab').style.display = 'none';
-                switchTab('dashboard');
-            }
-            
-            // Load data
-            updateDashboard();
-            loadMyProducts();
-            loadMarketplace();
-        }
-        
-        // Switch between tabs
-        function switchTab(tabName) {
-            // Update active tab
-            document.querySelectorAll('.nav-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.content-area').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            // Activate selected tab
-            event.target.classList.add('active');
-            document.getElementById(tabName).classList.add('active');
-            
-            // Refresh data if needed
-            if (tabName === 'dashboard') updateDashboard();
-            if (tabName === 'myProducts') loadMyProducts();
-            if (tabName === 'marketplace') loadMarketplace();
-            if (tabName === 'adminPanel') showPendingVerifications();
-        }
-        
-        // Update product form based on type
-        function updateProductForm() {
-            const type = document.getElementById('productType').value;
-            const label = document.getElementById('productNameLabel');
-            
-            switch(type) {
-                case 'fish':
-                    label.textContent = 'Fish Name/Species';
-                    break;
-                case 'goat':
-                    label.textContent = 'Goat Breed/Description';
-                    break;
-                case 'cow':
-                    label.textContent = 'Cattle Breed/Description';
-                    break;
-                case 'chicken':
-                    label.textContent = 'Poultry Type';
-                    break;
-                case 'sheep':
-                    label.textContent = 'Sheep Breed/Description';
-                    break;
-                default:
-                    label.textContent = 'Product Name';
-            }
-        }
-        
-        // Preview uploaded image
-        function previewImage(event) {
-            const file = event.target.files[0];
-            const preview = document.getElementById('imagePreview');
-            
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.innerHTML = `
-                        <img src="${e.target.result}" style="max-width: 200px; border-radius: 10px; margin: 10px 0;">
-                        <br><small>Image ready for upload</small>
-                    `;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-        
-        // Add new product
-        function addProduct() {
-            const type = document.getElementById('productType').value;
-            const name = document.getElementById('productName').value;
-            const quantity = document.getElementById('productQuantity').value;
-            const price = document.getElementById('productPrice').value;
-            const description = document.getElementById('productDescription').value;
-            const phone = document.getElementById('sellerPhone').value;
-            const location = document.getElementById('productLocation').value;
-            
-            if (!name || !quantity || !price || !phone) {
-                alert('Please fill all required fields!');
+            if (!emailOrPhone || !password) {
+                alert('Please enter email/phone and password');
                 return;
             }
             
-            // Generate product ID
-            const productId = 'PROD-' + Date.now();
+            // Find user
+            const users = BINGA_MARKETPLACE_DB.users.getAll();
+            const user = users.find(u => 
+                (u.email === emailOrPhone || u.phone === emailOrPhone || u.username === emailOrPhone) && 
+                u.password === password
+            );
             
-            // Get image data if uploaded
-            let imageData = '';
-            const fileInput = document.getElementById('imageUpload');
-            if (fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imageData = e.target.result;
-                    saveProduct(productId, type, name, quantity, price, description, phone, location, imageData);
-                };
-                reader.readAsDataURL(fileInput.files[0]);
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('binga_current_user', JSON.stringify(user));
+                updateAuthUI();
+                closeAuthModal();
+                
+                // Clear form
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
+                
+                // Show success message
+                showAlert('Login successful!', 'success');
             } else {
-                saveProduct(productId, type, name, quantity, price, description, phone, location, '');
+                alert('Invalid email/phone or password');
             }
         }
         
-        // Save product to database
-        function saveProduct(id, type, name, quantity, price, description, phone, location, image) {
-            const product = {
-                id: id,
-                type: type,
+        // Register function
+        function register() {
+            const name = document.getElementById('registerName').value;
+            const phone = document.getElementById('registerPhone').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const location = document.getElementById('registerLocation').value;
+            
+            if (!name || !phone || !password || !location) {
+                alert('Please fill all required fields');
+                return;
+            }
+            
+            // Check if user already exists
+            const users = BINGA_MARKETPLACE_DB.users.getAll();
+            if (users.find(u => u.phone === phone)) {
+                alert('Phone number already registered');
+                return;
+            }
+            
+            // Create username from phone
+            const username = 'user' + phone.replace(/\D/g, '').slice(-6);
+            
+            // Add new user
+            const newUser = BINGA_MARKETPLACE_DB.users.add({
+                username: username,
+                password: password,
                 name: name,
-                quantity: quantity,
-                price: parseFloat(price),
-                description: description,
-                sellerPhone: phone,
-                sellerName: currentUser.name,
-                sellerUsername: currentUser.username,
+                phone: phone,
+                email: email || '',
                 location: location,
-                image: image,
-                status: 'pending', // pending, verified, rejected
-                verifiedBy: null,
-                verificationDate: null,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-            };
+                type: 'user'
+            });
             
-            DB.products.add(product);
-            
-            // Update user's phone number if provided
-            if (phone && currentUserType === 'fisherman') {
-                const users = JSON.parse(localStorage.getItem('binga_users'));
-                const userIndex = users.findIndex(u => u.username === currentUser.username);
-                if (userIndex !== -1) {
-                    users[userIndex].phone = phone;
-                    localStorage.setItem('binga_users', JSON.stringify(users));
-                }
-            }
-            
-            // Log activity
-            DB.activity.log(`Added new ${type}: ${name}`, currentUser.username);
+            currentUser = newUser;
+            localStorage.setItem('binga_current_user', JSON.stringify(newUser));
+            updateAuthUI();
+            closeAuthModal();
             
             // Clear form
-            document.getElementById('productName').value = '';
-            document.getElementById('productQuantity').value = '';
-            document.getElementById('productPrice').value = '';
-            document.getElementById('productDescription').value = '';
-            document.getElementById('productLocation').value = '';
-            document.getElementById('imageUpload').value = '';
-            document.getElementById('imagePreview').innerHTML = '';
+            document.getElementById('registerName').value = '';
+            document.getElementById('registerPhone').value = '';
+            document.getElementById('registerEmail').value = '';
+            document.getElementById('registerPassword').value = '';
             
-            alert('✅ Product submitted! Waiting for admin verification.');
-            switchTab('myProducts');
-            loadMyProducts();
-            updateDashboard();
+            // Show success message
+            showAlert('Registration successful! You can now post ads.', 'success');
         }
         
-        // Load user's products
-        function loadMyProducts() {
-            const container = document.getElementById('myProductsList');
-            const products = DB.products.getAll();
-            const userProducts = products.filter(p => p.sellerUsername === currentUser.username);
-            
-            if (userProducts.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 40px; grid-column: 1 / -1;">
-                        <div style="font-size: 60px;">📦</div>
-                        <h3>No products yet</h3>
-                        <p>Add your first product to start selling!</p>
-                        <button onclick="switchTab('addProduct')" class="submit-btn" style="background: var(--accent); max-width: 300px; margin: 20px auto;">
-                            ➕ Add Your First Product
-                        </button>
-                    </div>
-                `;
-                return;
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                currentUser = null;
+                localStorage.removeItem('binga_current_user');
+                showAuthButtons();
+                showSection('home');
+                showAlert('Logged out successfully', 'success');
             }
-            
-            container.innerHTML = userProducts.map(product => `
-                <div class="product-card">
-                    <div class="product-image">
-                        ${product.image ? 
-                            `<img src="${product.image}" style="width: 100%; height: 100%; object-fit: cover;" onclick="viewImage('${product.image}')">` : 
-                            getProductIcon(product.type)
-                        }
-                        <div class="verification-badge ${product.status === 'verified' ? 'verified' : ''}">
-                            ${product.status === 'verified' ? '✓ Verified' : '⏳ Pending'}
-                        </div>
-                    </div>
-                    <div class="product-details">
-                        <div class="product-name">${product.name}</div>
-                        <div style="color: #666; font-size: 14px; margin: 5px 0;">
-                            ${product.quantity} • ${product.location}
-                        </div>
-                        <div class="product-price">$${product.price.toFixed(2)}</div>
-                        <p style="color: #666; font-size: 14px; margin: 10px 0;">${product.description}</p>
-                        
-                        ${product.status === 'verified' ? `
-                            <a href="https://wa.me/${product.sellerPhone.replace(/[^0-9]/g, '')}?text=Hi! I'm interested in your ${product.name} on Binga Marketplace" 
-                               target="_blank" class="whatsapp-btn">
-                               📱 Contact via WhatsApp
-                            </a>
-                        ` : ''}
-                        
-                        <div style="margin-top: 15px; font-size: 12px; color: #999;">
-                            Added: ${new Date(product.createdAt).toLocaleDateString()}
-                        </div>
-                    </div>
-                </div>
-            `).join('');
         }
         
-        // Load marketplace products (verified only)
+        // Load marketplace products
         function loadMarketplace() {
-            const container = document.getElementById('marketplaceProducts');
-            const products = DB.products.getAll();
-            const verifiedProducts = products.filter(p => p.status === 'verified');
+            const products = BINGA_MARKETPLACE_DB.products.getActive();
             
-            if (verifiedProducts.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 40px; grid-column: 1 / -1;">
-                        <div style="font-size: 60px;">🏪</div>
-                        <h3>Marketplace is empty</h3>
-                        <p>No verified products available yet. Check back soon!</p>
-                    </div>
-                `;
-                return;
-            }
+            // Sort by date (newest first)
+            products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             
-            container.innerHTML = verifiedProducts.map(product => `
+            // Featured products (verified and popular)
+            const featuredProducts = products.filter(p => p.verified).slice(0, 8);
+            const recentProducts = products.slice(0, 12);
+            
+            // Display featured products
+            const featuredContainer = document.getElementById('featuredProducts');
+            featuredContainer.innerHTML = featuredProducts.length > 0 ? 
+                featuredProducts.map(product => renderProductCard(product)).join('') :
+                '<div class="no-products">No featured products available</div>';
+            
+            // Display recent products
+            const recentContainer = document.getElementById('recentProducts');
+            recentContainer.innerHTML = recentProducts.length > 0 ? 
+                recentProducts.map(product => renderProductCard(product)).join('') :
+                '<div class="no-products">No products available. Be the first to post!</div>';
+        }
+        
+        // Render product card
+        function renderProductCard(product) {
+            const categoryIcons = {
+                'fish': '🐟',
+                'goat': '🐐',
+                'cow': '🐄',
+                'poultry': '🐓',
+                'agriculture': '🌾',
+                'services': '🔧',
+                'property': '🏠',
+                'vehicles': '🚗'
+            };
+            
+            const icon = categoryIcons[product.category] || '📦';
+            
+            return `
                 <div class="product-card">
                     <div class="product-image">
-                        ${product.image ? 
-                            `<img src="${product.image}" style="width: 100%; height: 100%; object-fit: cover;" onclick="viewImage('${product.image}')">` : 
-                            getProductIcon(product.type)
-                        }
-                        <div class="verification-badge verified">
-                            ✓ Verified
-                        </div>
+                        ${icon}
+                        <div class="product-price">$${product.price}</div>
                     </div>
                     <div class="product-details">
-                        <div class="product-name">${product.name}</div>
-                        <div style="color: #666; font-size: 14px; margin: 5px 0;">
-                            ${product.quantity} • ${product.location}
+                        <h3 class="product-title">
+                            ${product.title}
+                            ${product.verified ? '<span class="verified-badge">✓ Verified</span>' : ''}
+                        </h3>
+                        <p class="product-meta">${product.description.substring(0, 60)}...</p>
+                        <div class="product-location">
+                            <i class="fas fa-map-marker-alt"></i> ${product.location}
                         </div>
-                        <div class="product-price">$${product.price.toFixed(2)}</div>
-                        <p style="color: #666; font-size: 14px; margin: 10px 0;">${product.description}</p>
-                        
-                        <a href="https://wa.me/${product.sellerPhone.replace(/[^0-9]/g, '')}?text=Hi! I'm interested in your ${product.name} on Binga Marketplace. Price: $${product.price}. Quantity: ${product.quantity}" 
-                           target="_blank" class="whatsapp-btn">
-                           📱 Contact Seller on WhatsApp
+                        <a href="${product.whatsappLink}" target="_blank" class="whatsapp-btn">
+                            <i class="fab fa-whatsapp"></i> Contact Seller
                         </a>
-                        
-                        <div style="margin-top: 15px; font-size: 12px; color: #999;">
-                            Seller: ${product.sellerName}
-                        </div>
                     </div>
                 </div>
+            `;
+        }
+        
+        // Load categories
+        function loadCategories() {
+            const categories = BINGA_MARKETPLACE_DB.categories.getAll();
+            const container = document.getElementById('categoryList');
+            
+            container.innerHTML = categories.map(cat => `
+                <li class="category-item">
+                    <a href="#" onclick="showCategory('${cat.id}')">
+                        ${cat.icon} ${cat.name}
+                        <span class="category-count">${cat.count}</span>
+                    </a>
+                </li>
             `).join('');
+        }
+        
+        // Load locations
+        function loadLocations() {
+            const locations = BINGA_MARKETPLACE_DB.locations.getAll();
+            const container = document.getElementById('locationList');
+            
+            container.innerHTML = locations.map(loc => `
+                <li class="location-item">
+                    <a href="#" onclick="showLocation('${loc.id}')">
+                        ${loc.name}
+                        <span class="location-count">${loc.count}</span>
+                    </a>
+                </li>
+            `).join('');
+        }
+        
+        // Show section (home, fish, livestock, etc.)
+        function showSection(section) {
+            // Hide all sections
+            document.getElementById('homeSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('postAdSection').style.display = 'none';
+            
+            // Show selected section
+            if (section === 'home') {
+                document.getElementById('homeSection').style.display = 'block';
+                loadMarketplace();
+            } else if (section === 'dashboard') {
+                if (!currentUser) {
+                    openAuthModal();
+                    return;
+                }
+                document.getElementById('dashboardSection').style.display = 'block';
+                loadUserDashboard();
+            } else if (section === 'admin') {
+                if (!currentUser || currentUser.type !== 'admin') {
+                    alert('Admin access required');
+                    return;
+                }
+                document.getElementById('adminSection').style.display = 'block';
+                showAdminTab('pending');
+            } else {
+                // For category sections, filter products
+                document.getElementById('homeSection').style.display = 'block';
+                filterProductsByCategory(section);
+            }
+            
+            // Update active nav
+            setActiveNav(section);
+        }
+        
+        // Set active navigation
+        function setActiveNav(section) {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Find and activate the correct nav link
+            const navLinks = document.querySelectorAll('.nav-link');
+            for (let link of navLinks) {
+                if (link.textContent.toLowerCase().includes(section.toLowerCase()) || 
+                    (section === 'home' && link.classList.contains('active'))) {
+                    link.classList.add('active');
+                    break;
+                }
+            }
+        }
+        
+        // Filter products by category
+        function filterProductsByCategory(category) {
+            const products = BINGA_MARKETPLACE_DB.products.getByCategory(category);
+            const container = document.getElementById('recentProducts');
+            
+            if (products.length > 0) {
+                container.innerHTML = products.map(product => renderProductCard(product)).join('');
+                
+                // Update section title
+                const categoryNames = {
+                    'fish': 'Fish & Seafood',
+                    'goat': 'Goats',
+                    'cow': 'Cattle',
+                    'poultry': 'Poultry',
+                    'agriculture': 'Agricultural Products',
+                    'services': 'Services',
+                    'property': 'Property',
+                    'vehicles': 'Vehicles'
+                };
+                
+                document.querySelector('#homeSection .section-title').innerHTML = `
+                    <i class="fas fa-tag"></i> ${categoryNames[category] || category}
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="no-products">
+                        <h3>No products in this category</h3>
+                        <p>Be the first to post in this category!</p>
+                        ${currentUser ? 
+                            `<button class="btn btn-primary" onclick="showPostAdForm()" style="margin-top: 15px;">
+                                <i class="fas fa-plus-circle"></i> Post an Ad
+                            </button>` : 
+                            `<button class="btn btn-primary" onclick="openAuthModal()" style="margin-top: 15px;">
+                                <i class="fas fa-user-plus"></i> Register to Post
+                            </button>`
+                        }
+                    </div>
+                `;
+            }
+        }
+        
+        // Show category
+        function showCategory(categoryId) {
+            showSection('home');
+            filterProductsByCategory(categoryId);
+            setActiveNav(categoryId);
+        }
+        
+        // Show location
+        function showLocation(locationId) {
+            const products = BINGA_MARKETPLACE_DB.products.getActive()
+                .filter(p => p.location === locationId);
+            
+            const container = document.getElementById('recentProducts');
+            
+            if (products.length > 0) {
+                container.innerHTML = products.map(product => renderProductCard(product)).join('');
+                
+                // Update section title
+                document.querySelector('#homeSection .section-title').innerHTML = `
+                    <i class="fas fa-map-marker-alt"></i> Products in ${locationId}
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="no-products">
+                        <h3>No products in ${locationId}</h3>
+                        <p>Be the first to post in this location!</p>
+                    </div>
+                `;
+            }
         }
         
         // Search products
         function searchProducts() {
-            const searchTerm = document.getElementById('searchProducts').value.toLowerCase();
-            const products = DB.products.getAll();
-            const verifiedProducts = products.filter(p => p.status === 'verified');
-            const filteredProducts = verifiedProducts.filter(p => 
-                p.name.toLowerCase().includes(searchTerm) ||
-                p.description.toLowerCase().includes(searchTerm) ||
-                p.type.toLowerCase().includes(searchTerm) ||
-                p.location.toLowerCase().includes(searchTerm)
-            );
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categorySelect').value;
+            const location = document.getElementById('locationSelect').value;
             
-            const container = document.getElementById('marketplaceProducts');
-            if (filteredProducts.length === 0) {
+            let products = BINGA_MARKETPLACE_DB.products.getActive();
+            
+            // Filter by search query
+            if (query) {
+                products = products.filter(p => 
+                    p.title.toLowerCase().includes(query) || 
+                    p.description.toLowerCase().includes(query)
+                );
+            }
+            
+            // Filter by category
+            if (category) {
+                products = products.filter(p => p.category === category);
+            }
+            
+            // Filter by location
+            if (location) {
+                products = products.filter(p => p.location === location);
+            }
+            
+            // Display results
+            const container = document.getElementById('recentProducts');
+            
+            if (products.length > 0) {
+                container.innerHTML = products.map(product => renderProductCard(product)).join('');
+                
+                // Update section title
+                let title = 'Search Results';
+                if (query || category || location) {
+                    title = `${products.length} Product(s) Found`;
+                }
+                document.querySelector('#homeSection .section-title').innerHTML = `
+                    <i class="fas fa-search"></i> ${title}
+                `;
+            } else {
                 container.innerHTML = `
-                    <div style="text-align: center; padding: 40px; grid-column: 1 / -1;">
-                        <div style="font-size: 60px;">🔍</div>
+                    <div class="no-products">
                         <h3>No products found</h3>
-                        <p>Try different search terms</p>
+                        <p>Try different search terms or filters</p>
                     </div>
                 `;
+            }
+        }
+        
+        // Show post ad form
+        function showPostAdForm() {
+            if (!currentUser) {
+                openAuthModal();
                 return;
             }
             
-            container.innerHTML = filteredProducts.map(product => `
-                <div class="product-card">
-                    <div class="product-image">
-                        ${product.image ? 
-                            `<img src="${product.image}" style="width: 100%; height: 100%; object-fit: cover;" onclick="viewImage('${product.image}')">` : 
-                            getProductIcon(product.type)
-                        }
-                        <div class="verification-badge verified">
-                            ✓ Verified
-                        </div>
+            // Hide other sections
+            document.getElementById('homeSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('adminSection').style.display = 'none';
+            
+            // Show post ad section
+            document.getElementById('postAdSection').style.display = 'block';
+            
+            // Load post ad form
+            document.getElementById('postAdForm').innerHTML = `
+                <form id="adForm">
+                    <div class="form-group">
+                        <label class="form-label">Ad Title*</label>
+                        <input type="text" class="form-control" id="adTitle" placeholder="e.g., Fresh Kapenta - 20kg">
                     </div>
-                    <div class="product-details">
-                        <div class="product-name">${product.name}</div>
-                        <div style="color: #666; font-size: 14px; margin: 5px 0;">
-                            ${product.quantity} • ${product.location}
-                        </div>
-                        <div class="product-price">$${product.price.toFixed(2)}</div>
-                        <p style="color: #666; font-size: 14px; margin: 10px 0;">${product.description}</p>
-                        
-                        <a href="https://wa.me/${product.sellerPhone.replace(/[^0-9]/g, '')}?text=Hi! I'm interested in your ${product.name} on Binga Marketplace" 
-                           target="_blank" class="whatsapp-btn">
-                           📱 Contact via WhatsApp
-                        </a>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Category*</label>
+                        <select class="form-control" id="adCategory">
+                            <option value="">Select Category</option>
+                            <option value="fish">Fish & Seafood</option>
+                            <option value="goat">Goats</option>
+                            <option value="cow">Cattle</option>
+                            <option value="poultry">Poultry</option>
+                            <option value="agriculture">Agriculture</option>
+                            <option value="services">Services</option>
+                            <option value="property">Property</option>
+                            <option value="vehicles">Vehicles</option>
+                            <option value="other">Other</option>
+                        </select>
                     </div>
-                </div>
-            `).join('');
+                    
+                    <div class="form-group">
+                        <label class="form-label">Price (USD)*</label>
+                        <input type="number" class="form-control" id="adPrice" placeholder="e.g., 80">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Location in Binga*</label>
+                        <select class="form-control" id="adLocation">
+                            <option value="">Select Location</option>
+                            <option>Siachilaba</option>
+                            <option>Kariyangwe</option>
+                            <option>Binga Centre</option>
+                            <option>Chete Island</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Description*</label>
+                        <textarea class="form-control" id="adDescription" rows="4" placeholder="Describe your product or service..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Contact Phone*</label>
+                        <input type="tel" class="form-control" id="adPhone" value="${currentUser.phone}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Images (Optional)</label>
+                        <input type="file" class="form-control" id="adImages" multiple accept="image/*">
+                        <small>You can upload up to 4 images. Clear photos help sell faster.</small>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary" onclick="submitAd()" style="margin-top: 20px;">
+                        <i class="fas fa-paper-plane"></i> Submit Ad
+                    </button>
+                    
+                    <button type="button" class="btn" onclick="showSection('home')" style="margin-top: 20px; margin-left: 10px; background: #f0f0f0;">
+                        Cancel
+                    </button>
+                </form>
+            `;
         }
         
-        // Admin functions
-        function showPendingVerifications() {
-            const container = document.getElementById('adminContent');
-            const products = DB.products.getAll();
-            const pendingProducts = products.filter(p => p.status === 'pending');
+        // Submit ad
+        function submitAd() {
+            const title = document.getElementById('adTitle').value;
+            const category = document.getElementById('adCategory').value;
+            const price = document.getElementById('adPrice').value;
+            const location = document.getElementById('adLocation').value;
+            const description = document.getElementById('adDescription').value;
+            const phone = document.getElementById('adPhone').value;
             
-            if (pendingProducts.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 40px;">
-                        <div style="font-size: 60px;">✅</div>
-                        <h3>No pending verifications</h3>
-                        <p>All products are verified!</p>
-                    </div>
-                `;
+            if (!title || !category || !price || !location || !description || !phone) {
+                alert('Please fill all required fields');
                 return;
             }
             
-            let html = `
-                <h3>⚠️ Pending Product Verifications (${pendingProducts.length})</h3>
-                <div class="product-grid">
-            `;
+            // Create WhatsApp link
+            const whatsappLink = `https://wa.me/${phone.replace(/\D/g, '')}?text=Hi! I saw your ${title} on Binga Marketplace`;
             
-            pendingProducts.forEach(product => {
-                html += `
-                    <div class="product-card">
-                        <div class="product-image">
-                            ${product.image ? 
-                                `<img src="${product.image}" style="width: 100%; height: 100%; object-fit: cover;" onclick="viewImage('${product.image}')">` : 
-                                getProductIcon(product.type)
-                            }
-                            <div class="verification-badge">
-                                ⏳ Pending
-                            </div>
-                        </div>
-                        <div class="product-details">
-                            <div class="product-name">${product.name}</div>
-                            <div style="color: #666; font-size: 14px; margin: 5px 0;">
-                                Type: ${product.type} • ${product.quantity}
-                            </div>
-                            <div class="product-price">$${product.price.toFixed(2)}</div>
-                            <p style="color: #666; font-size: 14px; margin: 10px 0;">${product.description}</p>
-                            
-                            <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0;">
-                                <strong>Seller Info:</strong><br>
-                                Name: ${product.sellerName}<br>
-                                Phone: ${product.sellerPhone}<br>
-                                Location: ${product.location}
-                            </div>
-                            
-                            <div class="admin-controls">
-                                <button class="verify-btn" onclick="verifyProduct('${product.id}')">
-                                    ✅ Verify
-                                </button>
-                                <button class="reject-btn" onclick="rejectProduct('${product.id}')">
-                                    ❌ Reject
-                                </button>
-                            </div>
-                            
-                            <div style="margin-top: 15px; font-size: 12px; color: #999;">
-                                Submitted: ${new Date(product.createdAt).toLocaleString()}
-                            </div>
-                        </div>
-                    </div>
-                `;
+            // Add product
+            const product = BINGA_MARKETPLACE_DB.products.add({
+                title: title,
+                description: description,
+                category: category,
+                price: parseFloat(price),
+                location: location,
+                sellerId: currentUser.id,
+                sellerName: currentUser.name,
+                sellerPhone: phone,
+                whatsappLink: whatsappLink,
+                status: 'pending' // Will be reviewed by admin
             });
             
-            html += '</div>';
-            container.innerHTML = html;
-        }
-        
-        function showAllProducts() {
-            const container = document.getElementById('adminContent');
-            const products = DB.products.getAll();
-            
-            let html = `
-                <h3>📋 All Products (${products.length})</h3>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Product</th>
-                            <th>Seller</th>
-                            <th>Price</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            products.forEach(product => {
-                html += `
-                    <tr>
-                        <td>${product.id.substring(0, 8)}...</td>
-                        <td>${product.name}</td>
-                        <td>${product.sellerName}</td>
-                        <td>$${product.price.toFixed(2)}</td>
-                        <td class="status-${product.status}">${product.status}</td>
-                        <td>${new Date(product.createdAt).toLocaleDateString()}</td>
-                        <td>
-                            <button onclick="viewProduct('${product.id}')" style="background: var(--primary); color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px;">
-                                View
-                            </button>
-                            <button onclick="deleteProduct('${product.id}')" style="background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 3px;">
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            html += `
-                    </tbody>
-                </table>
-            `;
-            container.innerHTML = html;
-        }
-        
-        function showAllUsers() {
-            const container = document.getElementById('adminContent');
-            const users = DB.users.getAll();
-            
-            let html = `
-                <h3>👥 Registered Users (${users.length})</h3>
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Username</th>
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th>Phone</th>
-                            <th>Registered</th>
-                            <th>Products</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            const products = DB.products.getAll();
-            
-            users.forEach(user => {
-                const userProducts = products.filter(p => p.sellerUsername === user.username);
-                html += `
-                    <tr>
-                        <td>${user.username}</td>
-                        <td>${user.name}</td>
-                        <td>${user.type}</td>
-                        <td>${user.phone}</td>
-                        <td>${new Date(user.registered).toLocaleDateString()}</td>
-                        <td>${userProducts.length}</td>
-                    </tr>
-                `;
-            });
-            
-            html += `
-                    </tbody>
-                </table>
-            `;
-            container.innerHTML = html;
-        }
-        
-        // Verify product
-        function verifyProduct(productId) {
-            DB.products.update(productId, {
-                status: 'verified',
-                verifiedBy: currentUser.username,
-                verificationDate: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-            });
-            
-            const product = DB.products.getAll().find(p => p.id === productId);
-            DB.activity.log(`Verified product: ${product.name}`, currentUser.username);
-            
-            alert('Product verified successfully!');
-            showPendingVerifications();
-            updateDashboard();
-            loadMarketplace();
-        }
-        
-        // Reject product
-        function rejectProduct(productId) {
-            const reason = prompt('Enter rejection reason:');
-            if (reason) {
-                DB.products.update(productId, {
-                    status: 'rejected',
-                    rejectionReason: reason,
-                    verifiedBy: currentUser.username,
-                    verificationDate: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
-                });
-                
-                const product = DB.products.getAll().find(p => p.id === productId);
-                DB.activity.log(`Rejected product: ${product.name} (Reason: ${reason})`, currentUser.username);
-                
-                alert('Product rejected!');
-                showPendingVerifications();
-                updateDashboard();
+            // Update user's products
+            const users = BINGA_MARKETPLACE_DB.users.getAll();
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) {
+                users[userIndex].products.push(product.id);
+                localStorage.setItem('binga_marketplace_users', JSON.stringify(users));
+                currentUser = users[userIndex];
+                localStorage.setItem('binga_current_user', JSON.stringify(currentUser));
             }
+            
+            // Show success message
+            showAlert('Ad submitted successfully! It will be reviewed by admin before appearing on the marketplace.', 'success');
+            
+            // Clear form
+            document.getElementById('adTitle').value = '';
+            document.getElementById('adCategory').value = '';
+            document.getElementById('adPrice').value = '';
+            document.getElementById('adLocation').value = '';
+            document.getElementById('adDescription').value = '';
+            
+            // Go to dashboard
+            showSection('dashboard');
         }
         
-        // Delete product
-        function deleteProduct(productId) {
-            if (confirm('Are you sure you want to delete this product?')) {
-                const product = DB.products.getAll().find(p => p.id === productId);
-                DB.products.delete(productId);
-                DB.activity.log(`Deleted product: ${product.name}`, currentUser.username);
-                
-                alert('Product deleted!');
-                showAllProducts();
-                updateDashboard();
-            }
-        }
-        
-        // View product details
-        function viewProduct(productId) {
-            const product = DB.products.getAll().find(p => p.id === productId);
-            alert(`
-                Product Details:
-                Name: ${product.name}
-                Type: ${product.type}
-                Quantity: ${product.quantity}
-                Price: $${product.price}
-                Description: ${product.description}
-                Seller: ${product.sellerName}
-                Phone: ${product.sellerPhone}
-                Location: ${product.location}
-                Status: ${product.status}
-                Created: ${new Date(product.createdAt).toLocaleString()}
-                ${product.verifiedBy ? `Verified by: ${product.verifiedBy}` : ''}
-            `);
-        }
-        
-        // View image in modal
-        function viewImage(imageSrc) {
-            document.getElementById('modalImage').src = imageSrc;
-            document.getElementById('imageModal').style.display = 'flex';
-        }
-        
-        function closeModal() {
-            document.getElementById('imageModal').style.display = 'none';
-        }
-        
-        // Update dashboard statistics
-        function updateDashboard() {
-            const products = DB.products.getAll();
-            const users = DB.users.getAll();
-            const activities = DB.activity.getAll().slice(0, 10);
+        // Load user dashboard
+        function loadUserDashboard() {
+            if (!currentUser) return;
             
             // Update stats
-            document.getElementById('totalProducts').textContent = products.length;
-            document.getElementById('verifiedProducts').textContent = products.filter(p => p.status === 'verified').length;
-            document.getElementById('pendingVerification').textContent = products.filter(p => p.status === 'pending').length;
-            document.getElementById('totalUsers').textContent = users.length;
+            const myProducts = BINGA_MARKETPLACE_DB.products.getBySeller(currentUser.id);
+            const totalViews = myProducts.reduce((sum, p) => sum + (p.views || 0), 0);
             
-            // Update activity log
-            const activityContainer = document.getElementById('recentActivity');
-            activityContainer.innerHTML = activities.map(activity => `
-                <div style="padding: 10px; border-bottom: 1px solid #eee;">
-                    <strong>${activity.action}</strong>
-                    <div style="color: #666; font-size: 12px;">
-                        By ${activity.user} • ${activity.timestamp}
+            document.getElementById('myProductsCount').textContent = myProducts.length;
+            document.getElementById('myViewsCount').textContent = totalViews;
+            document.getElementById('myMessagesCount').textContent = '0'; // Would come from messages DB
+            document.getElementById('myRating').textContent = currentUser.rating || '0.0';
+            
+            // Load dashboard content
+            const container = document.getElementById('userDashboard');
+            
+            if (currentUser.type === 'admin') {
+                container.innerHTML = `
+                    <div style="display: flex; gap: 20px; margin-bottom: 30px;">
+                        <button class="btn btn-primary" onclick="showSection('admin')">
+                            <i class="fas fa-crown"></i> Admin Panel
+                        </button>
+                        <button class="btn" onclick="showPostAdForm()" style="background: var(--accent); color: white;">
+                            <i class="fas fa-plus-circle"></i> Post New Ad
+                        </button>
                     </div>
-                </div>
-            `).join('');
-        }
-        
-        // Refresh all data
-        function refreshData() {
-            updateDashboard();
-            loadMyProducts();
-            loadMarketplace();
-            alert('Data refreshed!');
-        }
-        
-        // Logout
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                DB.activity.log('User logged out', currentUser.username);
-                currentUser = null;
-                currentUserType = null;
-                document.getElementById('loginScreen').style.display = 'block';
-                document.getElementById('appContainer').style.display = 'none';
+                    
+                    <h3>My Products (${myProducts.length})</h3>
+                    ${myProducts.length > 0 ? 
+                        `<div class="products-grid" style="margin-top: 20px;">
+                            ${myProducts.map(p => renderProductCard(p)).join('')}
+                        </div>` :
+                        `<p>You haven't posted any ads yet. <a href="#" onclick="showPostAdForm()" style="color: var(--primary);">Post your first ad</a></p>`
+                    }
+                `;
+            } else {
+                container.innerHTML = `
+                    <div style="margin-bottom: 30px;">
+                        <button class="btn btn-primary" onclick="showPostAdForm()">
+                            <i class="fas fa-plus-circle"></i> Post New Ad
+                        </button>
+                    </div>
+                    
+                    <h3>My Products (${myProducts.length})</h3>
+                    ${myProducts.length > 0 ? 
+                        `<div class="products-grid" style="margin-top: 20px;">
+                            ${myProducts.map(p => `
+                                <div class="product-card">
+                                    <div class="product-image">
+                                        ${p.category === 'fish' ? '🐟' : p.category === 'goat' ? '🐐' : '📦'}
+                                        <div class="product-price">$${p.price}</div>
+                                    </div>
+                                    <div class="product-details">
+                                        <h3 class="product-title">${p.title}</h3>
+                                        <p class="product-meta">Status: <strong>${p.status}</strong></p>
+                                        <p class="product-meta">Views: ${p.views || 0}</p>
+                                        <div class="product-location">
+                                            <i class="fas fa-map-marker-alt"></i> ${p.location}
+                                        </div>
+                                        <div style="margin-top: 10px;">
+                                            <button class="btn" style="background: #f0f0f0; padding: 5px 10px; font-size: 12px;" onclick="editAd(${p.id})">Edit</button>
+                                            <button class="btn" style="background: #f8d7da; color: #721c24; padding: 5px 10px; font-size: 12px;" onclick="deleteAd(${p.id})">Delete</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>` :
+                        `<div class="no-products" style="padding: 30px;">
+                            <h3>You haven't posted any ads yet</h3>
+                            <p>Start selling by posting your first ad</p>
+                            <button class="btn btn-primary" onclick="showPostAdForm()" style="margin-top: 15px;">
+                                <i class="fas fa-plus-circle"></i> Post Your First Ad
+                            </button>
+                        </div>`
+                    }
+                `;
             }
         }
         
-        // Get product icon based on type
-        function getProductIcon(type) {
-            const icons = {
-                'fish': '🐟',
-                'goat': '🐐',
-                'cow': '🐄',
-                'chicken': '🐓',
-                'sheep': '🐑',
-                'other': '📦'
-            };
-            return icons[type] || '📦';
+        // Show admin tab
+        function showAdminTab(tab) {
+            // Update active tab
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const container = document.getElementById('adminContent');
+            
+            if (tab === 'pending') {
+                const pendingProducts = BINGA_MARKETPLACE_DB.products.getAll()
+                    .filter(p => p.status === 'pending');
+                
+                container.innerHTML = `
+                    <h3>Pending Ads (${pendingProducts.length})</h3>
+                    ${pendingProducts.length > 0 ? 
+                        `<div class="products-grid" style="margin-top: 20px;">
+                            ${pendingProducts.map(p => `
+                                <div class="product-card">
+                                    <div class="product-image">
+                                        ${p.category === 'fish' ? '🐟' : p.category === 'goat' ? '🐐' : '📦'}
+                                        <div class="product-price">$${p.price}</div>
+                                    </div>
+                                    <div class="product-details">
+                                        <h3 class="product-title">${p.title}</h3>
+                                        <p class="product-meta">${p.description.substring(0, 60)}...</p>
+                                        <p class="product-meta">Seller: ${p.sellerName} (${p.sellerPhone})</p>
+                                        <div class="product-location">
+                                            <i class="fas fa-map-marker-alt"></i> ${p.location}
+                                        </div>
+                                        <div style="margin-top: 10px; display: flex; gap: 10px;">
+                                            <button class="btn" style="background: var(--accent); color: white; padding: 5px 15px;" onclick="approveAd(${p.id})">Approve</button>
+                                            <button class="btn" style="background: var(--danger); color: white; padding: 5px 15px;" onclick="rejectAd(${p.id})">Reject</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>` :
+                        `<p>No pending ads to review</p>`
+                    }
+                `;
+            } else if (tab === 'users') {
+                const users = BINGA_MARKETPLACE_DB.users.getAll();
+                
+                container.innerHTML = `
+                    <h3>Registered Users (${users.length})</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                        <thead>
+                            <tr style="background: #f8f9fa;">
+                                <th style="padding: 12px; text-align: left;">Name</th>
+                                <th style="padding: 12px; text-align: left;">Phone</th>
+                                <th style="padding: 12px; text-align: left;">Type</th>
+                                <th style="padding: 12px; text-align: left;">Products</th>
+                                <th style="padding: 12px; text-align: left;">Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${users.map(u => `
+                                <tr style="border-bottom: 1px solid #eee;">
+                                    <td style="padding: 12px;">${u.name} ${u.type === 'admin' ? '<span style="background: gold; padding: 2px 8px; border-radius: 10px; font-size: 11px;">Admin</span>' : ''}</td>
+                                    <td style="padding: 12px;">${u.phone}</td>
+                                    <td style="padding: 12px;">${u.type}</td>
+                                    <td style="padding: 12px;">${u.products ? u.products.length : 0}</td>
+                                    <td style="padding: 12px;">${new Date(u.registered).toLocaleDateString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
         }
         
-        // Initialize
-        window.onload = function() {
-            updateProductForm();
-        };
+        // Admin: Approve ad
+        function approveAd(productId) {
+            BINGA_MARKETPLACE_DB.products.update(productId, {
+                status: 'active',
+                verified: true
+            });
+            
+            showAlert('Ad approved successfully!', 'success');
+            showAdminTab('pending');
+        }
+        
+        // Admin: Reject ad
+        function rejectAd(productId) {
+            BINGA_MARKETPLACE_DB.products.update(productId, {
+                status: 'rejected'
+            });
+            
+            showAlert('Ad rejected', 'success');
+            showAdminTab('pending');
+        }
+        
+        // User: Edit ad
+        function editAd(productId) {
+            alert('Edit feature coming soon!');
+        }
+        
+        // User: Delete ad
+        function deleteAd(productId) {
+            if (confirm('Are you sure you want to delete this ad?')) {
+                BINGA_MARKETPLACE_DB.products.delete(productId);
+                showAlert('Ad deleted successfully', 'success');
+                loadUserDashboard();
+            }
+        }
+        
+        // Show alert
+        function showAlert(message, type) {
+            // Create alert element
+            const alertEl = document.createElement('div');
+            alertEl.className = `alert alert-${type}`;
+            alertEl.innerHTML = `
+                ${message}
+                <button onclick="this.parentElement.remove()" style="float: right; background: none; border: none; font-size: 20px; cursor: pointer;">×</button>
+            `;
+            
+            // Insert at top of main content
+            const mainContent = document.getElementById('mainContent');
+            mainContent.insertBefore(alertEl, mainContent.firstChild);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertEl.parentElement) {
+                    alertEl.remove();
+                }
+            }, 5000);
+        }
         
         // Close modal when clicking outside
         window.onclick = function(event) {
-            const modal = document.getElementById('imageModal');
-            if (event.target == modal) {
-                modal.style.display = "none";
+            const modal = document.getElementById('authModal');
+            if (event.target === modal) {
+                closeAuthModal();
             }
         };
+        
+        // Initialize app when page loads
+        window.onload = initApp;
     </script>
 </body>
 </html>
