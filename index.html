@@ -339,6 +339,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
+            margin-top: 20px;
         }
         
         .product-card {
@@ -639,6 +640,85 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+        
+        /* Welcome Message */
+        .welcome-message {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .welcome-message h2 {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+        
+        .welcome-message p {
+            font-size: 18px;
+            max-width: 800px;
+            margin: 0 auto 25px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .cta-button {
+            padding: 15px 30px;
+            background: white;
+            color: var(--primary);
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .cta-button.secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        /* How it works */
+        .how-it-works {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .step-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+        
+        .step-card h3 {
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
     </style>
 </head>
 <body>
@@ -708,6 +788,54 @@
     <div id="mainContent">
         <!-- Home/Marketplace Section (Default) -->
         <div id="homeSection">
+            <!-- Welcome Message -->
+            <div class="welcome-message">
+                <h2>Welcome to Binga Marketplace!</h2>
+                <p>The first digital marketplace for Binga community. Buy and sell fish, livestock, agricultural products, and services directly with your neighbors.</p>
+                
+                <div class="cta-buttons">
+                    <a href="#" class="cta-button" onclick="showPostAdForm()">
+                        <i class="fas fa-plus-circle"></i> Post Your First Ad
+                    </a>
+                    <a href="#" class="cta-button secondary" onclick="openAuthModal('register')">
+                        <i class="fas fa-user-plus"></i> Register Now
+                    </a>
+                </div>
+            </div>
+            
+            <!-- How It Works -->
+            <div>
+                <h2 class="section-title">
+                    <i class="fas fa-play-circle"></i> How It Works
+                </h2>
+                
+                <div class="how-it-works">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h3>Register & Post</h3>
+                        <p>Create your free account and post your products or services with photos and details</p>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h3>Admin Approval</h3>
+                        <p>Our team verifies your listing to ensure quality and safety for all users</p>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h3>Buyers Contact You</h3>
+                        <p>Verified buyers contact you directly via WhatsApp to discuss purchases</p>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-number">4</div>
+                        <h3>Sell & Earn</h3>
+                        <p>Complete the sale and earn money from your products or services</p>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Search Bar -->
             <div class="search-container">
                 <div class="search-box">
@@ -736,11 +864,25 @@
             <!-- Featured Products -->
             <div class="featured-products">
                 <h2 class="section-title">
-                    <i class="fas fa-fire"></i> Featured Products
+                    <i class="fas fa-fire"></i> Marketplace Listings
                 </h2>
                 
-                <div class="products-grid" id="featuredProducts">
-                    <!-- Featured products will be loaded here -->
+                <div id="marketplaceMessage" class="no-products">
+                    <div style="font-size: 60px; margin-bottom: 20px;">🏪</div>
+                    <h3>Marketplace is Empty</h3>
+                    <p>No products have been listed yet. Be the first to post!</p>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="showPostAdForm()" style="margin: 10px;">
+                            <i class="fas fa-plus-circle"></i> Post Your First Ad
+                        </button>
+                        <button class="btn" onclick="openAuthModal('register')" style="margin: 10px; background: #f0f0f0;">
+                            <i class="fas fa-user-plus"></i> Register Now
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="products-grid" id="featuredProducts" style="display: none;">
+                    <!-- Products will be loaded here when available -->
                 </div>
             </div>
             
@@ -780,8 +922,14 @@
                         <i class="fas fa-clock"></i> Recent Listings
                     </h2>
                     
-                    <div class="products-grid" id="recentProducts">
+                    <div class="products-grid" id="recentProducts" style="display: none;">
                         <!-- Recent products will be loaded here -->
+                    </div>
+                    
+                    <div id="recentProductsMessage" class="no-products">
+                        <div style="font-size: 60px; margin-bottom: 20px;">📦</div>
+                        <h3>No Recent Listings</h3>
+                        <p>Check back soon or be the first to post!</p>
                     </div>
                 </div>
             </div>
@@ -859,7 +1007,7 @@
         <div class="footer-container">
             <div class="footer-section">
                 <h3>Binga Marketplace</h3>
-                <p>The largest online marketplace in Binga. Buy and sell fish, livestock, agricultural products, services, and more.</p>
+                <p>The first online marketplace in Binga. Buy and sell fish, livestock, agricultural products, services, and more.</p>
                 <p style="margin-top: 15px;">
                     <i class="fas fa-phone"></i> +263 77 123 4567<br>
                     <i class="fas fa-envelope"></i> info@bingamarket.co.zw
@@ -962,13 +1110,13 @@
     </div>
     
     <script>
-        // Database for storing users and products
+        // Database for storing users and products - NO SAMPLE DATA
         const BINGA_MARKETPLACE_DB = {
             // Initialize local storage databases
             init: function() {
                 // Initialize users database
                 if (!localStorage.getItem('binga_marketplace_users')) {
-                    // Create default admin user
+                    // Create default admin user only
                     const defaultUsers = [
                         {
                             id: 1,
@@ -987,93 +1135,22 @@
                     localStorage.setItem('binga_marketplace_users', JSON.stringify(defaultUsers));
                 }
                 
-                // Initialize products database
+                // Initialize products database - EMPTY
                 if (!localStorage.getItem('binga_marketplace_products')) {
-                    // Create sample products
-                    const sampleProducts = [
-                        {
-                            id: 1,
-                            title: 'Fresh Kapenta - 20kg',
-                            description: 'Sun-dried kapenta from Lake Kariba. High quality, perfect for restaurants.',
-                            category: 'fish',
-                            price: 80,
-                            location: 'Siachilaba',
-                            sellerId: 2,
-                            sellerName: 'John Fisherman',
-                            sellerPhone: '+263772223344',
-                            images: [],
-                            status: 'active',
-                            verified: true,
-                            views: 124,
-                            createdAt: '2024-03-10T10:00:00Z',
-                            whatsappLink: 'https://wa.me/263772223344?text=Hi! I saw your Fresh Kapenta - 20kg on Binga Marketplace'
-                        },
-                        {
-                            id: 2,
-                            title: 'Healthy Goats - 3 Available',
-                            description: '1-year old male goats. Good for breeding or meat. Vaccinated.',
-                            category: 'goat',
-                            price: 120,
-                            location: 'Kariyangwe',
-                            sellerId: 3,
-                            sellerName: 'Mary Farmer',
-                            sellerPhone: '+263773334455',
-                            images: [],
-                            status: 'active',
-                            verified: true,
-                            views: 89,
-                            createdAt: '2024-03-12T14:30:00Z',
-                            whatsappLink: 'https://wa.me/263773334455?text=Hi! I saw your Healthy Goats - 3 Available on Binga Marketplace'
-                        },
-                        {
-                            id: 3,
-                            title: 'Lake Bream - Fresh Catch',
-                            description: 'Fresh bream caught today. 2-3kg each. Perfect for grilling.',
-                            category: 'fish',
-                            price: 15,
-                            location: 'Binga Centre',
-                            sellerId: 4,
-                            sellerName: 'David Fisher',
-                            sellerPhone: '+263774445566',
-                            images: [],
-                            status: 'active',
-                            verified: false,
-                            views: 45,
-                            createdAt: '2024-03-15T08:15:00Z',
-                            whatsappLink: 'https://wa.me/263774445566?text=Hi! I saw your Lake Bream - Fresh Catch on Binga Marketplace'
-                        },
-                        {
-                            id: 4,
-                            title: 'Fertilizer - 50kg bag',
-                            description: 'Compound D fertilizer. Perfect for maize farming.',
-                            category: 'agriculture',
-                            price: 35,
-                            location: 'Siachilaba',
-                            sellerId: 5,
-                            sellerName: 'Agricultural Supplies',
-                            sellerPhone: '+263775556677',
-                            images: [],
-                            status: 'active',
-                            verified: true,
-                            views: 67,
-                            createdAt: '2024-03-14T11:20:00Z',
-                            whatsappLink: 'https://wa.me/263775556677?text=Hi! I saw your Fertilizer - 50kg bag on Binga Marketplace'
-                        }
-                    ];
-                    localStorage.setItem('binga_marketplace_products', JSON.stringify(sampleProducts));
+                    localStorage.setItem('binga_marketplace_products', JSON.stringify([]));
                 }
                 
                 // Initialize categories
                 if (!localStorage.getItem('binga_marketplace_categories')) {
                     const categories = [
-                        {id: 'fish', name: 'Fish & Seafood', count: 45, icon: '🐟'},
-                        {id: 'goat', name: 'Goats', count: 32, icon: '🐐'},
-                        {id: 'cow', name: 'Cattle', count: 18, icon: '🐄'},
-                        {id: 'poultry', name: 'Poultry', count: 27, icon: '🐓'},
-                        {id: 'agriculture', name: 'Agriculture', count: 39, icon: '🌾'},
-                        {id: 'services', name: 'Services', count: 52, icon: '🔧'},
-                        {id: 'property', name: 'Property', count: 23, icon: '🏠'},
-                        {id: 'vehicles', name: 'Vehicles', count: 15, icon: '🚗'}
+                        {id: 'fish', name: 'Fish & Seafood', icon: '🐟'},
+                        {id: 'goat', name: 'Goats', icon: '🐐'},
+                        {id: 'cow', name: 'Cattle', icon: '🐄'},
+                        {id: 'poultry', name: 'Poultry', icon: '🐓'},
+                        {id: 'agriculture', name: 'Agriculture', icon: '🌾'},
+                        {id: 'services', name: 'Services', icon: '🔧'},
+                        {id: 'property', name: 'Property', icon: '🏠'},
+                        {id: 'vehicles', name: 'Vehicles', icon: '🚗'}
                     ];
                     localStorage.setItem('binga_marketplace_categories', JSON.stringify(categories));
                 }
@@ -1081,11 +1158,11 @@
                 // Initialize locations
                 if (!localStorage.getItem('binga_marketplace_locations')) {
                     const locations = [
-                        {id: 'Siachilaba', name: 'Siachilaba', count: 42},
-                        {id: 'Kariyangwe', name: 'Kariyangwe', count: 38},
-                        {id: 'Binga Centre', name: 'Binga Centre', count: 67},
-                        {id: 'Chete Island', name: 'Chete Island', count: 15},
-                        {id: 'Other', name: 'Other Areas', count: 23}
+                        {id: 'Siachilaba', name: 'Siachilaba'},
+                        {id: 'Kariyangwe', name: 'Kariyangwe'},
+                        {id: 'Binga Centre', name: 'Binga Centre'},
+                        {id: 'Chete Island', name: 'Chete Island'},
+                        {id: 'Other', name: 'Other Areas'}
                     ];
                     localStorage.setItem('binga_marketplace_locations', JSON.stringify(locations));
                 }
@@ -1381,21 +1458,33 @@
             // Sort by date (newest first)
             products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             
+            // Check if there are any products
+            if (products.length === 0) {
+                // Show empty marketplace message
+                document.getElementById('marketplaceMessage').style.display = 'block';
+                document.getElementById('featuredProducts').style.display = 'none';
+                document.getElementById('recentProductsMessage').style.display = 'block';
+                document.getElementById('recentProducts').style.display = 'none';
+                return;
+            }
+            
+            // Hide empty messages
+            document.getElementById('marketplaceMessage').style.display = 'none';
+            document.getElementById('recentProductsMessage').style.display = 'none';
+            
             // Featured products (verified and popular)
             const featuredProducts = products.filter(p => p.verified).slice(0, 8);
             const recentProducts = products.slice(0, 12);
             
             // Display featured products
             const featuredContainer = document.getElementById('featuredProducts');
-            featuredContainer.innerHTML = featuredProducts.length > 0 ? 
-                featuredProducts.map(product => renderProductCard(product)).join('') :
-                '<div class="no-products">No featured products available</div>';
+            featuredContainer.style.display = 'grid';
+            featuredContainer.innerHTML = featuredProducts.map(product => renderProductCard(product)).join('');
             
             // Display recent products
             const recentContainer = document.getElementById('recentProducts');
-            recentContainer.innerHTML = recentProducts.length > 0 ? 
-                recentProducts.map(product => renderProductCard(product)).join('') :
-                '<div class="no-products">No products available. Be the first to post!</div>';
+            recentContainer.style.display = 'grid';
+            recentContainer.innerHTML = recentProducts.map(product => renderProductCard(product)).join('');
         }
         
         // Render product card
@@ -1436,34 +1525,48 @@
             `;
         }
         
-        // Load categories
+        // Load categories with counts
         function loadCategories() {
             const categories = BINGA_MARKETPLACE_DB.categories.getAll();
+            const activeProducts = BINGA_MARKETPLACE_DB.products.getActive();
+            
             const container = document.getElementById('categoryList');
             
-            container.innerHTML = categories.map(cat => `
-                <li class="category-item">
-                    <a href="#" onclick="showCategory('${cat.id}')">
-                        ${cat.icon} ${cat.name}
-                        <span class="category-count">${cat.count}</span>
-                    </a>
-                </li>
-            `).join('');
+            container.innerHTML = categories.map(cat => {
+                // Count products in this category
+                const count = activeProducts.filter(p => p.category === cat.id).length;
+                
+                return `
+                    <li class="category-item">
+                        <a href="#" onclick="showCategory('${cat.id}')">
+                            ${cat.icon} ${cat.name}
+                            <span class="category-count">${count}</span>
+                        </a>
+                    </li>
+                `;
+            }).join('');
         }
         
-        // Load locations
+        // Load locations with counts
         function loadLocations() {
             const locations = BINGA_MARKETPLACE_DB.locations.getAll();
+            const activeProducts = BINGA_MARKETPLACE_DB.products.getActive();
+            
             const container = document.getElementById('locationList');
             
-            container.innerHTML = locations.map(loc => `
-                <li class="location-item">
-                    <a href="#" onclick="showLocation('${loc.id}')">
-                        ${loc.name}
-                        <span class="location-count">${loc.count}</span>
-                    </a>
-                </li>
-            `).join('');
+            container.innerHTML = locations.map(loc => {
+                // Count products in this location
+                const count = activeProducts.filter(p => p.location === loc.id).length;
+                
+                return `
+                    <li class="location-item">
+                        <a href="#" onclick="showLocation('${loc.id}')">
+                            ${loc.name}
+                            <span class="location-count">${count}</span>
+                        </a>
+                    </li>
+                `;
+            }).join('');
         }
         
         // Show section (home, fish, livestock, etc.)
@@ -1523,8 +1626,11 @@
         function filterProductsByCategory(category) {
             const products = BINGA_MARKETPLACE_DB.products.getByCategory(category);
             const container = document.getElementById('recentProducts');
+            const message = document.getElementById('recentProductsMessage');
             
             if (products.length > 0) {
+                message.style.display = 'none';
+                container.style.display = 'grid';
                 container.innerHTML = products.map(product => renderProductCard(product)).join('');
                 
                 // Update section title
@@ -1543,19 +1649,20 @@
                     <i class="fas fa-tag"></i> ${categoryNames[category] || category}
                 `;
             } else {
-                container.innerHTML = `
-                    <div class="no-products">
-                        <h3>No products in this category</h3>
-                        <p>Be the first to post in this category!</p>
-                        ${currentUser ? 
-                            `<button class="btn btn-primary" onclick="showPostAdForm()" style="margin-top: 15px;">
-                                <i class="fas fa-plus-circle"></i> Post an Ad
-                            </button>` : 
-                            `<button class="btn btn-primary" onclick="openAuthModal()" style="margin-top: 15px;">
-                                <i class="fas fa-user-plus"></i> Register to Post
-                            </button>`
-                        }
-                    </div>
+                container.style.display = 'none';
+                message.style.display = 'block';
+                message.innerHTML = `
+                    <div style="font-size: 60px; margin-bottom: 20px;">🏷️</div>
+                    <h3>No products in ${categoryNames[category] || category} category</h3>
+                    <p>Be the first to post in this category!</p>
+                    ${currentUser ? 
+                        `<button class="btn btn-primary" onclick="showPostAdForm()" style="margin-top: 15px;">
+                            <i class="fas fa-plus-circle"></i> Post an Ad
+                        </button>` : 
+                        `<button class="btn btn-primary" onclick="openAuthModal()" style="margin-top: 15px;">
+                            <i class="fas fa-user-plus"></i> Register to Post
+                        </button>`
+                    }
                 `;
             }
         }
@@ -1573,8 +1680,11 @@
                 .filter(p => p.location === locationId);
             
             const container = document.getElementById('recentProducts');
+            const message = document.getElementById('recentProductsMessage');
             
             if (products.length > 0) {
+                message.style.display = 'none';
+                container.style.display = 'grid';
                 container.innerHTML = products.map(product => renderProductCard(product)).join('');
                 
                 // Update section title
@@ -1582,11 +1692,12 @@
                     <i class="fas fa-map-marker-alt"></i> Products in ${locationId}
                 `;
             } else {
-                container.innerHTML = `
-                    <div class="no-products">
-                        <h3>No products in ${locationId}</h3>
-                        <p>Be the first to post in this location!</p>
-                    </div>
+                container.style.display = 'none';
+                message.style.display = 'block';
+                message.innerHTML = `
+                    <div style="font-size: 60px; margin-bottom: 20px;">📍</div>
+                    <h3>No products in ${locationId}</h3>
+                    <p>Be the first to post in this location!</p>
                 `;
             }
         }
@@ -1619,8 +1730,11 @@
             
             // Display results
             const container = document.getElementById('recentProducts');
+            const message = document.getElementById('recentProductsMessage');
             
             if (products.length > 0) {
+                message.style.display = 'none';
+                container.style.display = 'grid';
                 container.innerHTML = products.map(product => renderProductCard(product)).join('');
                 
                 // Update section title
@@ -1632,11 +1746,12 @@
                     <i class="fas fa-search"></i> ${title}
                 `;
             } else {
-                container.innerHTML = `
-                    <div class="no-products">
-                        <h3>No products found</h3>
-                        <p>Try different search terms or filters</p>
-                    </div>
+                container.style.display = 'none';
+                message.style.display = 'block';
+                message.innerHTML = `
+                    <div style="font-size: 60px; margin-bottom: 20px;">🔍</div>
+                    <h3>No products found</h3>
+                    <p>Try different search terms or filters</p>
                 `;
             }
         }
@@ -1895,7 +2010,11 @@
                                 </div>
                             `).join('')}
                         </div>` :
-                        `<p>No pending ads to review</p>`
+                        `<div class="no-products" style="padding: 30px;">
+                            <div style="font-size: 60px; margin-bottom: 20px;">✅</div>
+                            <h3>No pending ads to review</h3>
+                            <p>All ads have been processed</p>
+                        </div>`
                     }
                 `;
             } else if (tab === 'users') {
@@ -1926,6 +2045,33 @@
                         </tbody>
                     </table>
                 `;
+            } else if (tab === 'stats') {
+                const products = BINGA_MARKETPLACE_DB.products.getAll();
+                const users = BINGA_MARKETPLACE_DB.users.getAll();
+                const activeProducts = products.filter(p => p.status === 'active');
+                const pendingProducts = products.filter(p => p.status === 'pending');
+                
+                container.innerHTML = `
+                    <h3>Marketplace Statistics</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
+                        <div class="stat-card">
+                            <div class="stat-number">${users.length}</div>
+                            <div>Total Users</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${activeProducts.length}</div>
+                            <div>Active Ads</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${pendingProducts.length}</div>
+                            <div>Pending Ads</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${products.length}</div>
+                            <div>Total Ads</div>
+                        </div>
+                    </div>
+                `;
             }
         }
         
@@ -1936,8 +2082,11 @@
                 verified: true
             });
             
-            showAlert('Ad approved successfully!', 'success');
+            showAlert('Ad approved successfully! It is now visible in the marketplace.', 'success');
             showAdminTab('pending');
+            loadMarketplace();
+            loadCategories();
+            loadLocations();
         }
         
         // Admin: Reject ad
@@ -1961,6 +2110,9 @@
                 BINGA_MARKETPLACE_DB.products.delete(productId);
                 showAlert('Ad deleted successfully', 'success');
                 loadUserDashboard();
+                loadMarketplace();
+                loadCategories();
+                loadLocations();
             }
         }
         
