@@ -15,6 +15,7 @@
             --light: #f8f9fa;
             --dark: #333333;
             --border: #e0e0e0;
+            --tourist: #8e44ad;
         }
         
         * {
@@ -91,6 +92,30 @@
             display: flex;
             gap: 10px;
             align-items: center;
+        }
+        
+        .auth-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+        
+        .auth-type-btn {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .auth-type-btn.active {
+            background: var(--primary);
+            color: white;
         }
         
         .auth-btn {
@@ -266,6 +291,15 @@
             border-bottom-color: var(--primary);
         }
         
+        .nav-link.tourist {
+            color: var(--tourist);
+        }
+        
+        .nav-link.tourist:hover, .nav-link.tourist.active {
+            color: var(--tourist);
+            border-bottom-color: var(--tourist);
+        }
+        
         .post-ad-btn {
             margin-left: auto;
             background: var(--accent);
@@ -364,6 +398,13 @@
             color: #999;
             font-size: 48px;
             position: relative;
+            overflow: hidden;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         .product-price {
@@ -414,6 +455,51 @@
             font-size: 14px;
             font-weight: 600;
             margin-top: 10px;
+        }
+        
+        /* Tourist Attraction Cards */
+        .attraction-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid var(--tourist);
+        }
+        
+        .attraction-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .attraction-image {
+            height: 200px;
+            background: linear-gradient(45deg, #e0d0f0, #d0c0e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 48px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .attraction-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .attraction-type {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--tourist);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
         }
         
         /* Search Bar */
@@ -537,12 +623,14 @@
             display: flex;
             border-bottom: 1px solid var(--border);
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         
         .admin-tab {
             padding: 15px 30px;
             cursor: pointer;
             font-weight: 600;
+            white-space: nowrap;
         }
         
         .admin-tab.active {
@@ -584,6 +672,14 @@
                 width: 100%;
                 justify-content: center;
             }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .search-box select {
+                max-width: 100% !important;
+            }
         }
         
         /* Verification badge */
@@ -620,6 +716,10 @@
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+        
+        .section-title.tourist {
+            color: var(--tourist);
         }
         
         /* Alert */
@@ -667,6 +767,7 @@
             gap: 20px;
             justify-content: center;
             margin-top: 30px;
+            flex-wrap: wrap;
         }
         
         .cta-button {
@@ -719,6 +820,115 @@
             margin-bottom: 15px;
             color: var(--dark);
         }
+        
+        /* Image upload preview */
+        .image-upload-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .image-preview {
+            width: 120px;
+            height: 120px;
+            border: 2px dashed #ccc;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .remove-image {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        /* Status badges */
+        .status-badge {
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        
+        .status-pending {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .status-active {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .status-rejected {
+            background: var(--danger);
+            color: white;
+        }
+        
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .action-btn.approve {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .action-btn.reject {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .action-btn.edit {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .action-btn.delete {
+            background: var(--danger);
+            color: white;
+        }
+        
+        /* Tab content */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -726,11 +936,11 @@
     <div class="header-top">
         <div class="header-container">
             <div>
-                <i class="fas fa-phone-alt"></i> +263 77 123 4567 | 
+                <i class="fas fa-phone-alt"></i> +263 77 286 3815 | 
                 <i class="fas fa-map-marker-alt"></i> Binga, Lake Kariba
             </div>
             <div>
-                <i class="fab fa-whatsapp"></i> WhatsApp: +263 78 456 7890
+                <i class="fab fa-whatsapp"></i> WhatsApp: +263 77 286 3815
             </div>
         </div>
     </div>
@@ -773,6 +983,7 @@
                 <li><a href="#" class="nav-link" onclick="showSection('fish')">Fish</a></li>
                 <li><a href="#" class="nav-link" onclick="showSection('livestock')">Livestock</a></li>
                 <li><a href="#" class="nav-link" onclick="showSection('agriculture')">Agriculture</a></li>
+                <li><a href="#" class="nav-link tourist" onclick="showSection('tourism')">Tourism</a></li>
                 <li><a href="#" class="nav-link" onclick="showSection('services')">Services</a></li>
                 <li><a href="#" class="nav-link" onclick="showSection('property')">Property</a></li>
                 <li><a href="#" class="nav-link" onclick="showSection('vehicles')">Vehicles</a></li>
@@ -797,9 +1008,12 @@
                     <a href="#" class="cta-button" onclick="showPostAdForm()">
                         <i class="fas fa-plus-circle"></i> Post Your First Ad
                     </a>
-                    <a href="#" class="cta-button secondary" onclick="openAuthModal('register')">
-                        <i class="fas fa-user-plus"></i> Register Now
-                    </a>
+                    <button class="cta-button secondary" onclick="openAuthModal('login')">
+                        <i class="fas fa-sign-in-alt"></i> Login as Seller
+                    </button>
+                    <button class="cta-button secondary" onclick="openAuthModal('login', 'admin')">
+                        <i class="fas fa-crown"></i> Login as Admin
+                    </button>
                 </div>
             </div>
             
@@ -813,13 +1027,13 @@
                     <div class="step-card">
                         <div class="step-number">1</div>
                         <h3>Register & Post</h3>
-                        <p>Create your free account and post your products or services with photos and details</p>
+                        <p>Create your free seller account and post your products with photos and details</p>
                     </div>
                     
                     <div class="step-card">
                         <div class="step-number">2</div>
                         <h3>Admin Approval</h3>
-                        <p>Our team verifies your listing to ensure quality and safety for all users</p>
+                        <p>Our administrator reviews and approves your listing to ensure quality</p>
                     </div>
                     
                     <div class="step-card">
@@ -847,6 +1061,7 @@
                         <option value="cow">Cattle</option>
                         <option value="poultry">Poultry</option>
                         <option value="agriculture">Agriculture</option>
+                        <option value="tourism">Tourism</option>
                     </select>
                     <select class="form-control" id="locationSelect" style="max-width: 200px;">
                         <option value="">All Locations</option>
@@ -854,6 +1069,7 @@
                         <option value="Kariyangwe">Kariyangwe</option>
                         <option value="Binga Centre">Binga Centre</option>
                         <option value="Chete Island">Chete Island</option>
+                        <option value="Other">Other Areas</option>
                     </select>
                     <button class="search-btn" onclick="searchProducts()">
                         <i class="fas fa-search"></i> Search
@@ -870,19 +1086,36 @@
                 <div id="marketplaceMessage" class="no-products">
                     <div style="font-size: 60px; margin-bottom: 20px;">🏪</div>
                     <h3>Marketplace is Empty</h3>
-                    <p>No products have been listed yet. Be the first to post!</p>
+                    <p>No approved products have been listed yet. Be the first to post!</p>
                     <div style="margin-top: 20px;">
                         <button class="btn btn-primary" onclick="showPostAdForm()" style="margin: 10px;">
                             <i class="fas fa-plus-circle"></i> Post Your First Ad
                         </button>
-                        <button class="btn" onclick="openAuthModal('register')" style="margin: 10px; background: #f0f0f0;">
-                            <i class="fas fa-user-plus"></i> Register Now
+                        <button class="btn" onclick="openAuthModal('login')" style="margin: 10px; background: #f0f0f0;">
+                            <i class="fas fa-sign-in-alt"></i> Login as Seller
                         </button>
                     </div>
                 </div>
                 
                 <div class="products-grid" id="featuredProducts" style="display: none;">
-                    <!-- Products will be loaded here when available -->
+                    <!-- Approved products will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Tourist Attractions Section -->
+            <div id="touristSection" style="margin: 40px 0;">
+                <h2 class="section-title tourist">
+                    <i class="fas fa-camera"></i> Binga Tourist Attractions
+                </h2>
+                
+                <div id="noAttractionsMessage" class="no-products">
+                    <div style="font-size: 60px; margin-bottom: 20px;">🏞️</div>
+                    <h3>No Tourist Attractions Listed</h3>
+                    <p>Administrators can add Binga's beautiful attractions here</p>
+                </div>
+                
+                <div class="products-grid" id="touristAttractions" style="display: none;">
+                    <!-- Tourist attractions will be loaded here -->
                 </div>
             </div>
             
@@ -935,6 +1168,18 @@
             </div>
         </div>
         
+        <!-- Tourism Section -->
+        <div id="tourismSection" class="dashboard-container" style="display: none;">
+            <div class="dashboard-header">
+                <h2><i class="fas fa-camera"></i> Binga Tourist Attractions</h2>
+                <p>Discover the beauty of Binga - Lake Kariba, Hot Springs, Beaches & More</p>
+            </div>
+            
+            <div id="tourismContent">
+                <!-- Tourism content will be loaded here -->
+            </div>
+        </div>
+        
         <!-- Dashboard Section (for logged in users) -->
         <div id="dashboardSection" class="dashboard-container" style="display: none;">
             <div class="dashboard-header">
@@ -952,12 +1197,12 @@
                     <div>Total Views</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="myMessagesCount">0</div>
-                    <div>Messages</div>
+                    <div class="stat-number" id="myPendingCount">0</div>
+                    <div>Pending Approval</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="myRating">0.0</div>
-                    <div>My Rating</div>
+                    <div class="stat-number" id="myActiveCount">0</div>
+                    <div>Active Listings</div>
                 </div>
             </div>
             
@@ -969,16 +1214,18 @@
         <!-- Admin Panel Section -->
         <div id="adminSection" class="dashboard-container" style="display: none;">
             <div class="dashboard-header">
-                <h2><i class="fas fa-crown"></i> Admin Control Panel</h2>
-                <p>Manage the entire marketplace</p>
+                <h2><i class="fas fa-crown"></i> Administrator Control Panel</h2>
+                <p>Manage marketplace, approve listings, control tourist attractions</p>
             </div>
             
             <div class="admin-panel">
                 <div class="admin-tabs">
                     <div class="admin-tab active" onclick="showAdminTab('pending')">Pending Ads</div>
+                    <div class="admin-tab" onclick="showAdminTab('attractions')">Tourist Attractions</div>
                     <div class="admin-tab" onclick="showAdminTab('reported')">Reported Ads</div>
                     <div class="admin-tab" onclick="showAdminTab('users')">Users</div>
                     <div class="admin-tab" onclick="showAdminTab('stats')">Statistics</div>
+                    <div class="admin-tab" onclick="showAdminTab('settings')">Settings</div>
                 </div>
                 
                 <div id="adminContent">
@@ -1000,6 +1247,20 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Add Tourist Attraction Form -->
+        <div id="addAttractionSection" class="dashboard-container" style="display: none;">
+            <div class="dashboard-header">
+                <h2><i class="fas fa-plus-circle"></i> Add Tourist Attraction</h2>
+                <p>Showcase Binga's beautiful places to visitors</p>
+            </div>
+            
+            <div class="admin-panel">
+                <div id="addAttractionForm">
+                    <!-- Add attraction form will be loaded here -->
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- Footer -->
@@ -1009,7 +1270,7 @@
                 <h3>Binga Marketplace</h3>
                 <p>The first online marketplace in Binga. Buy and sell fish, livestock, agricultural products, services, and more.</p>
                 <p style="margin-top: 15px;">
-                    <i class="fas fa-phone"></i> +263 77 123 4567<br>
+                    <i class="fas fa-phone"></i> +263 77 286 3815<br>
                     <i class="fas fa-envelope"></i> info@bingamarket.co.zw
                 </p>
             </div>
@@ -1020,7 +1281,7 @@
                     <li><a href="#" onclick="showSection('home')">Home</a></li>
                     <li><a href="#" onclick="showSection('fish')">Fish Market</a></li>
                     <li><a href="#" onclick="showSection('livestock')">Livestock</a></li>
-                    <li><a href="#" onclick="showSection('services')">Services</a></li>
+                    <li><a href="#" onclick="showSection('tourism')">Tourist Attractions</a></li>
                     <li><a href="#" onclick="showPostAdForm()">Post Free Ad</a></li>
                 </ul>
             </div>
@@ -1028,11 +1289,10 @@
             <div class="footer-section">
                 <h3>Help & Support</h3>
                 <ul class="footer-links">
-                    <li><a href="#" onclick="alert('FAQs coming soon')">FAQs</a></li>
+                    <li><a href="#" onclick="alert('Contact +263 77 286 3815 for all inquiries')">Contact Administrator</a></li>
                     <li><a href="#" onclick="alert('Safety tips coming soon')">Safety Tips</a></li>
-                    <li><a href="#" onclick="alert('Contact us at +263 77 123 4567')">Contact Us</a></li>
+                    <li><a href="#" onclick="alert('How to sell on Binga Marketplace')">How to Sell</a></li>
                     <li><a href="#" onclick="alert('Terms & Conditions coming soon')">Terms & Conditions</a></li>
-                    <li><a href="#" onclick="alert('Privacy Policy coming soon')">Privacy Policy</a></li>
                 </ul>
             </div>
             
@@ -1044,7 +1304,7 @@
                     <a href="#" style="color: white; font-size: 24px;"><i class="fab fa-twitter"></i></a>
                 </div>
                 <p style="margin-top: 20px; color: #bbb; font-size: 14px;">
-                    © 2024 Binga Marketplace. All rights reserved.
+                    © 2024 Binga Marketplace. Administrator Contact: +263 77 286 3815
                 </p>
             </div>
         </div>
@@ -1055,14 +1315,21 @@
         <div class="auth-modal-content">
             <div class="auth-tabs">
                 <div class="auth-tab active" onclick="showAuthForm('login')">Login</div>
-                <div class="auth-tab" onclick="showAuthForm('register')">Register</div>
+                <div class="auth-tab" onclick="showAuthForm('register')">Register as Seller</div>
             </div>
             
             <div class="auth-form">
+                <div id="loginTypeSelector" style="margin-bottom: 20px;">
+                    <div class="auth-type-selector">
+                        <button class="auth-type-btn active" onclick="setLoginType('seller')">Seller Login</button>
+                        <button class="auth-type-btn" onclick="setLoginType('admin')">Admin Login</button>
+                    </div>
+                </div>
+                
                 <div id="loginForm">
-                    <h3>Login to Your Account</h3>
+                    <h3 id="loginTitle">Login to Seller Account</h3>
                     <div class="form-group">
-                        <label class="form-label">Email or Phone</label>
+                        <label class="form-label" id="loginLabel">Email or Phone</label>
                         <input type="text" class="form-control" id="loginEmail" placeholder="Email or phone number">
                     </div>
                     <div class="form-group">
@@ -1071,46 +1338,50 @@
                     </div>
                     <button class="btn btn-primary" onclick="login()">Login</button>
                     <p style="text-align: center; margin-top: 15px; color: #666;">
-                        <a href="#" style="color: var(--primary);" onclick="alert('Please contact admin to reset password')">Forgot Password?</a>
+                        <a href="#" style="color: var(--primary);" onclick="alert('Contact administrator at +263 77 286 3815 to reset password')">Forgot Password?</a>
                     </p>
                 </div>
                 
                 <div id="registerForm" style="display: none;">
-                    <h3>Create New Account</h3>
+                    <h3>Create Seller Account</h3>
                     <div class="form-group">
                         <label class="form-label">Full Name</label>
                         <input type="text" class="form-control" id="registerName" placeholder="Full name">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="registerPhone" placeholder="+263 77 123 4567">
+                        <label class="form-label">Phone Number*</label>
+                        <input type="tel" class="form-control" id="registerPhone" placeholder="+263 77 286 3815" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Email (Optional)</label>
                         <input type="email" class="form-control" id="registerEmail" placeholder="Email address">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Password</label>
-                        <input type="password" class="form-control" id="registerPassword" placeholder="Create password">
+                        <label class="form-label">Password*</label>
+                        <input type="password" class="form-control" id="registerPassword" placeholder="Create password" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Location in Binga</label>
-                        <select class="form-control" id="registerLocation">
+                        <label class="form-label">Location in Binga*</label>
+                        <select class="form-control" id="registerLocation" required>
                             <option value="">Select Location</option>
                             <option>Siachilaba</option>
                             <option>Kariyangwe</option>
                             <option>Binga Centre</option>
+                            <option>Chete Island</option>
                             <option>Other</option>
                         </select>
                     </div>
-                    <button class="btn btn-primary" onclick="register()">Create Account</button>
+                    <button class="btn btn-primary" onclick="register()">Create Seller Account</button>
+                    <p style="text-align: center; margin-top: 15px; color: #666; font-size: 14px;">
+                        Note: All accounts must be approved by administrator
+                    </p>
                 </div>
             </div>
         </div>
     </div>
     
     <script>
-        // Database for storing users and products - NO SAMPLE DATA
+        // Database for storing users, products, and tourist attractions - EMPTY INITIALLY
         const BINGA_MARKETPLACE_DB = {
             // Initialize local storage databases
             init: function() {
@@ -1120,24 +1391,32 @@
                     const defaultUsers = [
                         {
                             id: 1,
-                            username: 'Munkuli$1996',
-                            password: 'PickGod',
-                            name: 'Administrator',
-                            phone: '+263771234567',
+                            username: 'admin',
+                            password: 'admin123',
+                            name: 'Binga Administrator',
+                            phone: '+263772863815',
                             email: 'admin@bingamarket.co.zw',
                             location: 'Binga Centre',
                             type: 'admin',
+                            role: 'superadmin',
                             registered: new Date().toISOString(),
                             products: [],
-                            rating: 5.0
+                            rating: 5.0,
+                            approved: true
                         }
                     ];
                     localStorage.setItem('binga_marketplace_users', JSON.stringify(defaultUsers));
                 }
                 
-                // Initialize products database - EMPTY
+                // Initialize products database - COMPLETELY EMPTY
                 if (!localStorage.getItem('binga_marketplace_products')) {
                     localStorage.setItem('binga_marketplace_products', JSON.stringify([]));
+                }
+                
+                // Initialize tourist attractions database
+                if (!localStorage.getItem('binga_marketplace_attractions')) {
+                    // Start with empty array
+                    localStorage.setItem('binga_marketplace_attractions', JSON.stringify([]));
                 }
                 
                 // Initialize categories
@@ -1148,6 +1427,7 @@
                         {id: 'cow', name: 'Cattle', icon: '🐄'},
                         {id: 'poultry', name: 'Poultry', icon: '🐓'},
                         {id: 'agriculture', name: 'Agriculture', icon: '🌾'},
+                        {id: 'tourism', name: 'Tourism Services', icon: '🏞️'},
                         {id: 'services', name: 'Services', icon: '🔧'},
                         {id: 'property', name: 'Property', icon: '🏠'},
                         {id: 'vehicles', name: 'Vehicles', icon: '🚗'}
@@ -1162,9 +1442,24 @@
                         {id: 'Kariyangwe', name: 'Kariyangwe'},
                         {id: 'Binga Centre', name: 'Binga Centre'},
                         {id: 'Chete Island', name: 'Chete Island'},
+                        {id: 'Lake Kariba', name: 'Lake Kariba'},
                         {id: 'Other', name: 'Other Areas'}
                     ];
                     localStorage.setItem('binga_marketplace_locations', JSON.stringify(locations));
+                }
+                
+                // Initialize attraction types
+                if (!localStorage.getItem('binga_marketplace_attraction_types')) {
+                    const attractionTypes = [
+                        {id: 'beach', name: 'Beach'},
+                        {id: 'hotspring', name: 'Hot Spring'},
+                        {id: 'lake', name: 'Lake View'},
+                        {id: 'cultural', name: 'Cultural Site'},
+                        {id: 'wildlife', name: 'Wildlife'},
+                        {id: 'accommodation', name: 'Accommodation'},
+                        {id: 'tour', name: 'Tour Service'}
+                    ];
+                    localStorage.setItem('binga_marketplace_attraction_types', JSON.stringify(attractionTypes));
                 }
             },
             
@@ -1174,6 +1469,14 @@
                     return JSON.parse(localStorage.getItem('binga_marketplace_users')) || [];
                 },
                 
+                getSellers: function() {
+                    return this.getAll().filter(u => u.type === 'seller');
+                },
+                
+                getAdmins: function() {
+                    return this.getAll().filter(u => u.type === 'admin');
+                },
+                
                 add: function(user) {
                     const users = this.getAll();
                     const newUser = {
@@ -1181,7 +1484,9 @@
                         ...user,
                         registered: new Date().toISOString(),
                         products: [],
-                        rating: 0
+                        rating: 0,
+                        approved: false, // Sellers need admin approval
+                        status: 'pending'
                     };
                     users.push(newUser);
                     localStorage.setItem('binga_marketplace_users', JSON.stringify(users));
@@ -1205,6 +1510,12 @@
                         users[index] = {...users[index], ...updates};
                         localStorage.setItem('binga_marketplace_users', JSON.stringify(users));
                     }
+                },
+                
+                delete: function(id) {
+                    const users = this.getAll();
+                    const filtered = users.filter(u => u.id !== id);
+                    localStorage.setItem('binga_marketplace_users', JSON.stringify(filtered));
                 }
             },
             
@@ -1215,7 +1526,11 @@
                 },
                 
                 getActive: function() {
-                    return this.getAll().filter(p => p.status === 'active');
+                    return this.getAll().filter(p => p.status === 'active' && p.approved);
+                },
+                
+                getPending: function() {
+                    return this.getAll().filter(p => p.status === 'pending');
                 },
                 
                 getByCategory: function(category) {
@@ -1233,8 +1548,10 @@
                         ...product,
                         views: 0,
                         status: 'pending', // pending, active, sold, removed
-                        verified: false,
-                        createdAt: new Date().toISOString()
+                        approved: false,
+                        featured: false,
+                        createdAt: new Date().toISOString(),
+                        adminContact: '+263772863815'
                     };
                     products.push(newProduct);
                     localStorage.setItem('binga_marketplace_products', JSON.stringify(products));
@@ -1257,6 +1574,46 @@
                 }
             },
             
+            // Tourist Attractions operations
+            attractions: {
+                getAll: function() {
+                    return JSON.parse(localStorage.getItem('binga_marketplace_attractions')) || [];
+                },
+                
+                getActive: function() {
+                    return this.getAll().filter(a => a.status === 'active');
+                },
+                
+                add: function(attraction) {
+                    const attractions = this.getAll();
+                    const newAttraction = {
+                        id: Date.now(),
+                        ...attraction,
+                        status: 'active',
+                        createdAt: new Date().toISOString(),
+                        adminContact: '+263772863815'
+                    };
+                    attractions.push(newAttraction);
+                    localStorage.setItem('binga_marketplace_attractions', JSON.stringify(attractions));
+                    return newAttraction;
+                },
+                
+                update: function(id, updates) {
+                    const attractions = this.getAll();
+                    const index = attractions.findIndex(a => a.id === id);
+                    if (index !== -1) {
+                        attractions[index] = {...attractions[index], ...updates};
+                        localStorage.setItem('binga_marketplace_attractions', JSON.stringify(attractions));
+                    }
+                },
+                
+                delete: function(id) {
+                    const attractions = this.getAll();
+                    const filtered = attractions.filter(a => a.id !== id);
+                    localStorage.setItem('binga_marketplace_attractions', JSON.stringify(filtered));
+                }
+            },
+            
             // Category operations
             categories: {
                 getAll: function() {
@@ -1269,6 +1626,13 @@
                 getAll: function() {
                     return JSON.parse(localStorage.getItem('binga_marketplace_locations')) || [];
                 }
+            },
+            
+            // Attraction types operations
+            attractionTypes: {
+                getAll: function() {
+                    return JSON.parse(localStorage.getItem('binga_marketplace_attraction_types')) || [];
+                }
             }
         };
         
@@ -1277,6 +1641,7 @@
         
         // Current user state
         let currentUser = null;
+        let loginType = 'seller'; // 'seller' or 'admin'
         
         // Initialize the application
         function initApp() {
@@ -1291,6 +1656,7 @@
             
             // Load marketplace data
             loadMarketplace();
+            loadTouristAttractions();
             loadCategories();
             loadLocations();
             
@@ -1301,10 +1667,29 @@
         // Show auth buttons (login/register)
         function showAuthButtons() {
             document.getElementById('authButtons').innerHTML = `
-                <button class="auth-btn login" onclick="openAuthModal()">Login</button>
-                <button class="auth-btn register" onclick="openAuthModal('register')">Register</button>
+                <button class="auth-btn login" onclick="openAuthModal('login', 'seller')">Seller Login</button>
+                <button class="auth-btn register" onclick="openAuthModal('register')">Register as Seller</button>
             `;
             document.getElementById('userMenu').style.display = 'none';
+        }
+        
+        // Set login type
+        function setLoginType(type) {
+            loginType = type;
+            const buttons = document.querySelectorAll('.auth-type-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            if (type === 'seller') {
+                buttons[0].classList.add('active');
+                document.getElementById('loginTitle').textContent = 'Login to Seller Account';
+                document.getElementById('loginLabel').textContent = 'Email or Phone';
+                document.getElementById('loginEmail').placeholder = 'Email or phone number';
+            } else {
+                buttons[1].classList.add('active');
+                document.getElementById('loginTitle').textContent = 'Admin Login';
+                document.getElementById('loginLabel').textContent = 'Admin Username';
+                document.getElementById('loginEmail').placeholder = 'Admin username';
+            }
         }
         
         // Update auth UI after login
@@ -1328,9 +1713,11 @@
         }
         
         // Open auth modal
-        function openAuthModal(form = 'login') {
+        function openAuthModal(form = 'login', type = 'seller') {
+            loginType = type;
             document.getElementById('authModal').style.display = 'flex';
             showAuthForm(form);
+            setLoginType(type);
         }
         
         // Close auth modal
@@ -1343,36 +1730,58 @@
             const loginForm = document.getElementById('loginForm');
             const registerForm = document.getElementById('registerForm');
             const tabs = document.querySelectorAll('.auth-tab');
+            const typeSelector = document.getElementById('loginTypeSelector');
             
             if (form === 'login') {
                 loginForm.style.display = 'block';
                 registerForm.style.display = 'none';
                 tabs[0].classList.add('active');
                 tabs[1].classList.remove('active');
+                typeSelector.style.display = 'block';
             } else {
                 loginForm.style.display = 'none';
                 registerForm.style.display = 'block';
                 tabs[0].classList.remove('active');
                 tabs[1].classList.add('active');
+                typeSelector.style.display = 'none';
             }
         }
         
         // Login function
         function login() {
-            const emailOrPhone = document.getElementById('loginEmail').value;
+            const username = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             
-            if (!emailOrPhone || !password) {
-                alert('Please enter email/phone and password');
+            if (!username || !password) {
+                alert('Please enter username/email/phone and password');
                 return;
             }
             
-            // Find user
+            // Find user based on login type
             const users = BINGA_MARKETPLACE_DB.users.getAll();
-            const user = users.find(u => 
-                (u.email === emailOrPhone || u.phone === emailOrPhone || u.username === emailOrPhone) && 
-                u.password === password
-            );
+            let user;
+            
+            if (loginType === 'admin') {
+                // Admin login - check username and type
+                user = users.find(u => 
+                    (u.username === username || u.email === username) && 
+                    u.password === password &&
+                    u.type === 'admin'
+                );
+            } else {
+                // Seller login
+                user = users.find(u => 
+                    (u.email === username || u.phone === username || u.username === username) && 
+                    u.password === password &&
+                    u.type === 'seller' &&
+                    u.approved === true
+                );
+                
+                if (user && !user.approved) {
+                    alert('Your seller account is pending approval. Contact administrator at +263 77 286 3815');
+                    return;
+                }
+            }
             
             if (user) {
                 currentUser = user;
@@ -1385,9 +1794,16 @@
                 document.getElementById('loginPassword').value = '';
                 
                 // Show success message
-                showAlert('Login successful!', 'success');
+                showAlert(`Login successful! Welcome ${user.name}`, 'success');
+                
+                // Redirect based on user type
+                if (user.type === 'admin') {
+                    setTimeout(() => showSection('admin'), 1000);
+                } else {
+                    setTimeout(() => showSection('dashboard'), 1000);
+                }
             } else {
-                alert('Invalid email/phone or password');
+                alert('Invalid credentials or account not approved');
             }
         }
         
@@ -1412,7 +1828,7 @@
             }
             
             // Create username from phone
-            const username = 'user' + phone.replace(/\D/g, '').slice(-6);
+            const username = 'seller_' + phone.replace(/\D/g, '').slice(-6);
             
             // Add new user
             const newUser = BINGA_MARKETPLACE_DB.users.add({
@@ -1422,22 +1838,21 @@
                 phone: phone,
                 email: email || '',
                 location: location,
-                type: 'user'
+                type: 'seller'
             });
             
-            currentUser = newUser;
-            localStorage.setItem('binga_current_user', JSON.stringify(newUser));
-            updateAuthUI();
-            closeAuthModal();
+            // Show success message
+            showAlert('Registration submitted! Your account is pending administrator approval. Contact +263 77 286 3815 for faster approval.', 'success');
             
             // Clear form
             document.getElementById('registerName').value = '';
             document.getElementById('registerPhone').value = '';
             document.getElementById('registerEmail').value = '';
             document.getElementById('registerPassword').value = '';
+            document.getElementById('registerLocation').value = '';
             
-            // Show success message
-            showAlert('Registration successful! You can now post ads.', 'success');
+            // Go back to login
+            showAuthForm('login');
         }
         
         // Logout function
@@ -1473,7 +1888,7 @@
             document.getElementById('recentProductsMessage').style.display = 'none';
             
             // Featured products (verified and popular)
-            const featuredProducts = products.filter(p => p.verified).slice(0, 8);
+            const featuredProducts = products.filter(p => p.featured).slice(0, 8);
             const recentProducts = products.slice(0, 12);
             
             // Display featured products
@@ -1487,6 +1902,23 @@
             recentContainer.innerHTML = recentProducts.map(product => renderProductCard(product)).join('');
         }
         
+        // Load tourist attractions
+        function loadTouristAttractions() {
+            const attractions = BINGA_MARKETPLACE_DB.attractions.getActive();
+            
+            const container = document.getElementById('touristAttractions');
+            const message = document.getElementById('noAttractionsMessage');
+            
+            if (attractions.length > 0) {
+                message.style.display = 'none';
+                container.style.display = 'grid';
+                container.innerHTML = attractions.map(attraction => renderAttractionCard(attraction)).join('');
+            } else {
+                container.style.display = 'none';
+                message.style.display = 'block';
+            }
+        }
+        
         // Render product card
         function renderProductCard(product) {
             const categoryIcons = {
@@ -1495,6 +1927,7 @@
                 'cow': '🐄',
                 'poultry': '🐓',
                 'agriculture': '🌾',
+                'tourism': '🏞️',
                 'services': '🔧',
                 'property': '🏠',
                 'vehicles': '🚗'
@@ -1511,7 +1944,7 @@
                     <div class="product-details">
                         <h3 class="product-title">
                             ${product.title}
-                            ${product.verified ? '<span class="verified-badge">✓ Verified</span>' : ''}
+                            ${product.approved ? '<span class="verified-badge">✓ Approved</span>' : ''}
                         </h3>
                         <p class="product-meta">${product.description.substring(0, 60)}...</p>
                         <div class="product-location">
@@ -1520,6 +1953,45 @@
                         <a href="${product.whatsappLink}" target="_blank" class="whatsapp-btn">
                             <i class="fab fa-whatsapp"></i> Contact Seller
                         </a>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Render tourist attraction card
+        function renderAttractionCard(attraction) {
+            const attractionIcons = {
+                'beach': '🏖️',
+                'hotspring': '♨️',
+                'lake': '🌊',
+                'cultural': '🏛️',
+                'wildlife': '🐘',
+                'accommodation': '🏨',
+                'tour': '🚣'
+            };
+            
+            const icon = attractionIcons[attraction.type] || '🏞️';
+            
+            return `
+                <div class="attraction-card">
+                    <div class="attraction-image">
+                        ${icon}
+                        <div class="attraction-type">${attraction.typeName || attraction.type}</div>
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-title">
+                            ${attraction.name}
+                            <span class="verified-badge" style="background: var(--tourist);">🏞️ Tourist</span>
+                        </h3>
+                        <p class="product-meta">${attraction.description.substring(0, 80)}...</p>
+                        <div class="product-location">
+                            <i class="fas fa-map-marker-alt"></i> ${attraction.location}
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <a href="tel:+263772863815" class="whatsapp-btn" style="background: var(--tourist);">
+                                <i class="fas fa-phone"></i> Book Tour: +263 77 286 3815
+                            </a>
+                        </div>
                     </div>
                 </div>
             `;
@@ -1573,24 +2045,30 @@
         function showSection(section) {
             // Hide all sections
             document.getElementById('homeSection').style.display = 'none';
+            document.getElementById('tourismSection').style.display = 'none';
             document.getElementById('dashboardSection').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
             document.getElementById('postAdSection').style.display = 'none';
+            document.getElementById('addAttractionSection').style.display = 'none';
             
             // Show selected section
             if (section === 'home') {
                 document.getElementById('homeSection').style.display = 'block';
                 loadMarketplace();
+                loadTouristAttractions();
+            } else if (section === 'tourism') {
+                document.getElementById('tourismSection').style.display = 'block';
+                loadTourismContent();
             } else if (section === 'dashboard') {
-                if (!currentUser) {
-                    openAuthModal();
+                if (!currentUser || currentUser.type !== 'seller') {
+                    openAuthModal('login', 'seller');
                     return;
                 }
                 document.getElementById('dashboardSection').style.display = 'block';
                 loadUserDashboard();
             } else if (section === 'admin') {
                 if (!currentUser || currentUser.type !== 'admin') {
-                    alert('Admin access required');
+                    openAuthModal('login', 'admin');
                     return;
                 }
                 document.getElementById('adminSection').style.display = 'block';
@@ -1603,6 +2081,37 @@
             
             // Update active nav
             setActiveNav(section);
+        }
+        
+        // Load tourism content
+        function loadTourismContent() {
+            const container = document.getElementById('tourismContent');
+            const attractions = BINGA_MARKETPLACE_DB.attractions.getActive();
+            
+            if (attractions.length > 0) {
+                container.innerHTML = `
+                    <div class="products-grid">
+                        ${attractions.map(attraction => renderAttractionCard(attraction)).join('')}
+                    </div>
+                    <div style="text-align: center; margin-top: 30px;">
+                        <h3>Plan Your Binga Visit</h3>
+                        <p>Contact our tourism desk for bookings and information:</p>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                            <h4><i class="fas fa-phone"></i> +263 77 286 3815</h4>
+                            <p>Available for tour bookings, accommodation, and travel information</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="no-products">
+                        <div style="font-size: 60px; margin-bottom: 20px;">🏞️</div>
+                        <h3>Tourist Attractions Coming Soon</h3>
+                        <p>Binga's beautiful attractions will be listed here by administrator</p>
+                        <p style="margin-top: 10px;">Contact: +263 77 286 3815 for tourism information</p>
+                    </div>
+                `;
+            }
         }
         
         // Set active navigation
@@ -1619,6 +2128,11 @@
                     link.classList.add('active');
                     break;
                 }
+            }
+            
+            // Special case for tourism
+            if (section === 'tourism') {
+                document.querySelector('.nav-link.tourist').classList.add('active');
             }
         }
         
@@ -1640,6 +2154,7 @@
                     'cow': 'Cattle',
                     'poultry': 'Poultry',
                     'agriculture': 'Agricultural Products',
+                    'tourism': 'Tourism Services',
                     'services': 'Services',
                     'property': 'Property',
                     'vehicles': 'Vehicles'
@@ -1655,12 +2170,12 @@
                     <div style="font-size: 60px; margin-bottom: 20px;">🏷️</div>
                     <h3>No products in ${categoryNames[category] || category} category</h3>
                     <p>Be the first to post in this category!</p>
-                    ${currentUser ? 
+                    ${currentUser && currentUser.type === 'seller' ? 
                         `<button class="btn btn-primary" onclick="showPostAdForm()" style="margin-top: 15px;">
                             <i class="fas fa-plus-circle"></i> Post an Ad
                         </button>` : 
-                        `<button class="btn btn-primary" onclick="openAuthModal()" style="margin-top: 15px;">
-                            <i class="fas fa-user-plus"></i> Register to Post
+                        `<button class="btn btn-primary" onclick="openAuthModal('login', 'seller')" style="margin-top: 15px;">
+                            <i class="fas fa-sign-in-alt"></i> Login as Seller
                         </button>`
                     }
                 `;
@@ -1758,15 +2273,17 @@
         
         // Show post ad form
         function showPostAdForm() {
-            if (!currentUser) {
-                openAuthModal();
+            if (!currentUser || currentUser.type !== 'seller') {
+                openAuthModal('login', 'seller');
                 return;
             }
             
             // Hide other sections
             document.getElementById('homeSection').style.display = 'none';
+            document.getElementById('tourismSection').style.display = 'none';
             document.getElementById('dashboardSection').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('addAttractionSection').style.display = 'none';
             
             // Show post ad section
             document.getElementById('postAdSection').style.display = 'block';
@@ -1808,6 +2325,7 @@
                             <option>Kariyangwe</option>
                             <option>Binga Centre</option>
                             <option>Chete Island</option>
+                            <option>Lake Kariba</option>
                             <option>Other</option>
                         </select>
                     </div>
@@ -1823,18 +2341,92 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Images (Optional)</label>
-                        <input type="file" class="form-control" id="adImages" multiple accept="image/*">
-                        <small>You can upload up to 4 images. Clear photos help sell faster.</small>
+                        <label class="form-label">Note to Administrator</label>
+                        <textarea class="form-control" id="adNote" rows="2" placeholder="Any special notes for admin review..."></textarea>
                     </div>
                     
                     <button type="button" class="btn btn-primary" onclick="submitAd()" style="margin-top: 20px;">
-                        <i class="fas fa-paper-plane"></i> Submit Ad
+                        <i class="fas fa-paper-plane"></i> Submit for Approval
                     </button>
                     
-                    <button type="button" class="btn" onclick="showSection('home')" style="margin-top: 20px; margin-left: 10px; background: #f0f0f0;">
+                    <button type="button" class="btn" onclick="showSection('dashboard')" style="margin-top: 20px; margin-left: 10px; background: #f0f0f0;">
                         Cancel
                     </button>
+                    
+                    <p style="margin-top: 20px; color: #666; font-size: 14px;">
+                        <i class="fas fa-info-circle"></i> Note: All ads require administrator approval before appearing on marketplace.
+                        Contact +263 77 286 3815 for faster approval.
+                    </p>
+                </form>
+            `;
+        }
+        
+        // Show add tourist attraction form
+        function showAddAttractionForm() {
+            if (!currentUser || currentUser.type !== 'admin') {
+                alert('Admin access required');
+                return;
+            }
+            
+            // Hide other sections
+            document.getElementById('homeSection').style.display = 'none';
+            document.getElementById('tourismSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('postAdSection').style.display = 'none';
+            
+            // Show add attraction section
+            document.getElementById('addAttractionSection').style.display = 'block';
+            
+            // Load add attraction form
+            const attractionTypes = BINGA_MARKETPLACE_DB.attractionTypes.getAll();
+            
+            document.getElementById('addAttractionForm').innerHTML = `
+                <form id="attractionForm">
+                    <div class="form-group">
+                        <label class="form-label">Attraction Name*</label>
+                        <input type="text" class="form-control" id="attractionName" placeholder="e.g., Binga Beach, Hot Springs, etc.">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Attraction Type*</label>
+                        <select class="form-control" id="attractionType">
+                            <option value="">Select Type</option>
+                            ${attractionTypes.map(type => `
+                                <option value="${type.id}">${type.name}</option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Location*</label>
+                        <input type="text" class="form-control" id="attractionLocation" placeholder="e.g., Binga Beach, Siachilaba Hot Springs">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Description*</label>
+                        <textarea class="form-control" id="attractionDescription" rows="4" placeholder="Describe the attraction..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Contact for Bookings</label>
+                        <input type="tel" class="form-control" id="attractionContact" value="+263772863815">
+                        <small>This number will be displayed for tour bookings</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Additional Information</label>
+                        <textarea class="form-control" id="attractionInfo" rows="3" placeholder="Entry fees, best time to visit, facilities..."></textarea>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="button" class="action-btn approve" onclick="submitAttraction()">
+                            <i class="fas fa-plus-circle"></i> Add Attraction
+                        </button>
+                        <button type="button" class="action-btn" onclick="showAdminTab('attractions')" style="background: #f0f0f0;">
+                            Cancel
+                        </button>
+                    </div>
                 </form>
             `;
         }
@@ -1847,6 +2439,7 @@
             const location = document.getElementById('adLocation').value;
             const description = document.getElementById('adDescription').value;
             const phone = document.getElementById('adPhone').value;
+            const note = document.getElementById('adNote').value;
             
             if (!title || !category || !price || !location || !description || !phone) {
                 alert('Please fill all required fields');
@@ -1859,7 +2452,7 @@
             // Add product
             const product = BINGA_MARKETPLACE_DB.products.add({
                 title: title,
-                description: description,
+                description: description + (note ? `\n\nNote: ${note}` : ''),
                 category: category,
                 price: parseFloat(price),
                 location: location,
@@ -1867,13 +2460,15 @@
                 sellerName: currentUser.name,
                 sellerPhone: phone,
                 whatsappLink: whatsappLink,
-                status: 'pending' // Will be reviewed by admin
+                status: 'pending',
+                adminNote: note || ''
             });
             
             // Update user's products
             const users = BINGA_MARKETPLACE_DB.users.getAll();
             const userIndex = users.findIndex(u => u.id === currentUser.id);
             if (userIndex !== -1) {
+                if (!users[userIndex].products) users[userIndex].products = [];
                 users[userIndex].products.push(product.id);
                 localStorage.setItem('binga_marketplace_users', JSON.stringify(users));
                 currentUser = users[userIndex];
@@ -1881,7 +2476,7 @@
             }
             
             // Show success message
-            showAlert('Ad submitted successfully! It will be reviewed by admin before appearing on the marketplace.', 'success');
+            showAlert('Ad submitted for approval! Administrator will review it shortly. Contact +263 77 286 3815 for faster approval.', 'success');
             
             // Clear form
             document.getElementById('adTitle').value = '';
@@ -1889,9 +2484,50 @@
             document.getElementById('adPrice').value = '';
             document.getElementById('adLocation').value = '';
             document.getElementById('adDescription').value = '';
+            document.getElementById('adNote').value = '';
             
             // Go to dashboard
             showSection('dashboard');
+        }
+        
+        // Submit tourist attraction
+        function submitAttraction() {
+            const name = document.getElementById('attractionName').value;
+            const type = document.getElementById('attractionType').value;
+            const location = document.getElementById('attractionLocation').value;
+            const description = document.getElementById('attractionDescription').value;
+            const contact = document.getElementById('attractionContact').value;
+            const info = document.getElementById('attractionInfo').value;
+            
+            if (!name || !type || !location || !description) {
+                alert('Please fill all required fields');
+                return;
+            }
+            
+            // Get type name
+            const attractionTypes = BINGA_MARKETPLACE_DB.attractionTypes.getAll();
+            const typeObj = attractionTypes.find(t => t.id === type);
+            const typeName = typeObj ? typeObj.name : type;
+            
+            // Add attraction
+            const attraction = BINGA_MARKETPLACE_DB.attractions.add({
+                name: name,
+                type: type,
+                typeName: typeName,
+                location: location,
+                description: description + (info ? `\n\nAdditional Info: ${info}` : ''),
+                contact: contact || '+263772863815',
+                status: 'active',
+                addedBy: currentUser.id,
+                addedByName: currentUser.name
+            });
+            
+            // Show success message
+            showAlert('Tourist attraction added successfully! It is now visible on the home page.', 'success');
+            
+            // Go back to admin attractions tab
+            showAdminTab('attractions');
+            showSection('admin');
         }
         
         // Load user dashboard
@@ -1900,77 +2536,76 @@
             
             // Update stats
             const myProducts = BINGA_MARKETPLACE_DB.products.getBySeller(currentUser.id);
+            const pendingProducts = myProducts.filter(p => p.status === 'pending');
+            const activeProducts = myProducts.filter(p => p.status === 'active' && p.approved);
             const totalViews = myProducts.reduce((sum, p) => sum + (p.views || 0), 0);
             
             document.getElementById('myProductsCount').textContent = myProducts.length;
             document.getElementById('myViewsCount').textContent = totalViews;
-            document.getElementById('myMessagesCount').textContent = '0'; // Would come from messages DB
-            document.getElementById('myRating').textContent = currentUser.rating || '0.0';
+            document.getElementById('myPendingCount').textContent = pendingProducts.length;
+            document.getElementById('myActiveCount').textContent = activeProducts.length;
             
             // Load dashboard content
             const container = document.getElementById('userDashboard');
             
-            if (currentUser.type === 'admin') {
-                container.innerHTML = `
-                    <div style="display: flex; gap: 20px; margin-bottom: 30px;">
-                        <button class="btn btn-primary" onclick="showSection('admin')">
-                            <i class="fas fa-crown"></i> Admin Panel
-                        </button>
-                        <button class="btn" onclick="showPostAdForm()" style="background: var(--accent); color: white;">
-                            <i class="fas fa-plus-circle"></i> Post New Ad
-                        </button>
-                    </div>
-                    
-                    <h3>My Products (${myProducts.length})</h3>
-                    ${myProducts.length > 0 ? 
-                        `<div class="products-grid" style="margin-top: 20px;">
-                            ${myProducts.map(p => renderProductCard(p)).join('')}
-                        </div>` :
-                        `<p>You haven't posted any ads yet. <a href="#" onclick="showPostAdForm()" style="color: var(--primary);">Post your first ad</a></p>`
-                    }
-                `;
-            } else {
-                container.innerHTML = `
-                    <div style="margin-bottom: 30px;">
-                        <button class="btn btn-primary" onclick="showPostAdForm()">
-                            <i class="fas fa-plus-circle"></i> Post New Ad
-                        </button>
-                    </div>
-                    
-                    <h3>My Products (${myProducts.length})</h3>
-                    ${myProducts.length > 0 ? 
-                        `<div class="products-grid" style="margin-top: 20px;">
-                            ${myProducts.map(p => `
-                                <div class="product-card">
-                                    <div class="product-image">
-                                        ${p.category === 'fish' ? '🐟' : p.category === 'goat' ? '🐐' : '📦'}
-                                        <div class="product-price">$${p.price}</div>
+            container.innerHTML = `
+                <div style="margin-bottom: 30px;">
+                    <button class="btn btn-primary" onclick="showPostAdForm()">
+                        <i class="fas fa-plus-circle"></i> Post New Ad
+                    </button>
+                </div>
+                
+                <h3>My Products (${myProducts.length})</h3>
+                ${myProducts.length > 0 ? 
+                    `<div class="products-grid" style="margin-top: 20px;">
+                        ${myProducts.map(p => `
+                            <div class="product-card">
+                                <div class="product-image">
+                                    ${p.category === 'fish' ? '🐟' : p.category === 'goat' ? '🐐' : '📦'}
+                                    <div class="product-price">$${p.price}</div>
+                                </div>
+                                <div class="product-details">
+                                    <h3 class="product-title">${p.title}</h3>
+                                    <p class="product-meta">Status: <span class="status-badge ${p.status === 'pending' ? 'status-pending' : p.approved ? 'status-active' : 'status-rejected'}">
+                                        ${p.status === 'pending' ? 'Pending Approval' : p.approved ? 'Active' : 'Rejected'}
+                                    </span></p>
+                                    <p class="product-meta">Views: ${p.views || 0}</p>
+                                    <div class="product-location">
+                                        <i class="fas fa-map-marker-alt"></i> ${p.location}
                                     </div>
-                                    <div class="product-details">
-                                        <h3 class="product-title">${p.title}</h3>
-                                        <p class="product-meta">Status: <strong>${p.status}</strong></p>
-                                        <p class="product-meta">Views: ${p.views || 0}</p>
-                                        <div class="product-location">
-                                            <i class="fas fa-map-marker-alt"></i> ${p.location}
-                                        </div>
-                                        <div style="margin-top: 10px;">
-                                            <button class="btn" style="background: #f0f0f0; padding: 5px 10px; font-size: 12px;" onclick="editAd(${p.id})">Edit</button>
-                                            <button class="btn" style="background: #f8d7da; color: #721c24; padding: 5px 10px; font-size: 12px;" onclick="deleteAd(${p.id})">Delete</button>
-                                        </div>
+                                    <div class="action-buttons">
+                                        ${p.status === 'pending' ? 
+                                            `<button class="action-btn" style="background: #f0f0f0;" onclick="alert('Ad pending admin approval. Contact +263 77 286 3815')">
+                                                <i class="fas fa-clock"></i> Awaiting Approval
+                                            </button>` : ''
+                                        }
+                                        <button class="action-btn delete" onclick="deleteAd(${p.id})">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
                                     </div>
                                 </div>
-                            `).join('')}
-                        </div>` :
-                        `<div class="no-products" style="padding: 30px;">
-                            <h3>You haven't posted any ads yet</h3>
-                            <p>Start selling by posting your first ad</p>
-                            <button class="btn btn-primary" onclick="showPostAdForm()" style="margin-top: 15px;">
-                                <i class="fas fa-plus-circle"></i> Post Your First Ad
-                            </button>
-                        </div>`
-                    }
-                `;
-            }
+                            </div>
+                        `).join('')}
+                    </div>` :
+                    `<div class="no-products" style="padding: 30px;">
+                        <h3>You haven't posted any ads yet</h3>
+                        <p>Start selling by posting your first ad</p>
+                        <button class="btn btn-primary" onclick="showPostAdForm()" style="margin-top: 15px;">
+                            <i class="fas fa-plus-circle"></i> Post Your First Ad
+                        </button>
+                    </div>`
+                }
+                
+                <div style="margin-top: 40px; background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                    <h4><i class="fas fa-info-circle"></i> Important Information</h4>
+                    <ul style="margin-top: 10px; color: #666;">
+                        <li>All ads require administrator approval</li>
+                        <li>Contact +263 77 286 3815 for faster approval</li>
+                        <li>Approved ads appear on homepage immediately</li>
+                        <li>Use clear descriptions and fair pricing</li>
+                    </ul>
+                </div>
+            `;
         }
         
         // Show admin tab
@@ -1982,74 +2617,239 @@
             const container = document.getElementById('adminContent');
             
             if (tab === 'pending') {
-                const pendingProducts = BINGA_MARKETPLACE_DB.products.getAll()
-                    .filter(p => p.status === 'pending');
+                const pendingProducts = BINGA_MARKETPLACE_DB.products.getPending();
+                const pendingUsers = BINGA_MARKETPLACE_DB.users.getAll()
+                    .filter(u => u.type === 'seller' && u.approved === false);
                 
                 container.innerHTML = `
-                    <h3>Pending Ads (${pendingProducts.length})</h3>
-                    ${pendingProducts.length > 0 ? 
+                    <h3><i class="fas fa-clock"></i> Pending Approvals</h3>
+                    
+                    <div style="margin-top: 30px;">
+                        <h4>Pending Ads (${pendingProducts.length})</h4>
+                        ${pendingProducts.length > 0 ? 
+                            `<div class="products-grid" style="margin-top: 20px;">
+                                ${pendingProducts.map(p => `
+                                    <div class="product-card">
+                                        <div class="product-image">
+                                            ${p.category === 'fish' ? '🐟' : p.category === 'goat' ? '🐐' : '📦'}
+                                            <div class="product-price">$${p.price}</div>
+                                        </div>
+                                        <div class="product-details">
+                                            <h3 class="product-title">${p.title}</h3>
+                                            <p class="product-meta">${p.description.substring(0, 60)}...</p>
+                                            <p class="product-meta">Seller: ${p.sellerName} (${p.sellerPhone})</p>
+                                            ${p.adminNote ? `<p class="product-meta"><strong>Note:</strong> ${p.adminNote}</p>` : ''}
+                                            <div class="product-location">
+                                                <i class="fas fa-map-marker-alt"></i> ${p.location}
+                                            </div>
+                                            <div class="action-buttons">
+                                                <button class="action-btn approve" onclick="approveAd(${p.id})">
+                                                    <i class="fas fa-check"></i> Approve
+                                                </button>
+                                                <button class="action-btn reject" onclick="rejectAd(${p.id})">
+                                                    <i class="fas fa-times"></i> Reject
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>` :
+                            `<div style="padding: 30px; text-align: center; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
+                                <p>No pending ads to review</p>
+                            </div>`
+                        }
+                    </div>
+                    
+                    <div style="margin-top: 40px;">
+                        <h4>Pending Seller Registrations (${pendingUsers.length})</h4>
+                        ${pendingUsers.length > 0 ? 
+                            `<div style="overflow-x: auto; margin-top: 20px;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="background: #f8f9fa;">
+                                            <th style="padding: 12px; text-align: left;">Name</th>
+                                            <th style="padding: 12px; text-align: left;">Phone</th>
+                                            <th style="padding: 12px; text-align: left;">Location</th>
+                                            <th style="padding: 12px; text-align: left;">Registered</th>
+                                            <th style="padding: 12px; text-align: left;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${pendingUsers.map(u => `
+                                            <tr style="border-bottom: 1px solid #eee;">
+                                                <td style="padding: 12px;">${u.name}</td>
+                                                <td style="padding: 12px;">${u.phone}</td>
+                                                <td style="padding: 12px;">${u.location}</td>
+                                                <td style="padding: 12px;">${new Date(u.registered).toLocaleDateString()}</td>
+                                                <td style="padding: 12px;">
+                                                    <button class="action-btn approve" onclick="approveUser(${u.id})" style="padding: 5px 10px; font-size: 12px;">
+                                                        Approve
+                                                    </button>
+                                                    <button class="action-btn reject" onclick="rejectUser(${u.id})" style="padding: 5px 10px; font-size: 12px;">
+                                                        Reject
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>` :
+                            `<div style="padding: 30px; text-align: center; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
+                                <p>No pending seller registrations</p>
+                            </div>`
+                        }
+                    </div>
+                `;
+            } else if (tab === 'attractions') {
+                const attractions = BINGA_MARKETPLACE_DB.attractions.getAll();
+                
+                container.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3><i class="fas fa-camera"></i> Tourist Attractions (${attractions.length})</h3>
+                        <button class="btn btn-primary" onclick="showAddAttractionForm()">
+                            <i class="fas fa-plus"></i> Add New Attraction
+                        </button>
+                    </div>
+                    
+                    ${attractions.length > 0 ? 
                         `<div class="products-grid" style="margin-top: 20px;">
-                            ${pendingProducts.map(p => `
-                                <div class="product-card">
-                                    <div class="product-image">
-                                        ${p.category === 'fish' ? '🐟' : p.category === 'goat' ? '🐐' : '📦'}
-                                        <div class="product-price">$${p.price}</div>
+                            ${attractions.map(a => `
+                                <div class="attraction-card">
+                                    <div class="attraction-image">
+                                        ${a.type === 'beach' ? '🏖️' : a.type === 'hotspring' ? '♨️' : '🏞️'}
+                                        <div class="attraction-type">${a.typeName || a.type}</div>
                                     </div>
                                     <div class="product-details">
-                                        <h3 class="product-title">${p.title}</h3>
-                                        <p class="product-meta">${p.description.substring(0, 60)}...</p>
-                                        <p class="product-meta">Seller: ${p.sellerName} (${p.sellerPhone})</p>
+                                        <h3 class="product-title">${a.name}</h3>
+                                        <p class="product-meta">${a.description.substring(0, 60)}...</p>
                                         <div class="product-location">
-                                            <i class="fas fa-map-marker-alt"></i> ${p.location}
+                                            <i class="fas fa-map-marker-alt"></i> ${a.location}
                                         </div>
-                                        <div style="margin-top: 10px; display: flex; gap: 10px;">
-                                            <button class="btn" style="background: var(--accent); color: white; padding: 5px 15px;" onclick="approveAd(${p.id})">Approve</button>
-                                            <button class="btn" style="background: var(--danger); color: white; padding: 5px 15px;" onclick="rejectAd(${p.id})">Reject</button>
+                                        <div class="action-buttons">
+                                            <button class="action-btn edit" onclick="editAttraction(${a.id})">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <button class="action-btn delete" onclick="deleteAttraction(${a.id})">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             `).join('')}
                         </div>` :
                         `<div class="no-products" style="padding: 30px;">
-                            <div style="font-size: 60px; margin-bottom: 20px;">✅</div>
-                            <h3>No pending ads to review</h3>
-                            <p>All ads have been processed</p>
+                            <div style="font-size: 60px; margin-bottom: 20px;">🏞️</div>
+                            <h3>No tourist attractions added yet</h3>
+                            <p>Add Binga's beautiful attractions to showcase them to visitors</p>
+                            <button class="btn btn-primary" onclick="showAddAttractionForm()" style="margin-top: 15px;">
+                                <i class="fas fa-plus-circle"></i> Add First Attraction
+                            </button>
                         </div>`
                     }
                 `;
             } else if (tab === 'users') {
                 const users = BINGA_MARKETPLACE_DB.users.getAll();
+                const sellers = users.filter(u => u.type === 'seller');
+                const admins = users.filter(u => u.type === 'admin');
                 
                 container.innerHTML = `
-                    <h3>Registered Users (${users.length})</h3>
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                        <thead>
-                            <tr style="background: #f8f9fa;">
-                                <th style="padding: 12px; text-align: left;">Name</th>
-                                <th style="padding: 12px; text-align: left;">Phone</th>
-                                <th style="padding: 12px; text-align: left;">Type</th>
-                                <th style="padding: 12px; text-align: left;">Products</th>
-                                <th style="padding: 12px; text-align: left;">Joined</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${users.map(u => `
-                                <tr style="border-bottom: 1px solid #eee;">
-                                    <td style="padding: 12px;">${u.name} ${u.type === 'admin' ? '<span style="background: gold; padding: 2px 8px; border-radius: 10px; font-size: 11px;">Admin</span>' : ''}</td>
-                                    <td style="padding: 12px;">${u.phone}</td>
-                                    <td style="padding: 12px;">${u.type}</td>
-                                    <td style="padding: 12px;">${u.products ? u.products.length : 0}</td>
-                                    <td style="padding: 12px;">${new Date(u.registered).toLocaleDateString()}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+                    <h3>User Management</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                        <div class="stat-card">
+                            <div class="stat-number">${users.length}</div>
+                            <div>Total Users</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${sellers.length}</div>
+                            <div>Sellers</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${admins.length}</div>
+                            <div>Administrators</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <h4>Sellers (${sellers.length})</h4>
+                        ${sellers.length > 0 ? 
+                            `<div style="overflow-x: auto; margin-top: 20px;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="background: #f8f9fa;">
+                                            <th style="padding: 12px; text-align: left;">Name</th>
+                                            <th style="padding: 12px; text-align: left;">Phone</th>
+                                            <th style="padding: 12px; text-align: left;">Location</th>
+                                            <th style="padding: 12px; text-align: left;">Status</th>
+                                            <th style="padding: 12px; text-align: left;">Products</th>
+                                            <th style="padding: 12px; text-align: left;">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${sellers.map(u => `
+                                            <tr style="border-bottom: 1px solid #eee;">
+                                                <td style="padding: 12px;">${u.name}</td>
+                                                <td style="padding: 12px;">${u.phone}</td>
+                                                <td style="padding: 12px;">${u.location}</td>
+                                                <td style="padding: 12px;">
+                                                    <span class="status-badge ${u.approved ? 'status-active' : 'status-pending'}">
+                                                        ${u.approved ? 'Approved' : 'Pending'}
+                                                    </span>
+                                                </td>
+                                                <td style="padding: 12px;">${u.products ? u.products.length : 0}</td>
+                                                <td style="padding: 12px;">
+                                                    ${!u.approved ? 
+                                                        `<button class="action-btn approve" onclick="approveUser(${u.id})" style="padding: 5px 10px; font-size: 12px;">
+                                                            Approve
+                                                        </button>` : ''
+                                                    }
+                                                    <button class="action-btn delete" onclick="deleteUser(${u.id})" style="padding: 5px 10px; font-size: 12px;">
+                                                        Remove
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>` :
+                            `<div style="padding: 30px; text-align: center; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
+                                <p>No sellers registered yet</p>
+                            </div>`
+                        }
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <h4>Add New Administrator</h4>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 10px;">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="newAdminName" placeholder="Admin name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="newAdminPhone" placeholder="+263 77 286 3815">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-control" id="newAdminUsername" placeholder="Admin username">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-control" id="newAdminPassword" placeholder="Password">
+                            </div>
+                            <button class="btn btn-primary" onclick="addNewAdmin()">
+                                <i class="fas fa-user-plus"></i> Add Administrator
+                            </button>
+                        </div>
+                    </div>
                 `;
             } else if (tab === 'stats') {
                 const products = BINGA_MARKETPLACE_DB.products.getAll();
                 const users = BINGA_MARKETPLACE_DB.users.getAll();
-                const activeProducts = products.filter(p => p.status === 'active');
+                const attractions = BINGA_MARKETPLACE_DB.attractions.getAll();
+                const activeProducts = products.filter(p => p.status === 'active' && p.approved);
                 const pendingProducts = products.filter(p => p.status === 'pending');
+                const sellers = users.filter(u => u.type === 'seller');
                 
                 container.innerHTML = `
                     <h3>Marketplace Statistics</h3>
@@ -2057,6 +2857,10 @@
                         <div class="stat-card">
                             <div class="stat-number">${users.length}</div>
                             <div>Total Users</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${sellers.length}</div>
+                            <div>Sellers</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-number">${activeProducts.length}</div>
@@ -2067,8 +2871,86 @@
                             <div>Pending Ads</div>
                         </div>
                         <div class="stat-card">
+                            <div class="stat-number">${attractions.length}</div>
+                            <div>Tourist Attractions</div>
+                        </div>
+                        <div class="stat-card">
                             <div class="stat-number">${products.length}</div>
-                            <div>Total Ads</div>
+                            <div>Total Ads Posted</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <h4>Category Distribution</h4>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 10px;">
+                            ${['fish', 'goat', 'cow', 'poultry', 'agriculture', 'tourism', 'services', 'property', 'vehicles'].map(cat => {
+                                const count = activeProducts.filter(p => p.category === cat).length;
+                                if (count === 0) return '';
+                                return `
+                                    <div style="margin-bottom: 10px;">
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                            <span>${cat.charAt(0).toUpperCase() + cat.slice(1)}</span>
+                                            <span>${count} ads</span>
+                                        </div>
+                                        <div style="height: 10px; background: #e0e0e0; border-radius: 5px; overflow: hidden;">
+                                            <div style="height: 100%; width: ${(count / Math.max(...['fish', 'goat', 'cow', 'poultry', 'agriculture', 'tourism', 'services', 'property', 'vehicles'].map(c => activeProducts.filter(p => p.category === c).length)) * 100}%; background: var(--primary);"></div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (tab === 'settings') {
+                container.innerHTML = `
+                    <h3>Administrator Settings</h3>
+                    
+                    <div style="margin-top: 30px;">
+                        <h4>Contact Information</h4>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 10px;">
+                            <div class="form-group">
+                                <label class="form-label">Primary Contact Number</label>
+                                <input type="tel" class="form-control" id="adminContact" value="+263772863815">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Administrator Email</label>
+                                <input type="email" class="form-control" id="adminEmail" value="admin@bingamarket.co.zw">
+                            </div>
+                            <button class="btn btn-primary" onclick="saveAdminSettings()">
+                                <i class="fas fa-save"></i> Save Settings
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <h4>Marketplace Management</h4>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 10px;">
+                            <div class="form-group">
+                                <label class="form-label">Marketplace Name</label>
+                                <input type="text" class="form-control" id="marketplaceName" value="Binga Marketplace">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Welcome Message</label>
+                                <textarea class="form-control" id="welcomeMessage" rows="3">The first digital marketplace for Binga community. Buy and sell fish, livestock, agricultural products, and services directly with your neighbors.</textarea>
+                            </div>
+                            <button class="btn btn-primary" onclick="saveMarketplaceSettings()">
+                                <i class="fas fa-save"></i> Save Settings
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <h4>Danger Zone</h4>
+                        <div style="background: #f8d7da; padding: 20px; border-radius: 8px; margin-top: 10px;">
+                            <p><strong>Warning:</strong> These actions cannot be undone</p>
+                            <div style="margin-top: 15px;">
+                                <button class="btn" style="background: #721c24; color: white;" onclick="clearAllPendingAds()">
+                                    <i class="fas fa-trash"></i> Clear All Pending Ads
+                                </button>
+                                <button class="btn" style="background: #721c24; color: white; margin-left: 10px;" onclick="clearAllProducts()">
+                                    <i class="fas fa-trash"></i> Clear All Products
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -2079,7 +2961,9 @@
         function approveAd(productId) {
             BINGA_MARKETPLACE_DB.products.update(productId, {
                 status: 'active',
-                verified: true
+                approved: true,
+                approvedAt: new Date().toISOString(),
+                approvedBy: currentUser.id
             });
             
             showAlert('Ad approved successfully! It is now visible in the marketplace.', 'success');
@@ -2092,16 +2976,131 @@
         // Admin: Reject ad
         function rejectAd(productId) {
             BINGA_MARKETPLACE_DB.products.update(productId, {
-                status: 'rejected'
+                status: 'rejected',
+                approved: false
             });
             
             showAlert('Ad rejected', 'success');
             showAdminTab('pending');
         }
         
-        // User: Edit ad
-        function editAd(productId) {
-            alert('Edit feature coming soon!');
+        // Admin: Approve user
+        function approveUser(userId) {
+            BINGA_MARKETPLACE_DB.users.update(userId, {
+                approved: true,
+                status: 'active'
+            });
+            
+            showAlert('User approved successfully! They can now login and post ads.', 'success');
+            showAdminTab('pending');
+        }
+        
+        // Admin: Reject user
+        function rejectUser(userId) {
+            BINGA_MARKETPLACE_DB.users.delete(userId);
+            
+            showAlert('User registration rejected and removed', 'success');
+            showAdminTab('pending');
+        }
+        
+        // Admin: Delete user
+        function deleteUser(userId) {
+            if (confirm('Are you sure you want to delete this user? All their products will also be deleted.')) {
+                // Delete user's products first
+                const userProducts = BINGA_MARKETPLACE_DB.products.getAll()
+                    .filter(p => p.sellerId === userId);
+                
+                userProducts.forEach(p => {
+                    BINGA_MARKETPLACE_DB.products.delete(p.id);
+                });
+                
+                // Delete user
+                BINGA_MARKETPLACE_DB.users.delete(userId);
+                
+                showAlert('User and all their products deleted', 'success');
+                showAdminTab('users');
+                loadMarketplace();
+            }
+        }
+        
+        // Admin: Add new admin
+        function addNewAdmin() {
+            const name = document.getElementById('newAdminName').value;
+            const phone = document.getElementById('newAdminPhone').value;
+            const username = document.getElementById('newAdminUsername').value;
+            const password = document.getElementById('newAdminPassword').value;
+            
+            if (!name || !phone || !username || !password) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            // Check if username already exists
+            const users = BINGA_MARKETPLACE_DB.users.getAll();
+            if (users.find(u => u.username === username)) {
+                alert('Username already exists');
+                return;
+            }
+            
+            // Add new admin
+            BINGA_MARKETPLACE_DB.users.add({
+                username: username,
+                password: password,
+                name: name,
+                phone: phone,
+                email: '',
+                location: 'Binga Centre',
+                type: 'admin',
+                role: 'admin',
+                approved: true
+            });
+            
+            // Clear form
+            document.getElementById('newAdminName').value = '';
+            document.getElementById('newAdminPhone').value = '';
+            document.getElementById('newAdminUsername').value = '';
+            document.getElementById('newAdminPassword').value = '';
+            
+            showAlert('New administrator added successfully', 'success');
+            showAdminTab('users');
+        }
+        
+        // Admin: Save settings
+        function saveAdminSettings() {
+            alert('Settings saved successfully!');
+            showAdminTab('settings');
+        }
+        
+        // Admin: Save marketplace settings
+        function saveMarketplaceSettings() {
+            alert('Marketplace settings saved successfully!');
+            showAdminTab('settings');
+        }
+        
+        // Admin: Clear all pending ads
+        function clearAllPendingAds() {
+            if (confirm('Are you sure you want to delete ALL pending ads? This cannot be undone.')) {
+                const products = BINGA_MARKETPLACE_DB.products.getAll();
+                const activeProducts = products.filter(p => p.status !== 'pending');
+                localStorage.setItem('binga_marketplace_products', JSON.stringify(activeProducts));
+                
+                showAlert('All pending ads have been cleared', 'success');
+                showAdminTab('pending');
+                loadMarketplace();
+            }
+        }
+        
+        // Admin: Clear all products
+        function clearAllProducts() {
+            if (confirm('WARNING: This will delete ALL products (including active ones). Are you sure?')) {
+                localStorage.setItem('binga_marketplace_products', JSON.stringify([]));
+                
+                showAlert('All products have been cleared', 'success');
+                showAdminTab('stats');
+                loadMarketplace();
+                loadCategories();
+                loadLocations();
+            }
         }
         
         // User: Delete ad
@@ -2113,6 +3112,24 @@
                 loadMarketplace();
                 loadCategories();
                 loadLocations();
+            }
+        }
+        
+        // Admin: Edit attraction
+        function editAttraction(attractionId) {
+            alert('Edit attraction feature coming soon!');
+        }
+        
+        // Admin: Delete attraction
+        function deleteAttraction(attractionId) {
+            if (confirm('Are you sure you want to delete this tourist attraction?')) {
+                BINGA_MARKETPLACE_DB.attractions.delete(attractionId);
+                showAlert('Tourist attraction deleted', 'success');
+                showAdminTab('attractions');
+                loadTouristAttractions();
+                if (document.getElementById('tourismSection').style.display !== 'none') {
+                    loadTourismContent();
+                }
             }
         }
         
