@@ -953,6 +953,10 @@
             width: 20px;
             height: 20px;
             cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         /* Status badges */
@@ -1088,6 +1092,61 @@
         textarea {
             font-size: 16px !important; /* Prevents iOS zoom */
         }
+        
+        /* Upload progress bar */
+        .upload-progress {
+            width: 100%;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .upload-progress-bar {
+            height: 10px;
+            background: var(--accent);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        /* Camera button */
+        .camera-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+        
+        /* Image upload instructions */
+        .upload-instructions {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        /* Compress image info */
+        .compress-info {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        /* File size warning */
+        .file-size-warning {
+            color: var(--warning);
+            font-size: 12px;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -1191,20 +1250,20 @@
                     
                     <div class="step-card">
                         <div class="step-number">2</div>
+                        <h3>Take Photos</h3>
+                        <p>Upload clear photos of your fish catch, livestock, or products directly from your phone</p>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-number">3</div>
                         <h3>Admin Approval</h3>
                         <p>Our administrator reviews and approves your listing to ensure quality</p>
                     </div>
                     
                     <div class="step-card">
-                        <div class="step-number">3</div>
-                        <h3>Buyers Contact You</h3>
-                        <p>Verified buyers contact you directly via WhatsApp to discuss purchases</p>
-                    </div>
-                    
-                    <div class="step-card">
                         <div class="step-number">4</div>
                         <h3>Sell & Earn</h3>
-                        <p>Complete the sale and earn money from your products or services</p>
+                        <p>Buyers contact you via WhatsApp and you complete the sale in person</p>
                     </div>
                 </div>
             </div>
@@ -1300,9 +1359,10 @@
                         <h3 class="sidebar-title">Sell Fast Tips</h3>
                         <ul style="list-style: none; color: #666; font-size: 14px;">
                             <li style="margin-bottom: 10px;">✅ Use clear photos</li>
+                            <li style="margin-bottom: 10px;">✅ Take photos in good light</li>
+                            <li style="margin-bottom: 10px;">✅ Show product from different angles</li>
                             <li style="margin-bottom: 10px;">✅ Set fair prices</li>
                             <li style="margin-bottom: 10px;">✅ Include WhatsApp number</li>
-                            <li style="margin-bottom: 10px;">✅ Be honest about condition</li>
                             <li>✅ Respond quickly to buyers</li>
                         </ul>
                     </div>
@@ -1565,7 +1625,7 @@
     </div>
     
     <script>
-        // Database for storing users, products, and tourist attractions - IMPROVED VERSION
+        // Database for storing users, products, and tourist attractions - WITH IMAGE SUPPORT
         const BINGA_MARKETPLACE_DB = {
             // Initialize local storage databases
             init: function() {
@@ -1638,7 +1698,7 @@
                     localStorage.setItem('binga_marketplace_users', JSON.stringify(defaultUsers));
                 }
                 
-                // Initialize products database - WITH SAMPLE DATA
+                // Initialize products database - WITH SAMPLE DATA AND IMAGES
                 if (!localStorage.getItem('binga_marketplace_products')) {
                     const sampleProducts = [
                         {
@@ -1658,7 +1718,7 @@
                             views: 45,
                             createdAt: new Date('2024-01-15').toISOString(),
                             adminContact: '263772863815',
-                            imageUrl: ''
+                            images: [] // Will store base64 images
                         },
                         {
                             id: 1002,
@@ -1677,7 +1737,7 @@
                             views: 32,
                             createdAt: new Date('2024-01-18').toISOString(),
                             adminContact: '263772863815',
-                            imageUrl: ''
+                            images: []
                         },
                         {
                             id: 1003,
@@ -1696,7 +1756,7 @@
                             views: 67,
                             createdAt: new Date('2024-01-12').toISOString(),
                             adminContact: '263772863815',
-                            imageUrl: ''
+                            images: []
                         },
                         {
                             id: 1004,
@@ -1715,7 +1775,7 @@
                             views: 28,
                             createdAt: new Date('2024-01-20').toISOString(),
                             adminContact: '263772863815',
-                            imageUrl: ''
+                            images: []
                         },
                         {
                             id: 1005,
@@ -1734,7 +1794,7 @@
                             views: 39,
                             createdAt: new Date('2024-01-10').toISOString(),
                             adminContact: '263772863815',
-                            imageUrl: ''
+                            images: []
                         }
                     ];
                     localStorage.setItem('binga_marketplace_products', JSON.stringify(sampleProducts));
@@ -1757,7 +1817,7 @@
                             addedByName: 'Binga Administrator',
                             createdAt: new Date('2024-01-01').toISOString(),
                             adminContact: '263772863815',
-                            imageUrl: ''
+                            images: []
                         },
                         {
                             id: 2002,
@@ -1773,39 +1833,7 @@
                             addedByName: 'Binga Administrator',
                             createdAt: new Date('2024-01-05').toISOString(),
                             adminContact: '263772863815',
-                            imageUrl: ''
-                        },
-                        {
-                            id: 2003,
-                            name: 'Lake Kariba Fishing Tours',
-                            type: 'tour',
-                            typeName: 'Tour Service',
-                            location: 'Lake Kariba',
-                            description: 'Guided fishing tours on Lake Kariba. Equipment provided. Experience the best fishing spots with local guides.',
-                            contact: '263772863815',
-                            whatsappLink: 'https://wa.me/263772863815?text=Hi! I want to book a fishing tour on Lake Kariba from Binga Marketplace',
-                            status: 'active',
-                            addedBy: 1,
-                            addedByName: 'Binga Administrator',
-                            createdAt: new Date('2024-01-08').toISOString(),
-                            adminContact: '263772863815',
-                            imageUrl: ''
-                        },
-                        {
-                            id: 2004,
-                            name: 'Chete Island Safari',
-                            type: 'wildlife',
-                            typeName: 'Wildlife',
-                            location: 'Chete Island',
-                            description: 'Wildlife safari on Chete Island. See elephants, buffalo, and various bird species in their natural habitat.',
-                            contact: '263772863815',
-                            whatsappLink: 'https://wa.me/263772863815?text=Hi! I want to book a safari to Chete Island from Binga Marketplace',
-                            status: 'active',
-                            addedBy: 1,
-                            addedByName: 'Binga Administrator',
-                            createdAt: new Date('2024-01-12').toISOString(),
-                            adminContact: '263772863815',
-                            imageUrl: ''
+                            images: []
                         }
                     ];
                     localStorage.setItem('binga_marketplace_attractions', JSON.stringify(sampleAttractions));
@@ -1852,6 +1880,11 @@
                         {id: 'tour', name: 'Tour Service'}
                     ];
                     localStorage.setItem('binga_marketplace_attraction_types', JSON.stringify(attractionTypes));
+                }
+                
+                // Initialize images storage
+                if (!localStorage.getItem('binga_marketplace_images')) {
+                    localStorage.setItem('binga_marketplace_images', JSON.stringify({}));
                 }
                 
                 console.log('Database initialized successfully');
@@ -1981,6 +2014,42 @@
                 }
             },
             
+            // Image operations
+            images: {
+                save: function(productId, base64Image) {
+                    const images = JSON.parse(localStorage.getItem('binga_marketplace_images')) || {};
+                    if (!images[productId]) {
+                        images[productId] = [];
+                    }
+                    // Limit to 5 images per product
+                    if (images[productId].length >= 5) {
+                        images[productId].shift(); // Remove oldest image
+                    }
+                    images[productId].push(base64Image);
+                    localStorage.setItem('binga_marketplace_images', JSON.stringify(images));
+                    return images[productId];
+                },
+                
+                get: function(productId) {
+                    const images = JSON.parse(localStorage.getItem('binga_marketplace_images')) || {};
+                    return images[productId] || [];
+                },
+                
+                delete: function(productId, imageIndex) {
+                    const images = JSON.parse(localStorage.getItem('binga_marketplace_images')) || {};
+                    if (images[productId]) {
+                        images[productId].splice(imageIndex, 1);
+                        localStorage.setItem('binga_marketplace_images', JSON.stringify(images));
+                    }
+                },
+                
+                deleteAll: function(productId) {
+                    const images = JSON.parse(localStorage.getItem('binga_marketplace_images')) || {};
+                    delete images[productId];
+                    localStorage.setItem('binga_marketplace_images', JSON.stringify(images));
+                }
+            },
+            
             // Tourist Attractions operations
             attractions: {
                 getAll: function() {
@@ -2034,6 +2103,8 @@
         // Current user state
         let currentUser = null;
         let loginType = 'seller';
+        let uploadedImages = [];
+        let isUploading = false;
         
         // Initialize the application
         function initApp() {
@@ -2390,13 +2461,25 @@
             };
             
             const icon = categoryIcons[product.category] || '📦';
-            const displayIcon = product.imageUrl ? `<img src="${product.imageUrl}" alt="${product.title}">` : icon;
+            
+            // Get images for this product
+            const images = BINGA_MARKETPLACE_DB.images.get(product.id);
+            const hasImages = images && images.length > 0;
+            
+            const displayImage = hasImages ? 
+                `<img src="${images[0]}" alt="${product.title}" style="width: 100%; height: 100%; object-fit: cover;">` : 
+                `<div style="font-size: 48px;">${icon}</div>`;
             
             return `
                 <div class="product-card">
                     <div class="product-image">
-                        ${displayIcon}
+                        ${displayImage}
                         <div class="product-price">$${product.price}</div>
+                        ${hasImages && images.length > 1 ? 
+                            `<div style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 3px 8px; border-radius: 10px; font-size: 12px;">
+                                <i class="fas fa-camera"></i> ${images.length}
+                            </div>` : ''
+                        }
                     </div>
                     <div class="product-details">
                         <h3 class="product-title">
@@ -2428,9 +2511,12 @@
             };
             
             const icon = attractionIcons[attraction.type] || '🏞️';
-            const displayImage = attraction.imageUrl ? 
-                `<img src="${attraction.imageUrl}" alt="${attraction.name}">` : 
-                icon;
+            const images = BINGA_MARKETPLACE_DB.images.get('attraction_' + attraction.id);
+            const hasImages = images && images.length > 0;
+            
+            const displayImage = hasImages ? 
+                `<img src="${images[0]}" alt="${attraction.name}" style="width: 100%; height: 100%; object-fit: cover;">` : 
+                `<div style="font-size: 48px;">${icon}</div>`;
             
             return `
                 <div class="attraction-card">
@@ -2570,11 +2656,11 @@
                 container.innerHTML = `
                     <div class="no-products">
                         <div style="font-size: 60px; margin-bottom: 20px;">🏞️</div>
-                        <h3>Tourist Attractions Coming Soon</h3>
-                        <p>Binga's beautiful attractions will be listed here by administrator</p>
-                        <p style="margin-top: 10px;">Contact: +263 77 286 3815 for tourism information</p>
-                    </div>
-                `;
+                            <h3>Tourist Attractions Coming Soon</h3>
+                            <p>Binga's beautiful attractions will be listed here by administrator</p>
+                            <p style="margin-top: 10px;">Contact: +263 77 286 3815 for tourism information</p>
+                        </div>
+                    `;
             }
         }
         
@@ -2742,6 +2828,9 @@
                 return;
             }
             
+            // Reset uploaded images
+            uploadedImages = [];
+            
             // Hide other sections
             document.getElementById('homeSection').style.display = 'none';
             document.getElementById('tourismSection').style.display = 'none';
@@ -2807,9 +2896,45 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Product Image URL (Optional)</label>
-                        <input type="text" class="form-control" id="adImageUrl" placeholder="https://example.com/image.jpg">
-                        <small>Enter a direct link to your product image</small>
+                        <label class="form-label">Product Photos (Optional but recommended)</label>
+                        <div class="upload-instructions">
+                            <p><strong>Tips for best photos:</strong></p>
+                            <ul>
+                                <li>Take photos in good daylight</li>
+                                <li>Show product from different angles</li>
+                                <li>Keep the product clean and visible</li>
+                                <li>Maximum 5 photos per product</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="margin-top: 15px;">
+                            <label for="imageUpload" class="image-upload-btn">
+                                <i class="fas fa-camera"></i> Upload Photos from Gallery
+                            </label>
+                            <input type="file" id="imageUpload" accept="image/*" multiple onchange="handleImageUpload(event)" style="display: none;">
+                            
+                            ${navigator.mediaDevices && navigator.mediaDevices.getUserMedia ? 
+                                `<button type="button" class="camera-btn" onclick="openCamera()">
+                                    <i class="fas fa-camera"></i> Take Photo with Camera
+                                </button>` : ''
+                            }
+                        </div>
+                        
+                        <div class="compress-info">
+                            <i class="fas fa-info-circle"></i> Photos are automatically compressed to save space
+                        </div>
+                        
+                        <div class="upload-progress" id="uploadProgress">
+                            <div class="upload-progress-bar" id="uploadProgressBar"></div>
+                        </div>
+                        
+                        <div class="image-upload-container" id="imagePreviewContainer">
+                            <!-- Image previews will appear here -->
+                        </div>
+                        
+                        <div class="file-size-warning" id="fileSizeWarning" style="display: none;">
+                            <i class="fas fa-exclamation-triangle"></i> Large files are being compressed. Please wait...
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -2833,6 +2958,253 @@
             `;
         }
         
+        // Handle image upload
+        function handleImageUpload(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+            
+            // Limit to 5 images
+            const remainingSlots = 5 - uploadedImages.length;
+            const filesToProcess = Array.from(files).slice(0, remainingSlots);
+            
+            if (files.length > remainingSlots) {
+                alert(`You can only upload ${remainingSlots} more images (maximum 5 total).`);
+            }
+            
+            processImages(filesToProcess);
+        }
+        
+        // Open camera for taking photos
+        function openCamera() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert('Camera access is not supported on this device');
+                return;
+            }
+            
+            // Create a temporary video element for camera preview
+            const video = document.createElement('video');
+            video.style.position = 'fixed';
+            video.style.top = '0';
+            video.style.left = '0';
+            video.style.width = '100%';
+            video.style.height = '100%';
+            video.style.zIndex = '9999';
+            video.style.backgroundColor = '#000';
+            video.autoplay = true;
+            
+            const container = document.createElement('div');
+            container.style.position = 'fixed';
+            container.style.top = '0';
+            container.style.left = '0';
+            container.style.width = '100%';
+            container.style.height = '100%';
+            container.style.zIndex = '9998';
+            container.style.backgroundColor = 'rgba(0,0,0,0.9)';
+            
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.position = 'fixed';
+            buttonContainer.style.bottom = '50px';
+            buttonContainer.style.left = '0';
+            buttonContainer.style.width = '100%';
+            buttonContainer.style.textAlign = 'center';
+            buttonContainer.style.zIndex = '10000';
+            
+            const captureBtn = document.createElement('button');
+            captureBtn.innerHTML = '<i class="fas fa-camera"></i> Take Photo';
+            captureBtn.className = 'btn btn-primary';
+            captureBtn.style.padding = '15px 30px';
+            captureBtn.style.fontSize = '18px';
+            captureBtn.style.marginRight = '20px';
+            
+            const cancelBtn = document.createElement('button');
+            cancelBtn.innerHTML = '<i class="fas fa-times"></i> Cancel';
+            cancelBtn.className = 'btn';
+            cancelBtn.style.padding = '15px 30px';
+            cancelBtn.style.fontSize = '18px';
+            cancelBtn.style.background = '#f0f0f0';
+            
+            buttonContainer.appendChild(captureBtn);
+            buttonContainer.appendChild(cancelBtn);
+            
+            container.appendChild(video);
+            container.appendChild(buttonContainer);
+            document.body.appendChild(container);
+            
+            let stream = null;
+            
+            // Access camera
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(mediaStream) {
+                    stream = mediaStream;
+                    video.srcObject = stream;
+                })
+                .catch(function(err) {
+                    console.error('Camera access error:', err);
+                    alert('Unable to access camera. Please check permissions.');
+                    document.body.removeChild(container);
+                });
+            
+            // Capture photo
+            captureBtn.onclick = function() {
+                if (!stream) return;
+                
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // Convert to blob
+                canvas.toBlob(function(blob) {
+                    // Stop camera
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                    // Remove camera UI
+                    document.body.removeChild(container);
+                    
+                    // Process the captured image
+                    const file = new File([blob], 'camera-photo.jpg', { type: 'image/jpeg' });
+                    processImages([file]);
+                }, 'image/jpeg', 0.8);
+            };
+            
+            // Cancel camera
+            cancelBtn.onclick = function() {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+                document.body.removeChild(container);
+            };
+        }
+        
+        // Process uploaded images
+        function processImages(files) {
+            if (isUploading) {
+                alert('Please wait for current upload to finish');
+                return;
+            }
+            
+            isUploading = true;
+            const progressBar = document.getElementById('uploadProgress');
+            const progressFill = document.getElementById('uploadProgressBar');
+            const warning = document.getElementById('fileSizeWarning');
+            
+            progressBar.style.display = 'block';
+            warning.style.display = 'block';
+            
+            let processedCount = 0;
+            
+            files.forEach((file, index) => {
+                if (uploadedImages.length >= 5) {
+                    alert('Maximum 5 images allowed');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        // Create canvas for compression
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Calculate new dimensions (max 800px on longest side)
+                        let width = img.width;
+                        let height = img.height;
+                        const maxSize = 800;
+                        
+                        if (width > height && width > maxSize) {
+                            height = (height * maxSize) / width;
+                            width = maxSize;
+                        } else if (height > maxSize) {
+                            width = (width * maxSize) / height;
+                            height = maxSize;
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        // Draw and compress image
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Convert to base64 with quality compression
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                        
+                        // Add to uploaded images array
+                        uploadedImages.push(compressedBase64);
+                        
+                        // Update progress
+                        processedCount++;
+                        progressFill.style.width = `${(processedCount / files.length) * 100}%`;
+                        
+                        // Update preview
+                        updateImagePreviews();
+                        
+                        // Check if all files processed
+                        if (processedCount === files.length) {
+                            setTimeout(() => {
+                                progressBar.style.display = 'none';
+                                warning.style.display = 'none';
+                                progressFill.style.width = '0%';
+                                isUploading = false;
+                            }, 500);
+                        }
+                    };
+                    
+                    img.src = e.target.result;
+                };
+                
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // Update image previews
+        function updateImagePreviews() {
+            const container = document.getElementById('imagePreviewContainer');
+            container.innerHTML = '';
+            
+            uploadedImages.forEach((image, index) => {
+                const previewDiv = document.createElement('div');
+                previewDiv.className = 'image-preview';
+                
+                const img = document.createElement('img');
+                img.src = image;
+                img.alt = `Product image ${index + 1}`;
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-image';
+                removeBtn.innerHTML = '×';
+                removeBtn.onclick = function() {
+                    uploadedImages.splice(index, 1);
+                    updateImagePreviews();
+                };
+                
+                previewDiv.appendChild(img);
+                previewDiv.appendChild(removeBtn);
+                container.appendChild(previewDiv);
+            });
+            
+            // Add placeholder for adding more images
+            if (uploadedImages.length < 5) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'image-preview';
+                placeholder.style.display = 'flex';
+                placeholder.style.flexDirection = 'column';
+                placeholder.style.alignItems = 'center';
+                placeholder.style.justifyContent = 'center';
+                placeholder.style.cursor = 'pointer';
+                placeholder.innerHTML = `
+                    <i class="fas fa-plus" style="font-size: 24px; color: #999; margin-bottom: 5px;"></i>
+                    <div style="font-size: 12px; color: #999; text-align: center;">Add Photo<br>(${uploadedImages.length}/5)</div>
+                `;
+                placeholder.onclick = function() {
+                    document.getElementById('imageUpload').click();
+                };
+                container.appendChild(placeholder);
+            }
+        }
+        
         // Submit ad
         function submitAd() {
             const title = document.getElementById('adTitle').value.trim();
@@ -2841,7 +3213,6 @@
             const location = document.getElementById('adLocation').value;
             const description = document.getElementById('adDescription').value.trim();
             const phone = document.getElementById('adPhone').value.replace(/\D/g, '');
-            const imageUrl = document.getElementById('adImageUrl').value.trim();
             const note = document.getElementById('adNote').value.trim();
             
             if (!title || !category || !price || !location || !description || !phone) {
@@ -2852,6 +3223,12 @@
             if (phone.length < 9) {
                 alert('Please enter a valid phone number');
                 return;
+            }
+            
+            if (uploadedImages.length === 0) {
+                if (!confirm('You haven\'t uploaded any photos. Photos help sell products faster. Continue without photos?')) {
+                    return;
+                }
             }
             
             // Create WhatsApp link
@@ -2870,8 +3247,15 @@
                 whatsappLink: whatsappLink,
                 status: 'pending',
                 adminNote: note || '',
-                imageUrl: imageUrl || ''
+                images: [] // Store reference to images
             });
+            
+            // Save images if any
+            if (uploadedImages.length > 0) {
+                uploadedImages.forEach(image => {
+                    BINGA_MARKETPLACE_DB.images.save(product.id, image);
+                });
+            }
             
             // Update user's products
             BINGA_MARKETPLACE_DB.users.update(currentUser.id, {
@@ -2885,14 +3269,14 @@
             // Show success message
             showAlert('Ad submitted for approval! Administrator will review it shortly. Contact +263 77 286 3815 for faster approval.', 'success');
             
-            // Clear form
+            // Clear form and images
             document.getElementById('adTitle').value = '';
             document.getElementById('adCategory').value = '';
             document.getElementById('adPrice').value = '';
             document.getElementById('adLocation').value = '';
             document.getElementById('adDescription').value = '';
-            document.getElementById('adImageUrl').value = '';
             document.getElementById('adNote').value = '';
+            uploadedImages = [];
             
             // Go to dashboard
             showSection('dashboard');
@@ -2926,34 +3310,48 @@
                 <h3>My Products (${myProducts.length})</h3>
                 ${myProducts.length > 0 ? 
                     `<div class="products-grid" style="margin-top: 20px;">
-                        ${myProducts.map(p => `
-                            <div class="product-card">
-                                <div class="product-image">
-                                    ${p.imageUrl ? `<img src="${p.imageUrl}" alt="${p.title}">` : (p.category === 'fish' ? '🐟' : p.category === 'goat' ? '🐐' : '📦')}
-                                    <div class="product-price">$${p.price}</div>
-                                </div>
-                                <div class="product-details">
-                                    <h3 class="product-title">${p.title}</h3>
-                                    <p class="product-meta">Status: <span class="status-badge ${!p.approved ? 'status-pending' : p.status === 'active' ? 'status-active' : 'status-rejected'}">
-                                        ${!p.approved ? 'Pending Approval' : p.status === 'active' ? 'Active' : 'Rejected'}
-                                    </span></p>
-                                    <p class="product-meta">Views: ${p.views || 0}</p>
-                                    <div class="product-location">
-                                        <i class="fas fa-map-marker-alt"></i> ${p.location}
-                                    </div>
-                                    <div class="action-buttons">
-                                        ${!p.approved ? 
-                                            `<button class="action-btn" style="background: #f0f0f0;" onclick="alert('Ad pending admin approval. Contact +263 77 286 3815')">
-                                                <i class="fas fa-clock"></i> Awaiting Approval
-                                            </button>` : ''
+                        ${myProducts.map(p => {
+                            const images = BINGA_MARKETPLACE_DB.images.get(p.id);
+                            const hasImages = images && images.length > 0;
+                            const icon = p.category === 'fish' ? '🐟' : p.category === 'goat' ? '🐐' : '📦';
+                            
+                            return `
+                                <div class="product-card">
+                                    <div class="product-image">
+                                        ${hasImages ? 
+                                            `<img src="${images[0]}" alt="${p.title}" style="width: 100%; height: 100%; object-fit: cover;">` : 
+                                            `<div style="font-size: 48px;">${icon}</div>`
                                         }
-                                        <button class="action-btn delete" onclick="deleteAd(${p.id})">
-                                            <i class="fas fa-trash"></i> Delete
-                                        </button>
+                                        <div class="product-price">$${p.price}</div>
+                                        ${hasImages && images.length > 1 ? 
+                                            `<div style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 3px 8px; border-radius: 10px; font-size: 12px;">
+                                                <i class="fas fa-camera"></i> ${images.length}
+                                            </div>` : ''
+                                        }
+                                    </div>
+                                    <div class="product-details">
+                                        <h3 class="product-title">${p.title}</h3>
+                                        <p class="product-meta">Status: <span class="status-badge ${!p.approved ? 'status-pending' : p.status === 'active' ? 'status-active' : 'status-rejected'}">
+                                            ${!p.approved ? 'Pending Approval' : p.status === 'active' ? 'Active' : 'Rejected'}
+                                        </span></p>
+                                        <p class="product-meta">Views: ${p.views || 0}</p>
+                                        <div class="product-location">
+                                            <i class="fas fa-map-marker-alt"></i> ${p.location}
+                                        </div>
+                                        <div class="action-buttons">
+                                            ${!p.approved ? 
+                                                `<button class="action-btn" style="background: #f0f0f0;" onclick="alert('Ad pending admin approval. Contact +263 77 286 3815')">
+                                                    <i class="fas fa-clock"></i> Awaiting Approval
+                                                </button>` : ''
+                                            }
+                                            <button class="action-btn delete" onclick="deleteAd(${p.id})">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        `).join('')}
+                            `;
+                        }).join('')}
                     </div>` :
                     `<div class="no-products" style="padding: 30px;">
                         <h3>You haven't posted any ads yet</h3>
@@ -2970,8 +3368,8 @@
                         <li>All ads require administrator approval</li>
                         <li>Contact +263 77 286 3815 for faster approval</li>
                         <li>Approved ads appear on homepage immediately</li>
-                        <li>Use clear descriptions and fair pricing</li>
-                        <li>Add images to make your ads more attractive</li>
+                        <li>Use clear photos to make your ads more attractive</li>
+                        <li>Photos help products sell 3x faster!</li>
                     </ul>
                 </div>
             `;
@@ -2997,31 +3395,45 @@
                         <h4>Pending Ads (${pendingProducts.length})</h4>
                         ${pendingProducts.length > 0 ? 
                             `<div class="products-grid" style="margin-top: 20px;">
-                                ${pendingProducts.map(p => `
-                                    <div class="product-card">
-                                        <div class="product-image">
-                                            ${p.imageUrl ? `<img src="${p.imageUrl}" alt="${p.title}">` : (p.category === 'fish' ? '🐟' : p.category === 'goat' ? '🐐' : '📦')}
-                                            <div class="product-price">$${p.price}</div>
-                                        </div>
-                                        <div class="product-details">
-                                            <h3 class="product-title">${p.title}</h3>
-                                            <p class="product-meta">${p.description.substring(0, 60)}...</p>
-                                            <p class="product-meta">Seller: ${p.sellerName} (${p.sellerPhone})</p>
-                                            ${p.adminNote ? `<p class="product-meta"><strong>Note:</strong> ${p.adminNote}</p>` : ''}
-                                            <div class="product-location">
-                                                <i class="fas fa-map-marker-alt"></i> ${p.location}
+                                ${pendingProducts.map(p => {
+                                    const images = BINGA_MARKETPLACE_DB.images.get(p.id);
+                                    const hasImages = images && images.length > 0;
+                                    const icon = p.category === 'fish' ? '🐟' : p.category === 'goat' ? '🐐' : '📦';
+                                    
+                                    return `
+                                        <div class="product-card">
+                                            <div class="product-image">
+                                                ${hasImages ? 
+                                                    `<img src="${images[0]}" alt="${p.title}" style="width: 100%; height: 100%; object-fit: cover;">` : 
+                                                    `<div style="font-size: 48px;">${icon}</div>`
+                                                }
+                                                <div class="product-price">$${p.price}</div>
+                                                ${hasImages && images.length > 1 ? 
+                                                    `<div style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.7); color: white; padding: 3px 8px; border-radius: 10px; font-size: 12px;">
+                                                        <i class="fas fa-camera"></i> ${images.length}
+                                                    </div>` : ''
+                                                }
                                             </div>
-                                            <div class="action-buttons">
-                                                <button class="action-btn approve" onclick="approveAd(${p.id})">
-                                                    <i class="fas fa-check"></i> Approve
-                                                </button>
-                                                <button class="action-btn reject" onclick="rejectAd(${p.id})">
-                                                    <i class="fas fa-times"></i> Reject
-                                                </button>
+                                            <div class="product-details">
+                                                <h3 class="product-title">${p.title}</h3>
+                                                <p class="product-meta">${p.description.substring(0, 60)}...</p>
+                                                <p class="product-meta">Seller: ${p.sellerName} (${p.sellerPhone})</p>
+                                                ${p.adminNote ? `<p class="product-meta"><strong>Note:</strong> ${p.adminNote}</p>` : ''}
+                                                <div class="product-location">
+                                                    <i class="fas fa-map-marker-alt"></i> ${p.location}
+                                                </div>
+                                                <div class="action-buttons">
+                                                    <button class="action-btn approve" onclick="approveAd(${p.id})">
+                                                        <i class="fas fa-check"></i> Approve
+                                                    </button>
+                                                    <button class="action-btn reject" onclick="rejectAd(${p.id})">
+                                                        <i class="fas fa-times"></i> Reject
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                `).join('')}
+                                    `;
+                                }).join('')}
                             </div>` :
                             `<div style="padding: 30px; text-align: center; background: #f8f9fa; border-radius: 8px; margin-top: 20px;">
                                 <p>No pending ads to review</p>
@@ -3084,29 +3496,38 @@
                     
                     ${attractions.length > 0 ? 
                         `<div class="products-grid" style="margin-top: 20px;">
-                            ${attractions.map(a => `
-                                <div class="attraction-card">
-                                    <div class="attraction-image">
-                                        ${a.imageUrl ? `<img src="${a.imageUrl}" alt="${a.name}">` : (a.type === 'beach' ? '🏖️' : a.type === 'hotspring' ? '♨️' : '🏞️')}
-                                        <div class="attraction-type">${a.typeName || a.type}</div>
-                                    </div>
-                                    <div class="product-details">
-                                        <h3 class="product-title">${a.name}</h3>
-                                        <p class="product-meta">${a.description.substring(0, 60)}...</p>
-                                        <div class="product-location">
-                                            <i class="fas fa-map-marker-alt"></i> ${a.location}
+                            ${attractions.map(a => {
+                                const images = BINGA_MARKETPLACE_DB.images.get('attraction_' + a.id);
+                                const hasImages = images && images.length > 0;
+                                const icon = a.type === 'beach' ? '🏖️' : a.type === 'hotspring' ? '♨️' : '🏞️';
+                                
+                                return `
+                                    <div class="attraction-card">
+                                        <div class="attraction-image">
+                                            ${hasImages ? 
+                                                `<img src="${images[0]}" alt="${a.name}" style="width: 100%; height: 100%; object-fit: cover;">` : 
+                                                `<div style="font-size: 48px;">${icon}</div>`
+                                            }
+                                            <div class="attraction-type">${a.typeName || a.type}</div>
                                         </div>
-                                        <div class="action-buttons">
-                                            <button class="action-btn edit" onclick="editAttraction(${a.id})">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </button>
-                                            <button class="action-btn delete" onclick="deleteAttraction(${a.id})">
-                                                <i class="fas fa-trash"></i> Delete
-                                            </button>
+                                        <div class="product-details">
+                                            <h3 class="product-title">${a.name}</h3>
+                                            <p class="product-meta">${a.description.substring(0, 60)}...</p>
+                                            <div class="product-location">
+                                                <i class="fas fa-map-marker-alt"></i> ${a.location}
+                                            </div>
+                                            <div class="action-buttons">
+                                                <button class="action-btn edit" onclick="editAttraction(${a.id})">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </button>
+                                                <button class="action-btn delete" onclick="deleteAttraction(${a.id})">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            `).join('')}
+                                `;
+                            }).join('')}
                         </div>` :
                         `<div class="no-products" style="padding: 30px;">
                             <div style="font-size: 60px; margin-bottom: 20px;">🏞️</div>
@@ -3140,7 +3561,12 @@
         // Admin: Reject ad
         function rejectAd(productId) {
             if (confirm('Are you sure you want to reject this ad?')) {
+                // Delete associated images
+                BINGA_MARKETPLACE_DB.images.deleteAll(productId);
+                
+                // Delete product
                 BINGA_MARKETPLACE_DB.products.delete(productId);
+                
                 showAlert('Ad rejected and removed', 'success');
                 showAdminTab('pending');
             }
@@ -3168,8 +3594,22 @@
         
         // User: Delete ad
         function deleteAd(productId) {
-            if (confirm('Are you sure you want to delete this ad?')) {
+            if (confirm('Are you sure you want to delete this ad? This cannot be undone.')) {
+                // Delete associated images
+                BINGA_MARKETPLACE_DB.images.deleteAll(productId);
+                
+                // Delete product
                 BINGA_MARKETPLACE_DB.products.delete(productId);
+                
+                // Update current user's products list
+                if (currentUser && currentUser.products) {
+                    const index = currentUser.products.indexOf(productId);
+                    if (index > -1) {
+                        currentUser.products.splice(index, 1);
+                        localStorage.setItem('binga_current_user', JSON.stringify(currentUser));
+                    }
+                }
+                
                 showAlert('Ad deleted successfully', 'success');
                 loadUserDashboard();
                 loadMarketplace();
@@ -3199,6 +3639,7 @@
             
             // Load edit attraction form
             const attractionTypes = JSON.parse(localStorage.getItem('binga_marketplace_attraction_types')) || [];
+            const images = BINGA_MARKETPLACE_DB.images.get('attraction_' + attractionId);
             
             document.getElementById('editAttractionForm').innerHTML = `
                 <form id="editAttractionFormContent">
@@ -3234,19 +3675,25 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Image URL</label>
-                        <input type="text" class="form-control" id="editAttractionImageUrl" value="${attraction.imageUrl || ''}" placeholder="https://example.com/image.jpg">
-                        <small>Enter a direct link to an image of the attraction</small>
-                    </div>
-                    
-                    ${attraction.imageUrl ? `
-                        <div class="form-group">
-                            <label class="form-label">Current Image Preview</label>
-                            <div>
-                                <img src="${attraction.imageUrl}" alt="${attraction.name}" class="uploaded-image">
-                            </div>
+                        <label class="form-label">Upload Photos (Optional)</label>
+                        <div style="margin-top: 15px;">
+                            <label for="attractionImageUpload" class="image-upload-btn">
+                                <i class="fas fa-camera"></i> Upload Photos
+                            </label>
+                            <input type="file" id="attractionImageUpload" accept="image/*" multiple style="display: none;">
                         </div>
-                    ` : ''}
+                        
+                        ${images && images.length > 0 ? `
+                            <div class="image-upload-container" style="margin-top: 10px;">
+                                ${images.map((img, index) => `
+                                    <div class="image-preview">
+                                        <img src="${img}" alt="Attraction image ${index + 1}">
+                                        <button type="button" class="remove-image" onclick="deleteAttractionImage(${attractionId}, ${index})">×</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
                     
                     <div class="action-buttons">
                         <button type="button" class="action-btn approve" onclick="updateAttraction(${attractionId})">
@@ -3260,6 +3707,12 @@
             `;
         }
         
+        // Delete attraction image
+        function deleteAttractionImage(attractionId, imageIndex) {
+            BINGA_MARKETPLACE_DB.images.delete('attraction_' + attractionId, imageIndex);
+            editAttraction(attractionId); // Reload the form
+        }
+        
         // Update attraction
         function updateAttraction(attractionId) {
             const name = document.getElementById('editAttractionName').value.trim();
@@ -3267,7 +3720,6 @@
             const location = document.getElementById('editAttractionLocation').value.trim();
             const description = document.getElementById('editAttractionDescription').value.trim();
             const contact = document.getElementById('editAttractionContact').value.replace(/\D/g, '');
-            const imageUrl = document.getElementById('editAttractionImageUrl').value.trim();
             
             if (!name || !type || !location || !description || !contact) {
                 alert('Please fill all required fields');
@@ -3287,7 +3739,6 @@
                 location: location,
                 description: description,
                 contact: contact,
-                imageUrl: imageUrl,
                 whatsappLink: `https://wa.me/${contact}?text=Hi! I want to book a tour to ${encodeURIComponent(name)} from Binga Marketplace`,
                 updatedAt: new Date().toISOString(),
                 updatedBy: currentUser.id
@@ -3308,7 +3759,12 @@
         // Admin: Delete attraction
         function deleteAttraction(attractionId) {
             if (confirm('Are you sure you want to delete this tourist attraction?')) {
+                // Delete associated images
+                BINGA_MARKETPLACE_DB.images.deleteAll('attraction_' + attractionId);
+                
+                // Delete attraction
                 BINGA_MARKETPLACE_DB.attractions.delete(attractionId);
+                
                 showAlert('Tourist attraction deleted', 'success');
                 showAdminTab('attractions');
                 loadTouristAttractions();
@@ -3372,12 +3828,6 @@
                         <small>This number will be linked to WhatsApp for bookings</small>
                     </div>
                     
-                    <div class="form-group">
-                        <label class="form-label">Image URL (Optional)</label>
-                        <input type="text" class="form-control" id="attractionImageUrl" placeholder="https://example.com/image.jpg">
-                        <small>Enter a direct link to an image of the attraction</small>
-                    </div>
-                    
                     <div class="action-buttons">
                         <button type="button" class="action-btn approve" onclick="submitAttraction()">
                             <i class="fas fa-plus-circle"></i> Add Attraction
@@ -3397,7 +3847,6 @@
             const location = document.getElementById('attractionLocation').value.trim();
             const description = document.getElementById('attractionDescription').value.trim();
             const contact = document.getElementById('attractionContact').value.replace(/\D/g, '');
-            const imageUrl = document.getElementById('attractionImageUrl').value.trim();
             
             if (!name || !type || !location || !description || !contact) {
                 alert('Please fill all required fields');
@@ -3413,14 +3862,13 @@
             const whatsappLink = `https://wa.me/${contact}?text=Hi! I want to book a tour to ${encodeURIComponent(name)} from Binga Marketplace`;
             
             // Add attraction
-            BINGA_MARKETPLACE_DB.attractions.add({
+            const attraction = BINGA_MARKETPLACE_DB.attractions.add({
                 name: name,
                 type: type,
                 typeName: typeName,
                 location: location,
                 description: description,
                 contact: contact,
-                imageUrl: imageUrl,
                 whatsappLink: whatsappLink,
                 addedBy: currentUser.id,
                 addedByName: currentUser.name
