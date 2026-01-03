@@ -3,501 +3,1378 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Victoria Falls Transit Planner</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <title>Binga Fish & Livestock Marketplace | Admin Control Panel</title>
     <style>
+        :root {
+            --primary: #1a5276;
+            --secondary: #d4ac0d;
+            --accent: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --tonga-brown: #8b4513;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
         body {
-            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
         }
-        .card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        
+        /* Login Screen */
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            text-align: center;
         }
-        .btn-primary {
-            background-color: #4f46e5;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
+        
+        .login-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: var(--primary);
         }
-        .btn-primary:hover {
-            background-color: #4338ca;
-        }
-        #map, #map-admin { /* Apply height to both maps */
-            height: 400px;
+        
+        .login-input {
             width: 100%;
-            border-radius: 0.75rem;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
         }
-        .login-tab {
-            padding: 0.5rem 1rem;
+        
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        /* Main App Container */
+        .app-container {
+            display: none;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        /* Header */
+        .app-header {
+            background: linear-gradient(to right, var(--primary), var(--tonga-brown));
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
             cursor: pointer;
         }
-        .login-tab.active {
-            border-bottom: 2px solid #4f46e5;
-            color: #4f46e5;
+        
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .nav-tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .nav-tab:hover {
+            background: #e9ecef;
+        }
+        
+        .nav-tab.active {
+            border-bottom: 3px solid var(--secondary);
+            background: white;
+            color: var(--primary);
+        }
+        
+        /* Content Areas */
+        .content-area {
+            display: none;
+            padding: 30px;
+            min-height: 600px;
+        }
+        
+        .content-area.active {
+            display: block;
+        }
+        
+        /* Dashboard */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        /* Forms */
+        .form-container {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .file-input {
+            padding: 10px;
+            background: white;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .submit-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .product-image {
+            height: 200px;
+            background: linear-gradient(45deg, #1a5276, #27ae60);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 60px;
+            position: relative;
+        }
+        
+        .verification-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--warning);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+        
+        .verified {
+            background: var(--accent);
+        }
+        
+        .product-details {
+            padding: 20px;
+        }
+        
+        .product-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .product-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 10px 0;
+        }
+        
+        .whatsapp-btn {
+            background: #25D366;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
             font-weight: 600;
         }
-        #message-box {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #333;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
-            z-index: 1001; /* Above map */
-            display: none;
-            font-size: 1.1rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        
+        /* Admin Controls */
+        .admin-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
         }
-        #rating-modal {
+        
+        .verify-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .reject-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .delete-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .data-table th {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .data-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .status-pending { color: var(--warning); font-weight: 600; }
+        .status-verified { color: var(--accent); font-weight: 600; }
+        
+        /* Modal */
+        .modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
             align-items: center;
-            z-index: 10000;
-            display: none;
+            justify-content: center;
         }
-        #rating-modal-content {
-            background-color: white;
+        
+        .modal-content {
+            background: white;
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            text-align: center;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
         }
-        #rating-modal-content .stars button {
-            background: none;
-            border: none;
-            font-size: 2.5rem;
+        
+        .close-modal {
+            float: right;
+            font-size: 28px;
             cursor: pointer;
-            color: #ccc;
         }
-        #rating-modal-content .stars button.selected {
-            color: #f3da35;
-        }
-        .leaflet-div-icon {
-            background: transparent;
-            border: none;
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-100">
-    <div id="message-box" class="fixed"></div>
-    <div id="rating-modal">
-        <div id="rating-modal-content">
-            <h3 class="text-xl font-bold mb-4">Rate Your Driver</h3>
-            <div class="stars mb-4">
-                <button data-star="1">★</button> <button data-star="2">★</button> <button data-star="3">★</button> <button data-star="4">★</button> <button data-star="5">★</button>
-            </div>
-            <textarea id="rating-feedback" class="border p-2 w-full mb-4 rounded-md" placeholder="Optional feedback..."></textarea>
-            <button id="submit-rating-btn" class="btn-primary w-full rounded-md">Submit Rating</button>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-icon">🐟🌊</div>
+        <h2>Binga Marketplace Admin</h2>
+        <p style="color: #666; margin-bottom: 30px;">Fishermen & Livestock Trade Platform</p>
+        
+        <input type="text" id="username" class="login-input" placeholder="Username" value="Munkuli$1996">
+        <input type="password" id="password" class="login-input" placeholder="Password" value="PickGod">
+        
+        <div style="text-align: left; margin: 15px 0; font-size: 14px;">
+            <label><input type="radio" name="userType" value="fisherman" checked> Fisherman/Livestock Seller</label><br>
+            <label><input type="radio" name="userType" value="admin"> Administrator</label>
+        </div>
+        
+        <button class="login-btn" onclick="login()">Login to Dashboard</button>
+        
+        <div style="margin-top: 30px; font-size: 14px; color: #666;">
+            <p>📱 WhatsApp Support: +263 77 123 4567</p>
+            <p>📍 Binga, Lake Kariba, Zimbabwe</p>
         </div>
     </div>
-
-    <div id="app" class="min-h-screen flex flex-col items-center justify-center p-4">
-        <div class="w-full max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-6">
-            <header class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-800">Victoria Falls Transit Planner</h1>
-                <p class="text-gray-600 mt-2">Your guide to getting around in Vic Falls, Zimbabwe.</p>
-            </header>
-
-            <div id="auth-section" class="mb-6">
-                <div class="flex justify-center space-x-4 mb-4">
-                    <div class="login-tab active" data-tab="passenger">Passenger</div>
-                    <div class="login-tab" data-tab="admin">Admin</div>
+    
+    <!-- Main Application (Hidden until login) -->
+    <div id="appContainer" class="app-container">
+        <!-- Header -->
+        <div class="app-header">
+            <div>
+                <h2>Binga Fish & Livestock Marketplace</h2>
+                <p id="userRoleDisplay"></p>
+            </div>
+            <div class="user-info">
+                <span id="currentUser"></span>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="switchTab('dashboard')">📊 Dashboard</div>
+            <div class="nav-tab" onclick="switchTab('addProduct')" id="addProductTab">➕ Add Product</div>
+            <div class="nav-tab" onclick="switchTab('myProducts')" id="myProductsTab">📦 My Products</div>
+            <div class="nav-tab" onclick="switchTab('marketplace')" id="marketplaceTab">🛒 Marketplace</div>
+            <div class="nav-tab" onclick="switchTab('adminPanel')" id="adminPanelTab">👑 Admin Panel</div>
+        </div>
+        
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="content-area active">
+            <h2>Dashboard Overview</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalProducts">0</div>
+                    <div class="stat-label">Total Products</div>
                 </div>
-                <div id="passenger-login" class="auth-form">
-                    <h2 class="text-xl font-bold mb-4">Passenger Login</h2>
-                    <input type="text" id="passengerUsername" placeholder="Username" class="border p-2 w-full mb-2 rounded-md">
-                    <input type="password" id="passengerPassword" placeholder="Password" class="border p-2 w-full mb-4 rounded-md">
-                    <button id="passengerLoginBtn" class="btn-primary w-full rounded-md">Login</button>
-                    <button id="passengerRegisterBtn" class="btn-primary w-full mt-2 bg-gray-600 hover:bg-gray-700 rounded-md">Register</button>
+                <div class="stat-card">
+                    <div class="stat-value" id="verifiedProducts">0</div>
+                    <div class="stat-label">Verified Products</div>
                 </div>
-                <div id="admin-login" class="auth-form hidden">
-                    <h2 class="text-xl font-bold mb-4">Admin Login</h2>
-                    <input type="text" id="adminUsername" placeholder="Username" class="border p-2 w-full mb-2 rounded-md" value="Munkuli$1996">
-                    <input type="password" id="adminPassword" placeholder="Password" class="border p-2 w-full mb-4 rounded-md" value="PickGod">
-                    <button id="adminLoginBtn" class="btn-primary w-full rounded-md">Login</button>
+                <div class="stat-card">
+                    <div class="stat-value" id="pendingVerification">0</div>
+                    <div class="stat-label">Pending Verification</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalUsers">0</div>
+                    <div class="stat-label">Registered Users</div>
                 </div>
             </div>
-
-            <div id="admin-dashboard" class="hidden">
-                 <button id="backToLoginAdmin" class="btn-primary mb-4 rounded-md">Logout</button>
-                <div class="flex justify-center space-x-4 mb-4 border-b">
-                    <div class="login-tab active" data-tab="register-driver">Register Driver</div>
-                    <div class="login-tab" data-tab="manage-drivers">Manage Drivers</div>
-                    <div class="login-tab" data-tab="manage-users">Manage Users</div>
-                    <div class="login-tab" data-tab="admin-settings">Settings</div>
+            
+            <div style="margin-top: 40px;">
+                <h3>📈 Recent Activity</h3>
+                <div id="recentActivity" style="margin-top: 20px;">
+                    <!-- Activity log will be populated here -->
                 </div>
-                <div id="register-driver-section" class="admin-section">
-                    <h2 class="text-xl font-bold mb-4">Driver Registration</h2>
-                    <input type="text" id="driverName" placeholder="Driver Name" class="border p-2 w-full mb-2 rounded-md">
-                    <input type="text" id="driverPhone" placeholder="Phone (+263...)" class="border p-2 w-full mb-2 rounded-md">
-                    <input type="text" id="driverCarReg" placeholder="Car Registration" class="border p-2 w-full mb-2 rounded-md">
-                    <select id="driverVehicleType" class="border p-2 w-full mb-4 rounded-md">
-                        <option value="Standard">Standard</option> <option value="Premium">Premium</option> <option value="XL">XL</option>
+            </div>
+            
+            <div style="margin-top: 40px; background: #f8f9fa; padding: 25px; border-radius: 15px;">
+                <h3>📋 Quick Actions</h3>
+                <div style="display: flex; gap: 15px; margin-top: 20px;">
+                    <button onclick="switchTab('addProduct')" class="submit-btn" style="background: var(--accent);">➕ Add New Product</button>
+                    <button onclick="refreshData()" class="submit-btn" style="background: var(--primary);">🔄 Refresh Data</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add Product Tab -->
+        <div id="addProduct" class="content-area">
+            <h2>➕ Add New Product</h2>
+            <div class="form-container">
+                <div class="form-group">
+                    <label class="form-label">Product Type</label>
+                    <select id="productType" class="form-control" onchange="updateProductForm()">
+                        <option value="fish">🐟 Fish (Kapenta, Bream, Tigerfish)</option>
+                        <option value="goat">🐐 Goats</option>
+                        <option value="cow">🐄 Cattle</option>
+                        <option value="chicken">🐓 Poultry</option>
+                        <option value="sheep">🐑 Sheep</option>
+                        <option value="other">📦 Other Livestock</option>
                     </select>
-                    <button id="registerDriverBtn" class="btn-primary w-full rounded-md">Register Driver</button>
                 </div>
-                <div id="manage-drivers-section" class="admin-section hidden">
-                    <h2 class="text-xl font-bold mb-4">Manage Drivers</h2>
-                    <div id="driver-list-container" class="mt-4 max-h-60 overflow-y-auto"></div>
+                
+                <div class="form-group">
+                    <label class="form-label" id="productNameLabel">Fish Name/Species</label>
+                    <input type="text" id="productName" class="form-control" placeholder="e.g., Fresh Kapenta, Live Goat">
                 </div>
-                <div id="manage-users-section" class="admin-section hidden">
-                    <h2 class="text-xl font-bold mb-4">Manage Passengers</h2>
-                    <div id="passenger-list-container" class="mt-4 max-h-60 overflow-y-auto"></div>
+                
+                <div class="form-group">
+                    <label class="form-label">Quantity/Weight</label>
+                    <input type="text" id="productQuantity" class="form-control" placeholder="e.g., 25kg, 3 goats, 1 cow">
                 </div>
-                <div id="admin-settings-section" class="admin-section hidden">
-                    <h2 class="text-xl font-bold mb-4">Settings</h2>
-                    <label for="fareMultiplier" class="block">Global Fare Multiplier:</label>
-                    <input type="number" id="fareMultiplier" value="1.0" step="0.1" min="0.1" class="border p-2 w-full mb-4 rounded-md">
-                    <button id="updateFareMultiplierBtn" class="btn-primary w-full rounded-md">Update Multiplier</button>
+                
+                <div class="form-group">
+                    <label class="form-label">Price (USD)</label>
+                    <input type="number" id="productPrice" class="form-control" placeholder="e.g., 150" step="0.01">
                 </div>
-            </div>
-
-            <div id="main-app" class="hidden">
-                 <button id="backToLogin" class="btn-primary mb-4 rounded-md">Logout</button>
-                <div id="ride-planning-section">
-                    <h2 class="text-xl font-bold mb-4">Plan Your Trip</h2>
-                    <div class="flex items-center justify-between mb-6">
-                        <select id="startLocation" class="border p-2 w-1/2 rounded-md"></select>
-                        <select id="endLocation" class="border p-2 w-1/2 rounded-md"></select>
+                
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea id="productDescription" class="form-control" rows="4" placeholder="Describe your product..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Your Phone Number (for WhatsApp)</label>
+                    <input type="tel" id="sellerPhone" class="form-control" placeholder="+263 77 123 4567" required>
+                    <small style="color: #666;">Buyers will contact you via WhatsApp</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Location in Binga</label>
+                    <input type="text" id="productLocation" class="form-control" placeholder="e.g., Siachilaba, Kariyangwe, Binga Centre">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Product Image</label>
+                    <div class="file-input" onclick="document.getElementById('imageUpload').click()">
+                        📷 Click to upload product photo
                     </div>
-                    <button id="planTripBtn" class="btn-primary w-full rounded-md">Find My Ride</button>
+                    <input type="file" id="imageUpload" accept="image/*" style="display: none;" onchange="previewImage(event)">
+                    <div id="imagePreview" style="margin-top: 10px; text-align: center;"></div>
                 </div>
-                <div id="ride-results-section" class="hidden mt-4">
-                    <h2 class="text-xl font-bold mb-2">Available Drivers</h2>
-                    <div id="results-container" class="mt-4"></div>
-                </div>
-                <div id="ride-history" class="mt-4">
-                    <h2 class="text-xl font-bold mb-2">Your Ride History</h2>
-                    <div id="history-container" class="mt-4 max-h-60 overflow-y-auto"></div>
-                </div>
-                <div id="map" class="hidden mt-4"></div>
+                
+                <button class="submit-btn" onclick="addProduct()">✅ Submit Product for Verification</button>
+                <p style="margin-top: 15px; color: #666; font-size: 14px;">Note: All products require admin verification before appearing in marketplace</p>
+            </div>
+        </div>
+        
+        <!-- My Products Tab -->
+        <div id="myProducts" class="content-area">
+            <h2>📦 My Products</h2>
+            <div id="myProductsList" class="product-grid">
+                <!-- Products will be loaded here -->
+            </div>
+        </div>
+        
+        <!-- Marketplace Tab -->
+        <div id="marketplace" class="content-area">
+            <h2>🛒 Verified Products Marketplace</h2>
+            <div style="margin-bottom: 20px;">
+                <input type="text" id="searchProducts" class="form-control" placeholder="🔍 Search products..." onkeyup="searchProducts()">
+            </div>
+            <div id="marketplaceProducts" class="product-grid">
+                <!-- Verified products will be loaded here -->
+            </div>
+        </div>
+        
+        <!-- Admin Panel Tab -->
+        <div id="adminPanel" class="content-area">
+            <h2>👑 Admin Control Panel</h2>
+            
+            <div style="display: flex; gap: 20px; margin-bottom: 30px;">
+                <button onclick="showPendingVerifications()" class="submit-btn" style="background: var(--warning);">⚠️ Pending Verifications</button>
+                <button onclick="showAllProducts()" class="submit-btn" style="background: var(--primary);">📋 All Products</button>
+                <button onclick="showAllUsers()" class="submit-btn" style="background: var(--accent);">👥 All Users</button>
+            </div>
+            
+            <div id="adminContent">
+                <!-- Admin content will be loaded here -->
             </div>
         </div>
     </div>
-
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
+    
+    <!-- Image Preview Modal -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3>Image Preview</h3>
+            <img id="modalImage" src="" style="width: 100%; border-radius: 10px; margin-top: 20px;">
+        </div>
+    </div>
+    
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // FIX: Corrected the object by removing duplicate and malformed entries.
-            const localTransportData = {
-                "Victoria Falls Hotel": { arrival_time: "10 min", icon: "🏨", coords: [-17.9333, 25.8267] },
-                "Zambezi National Park": { arrival_time: "15 min", icon: "🐘", coords: [-17.8833, 25.6167] },
-                "Town Center": { arrival_time: "5 min", icon: "🏙️", coords: [-17.9319, 25.8306] },
-                "Victoria Falls Airport": { arrival_time: "20 min", icon: "✈️", coords: [-18.0956, 25.8392] },
-                "Curio Market": { arrival_time: "7 min", icon: "🛍️", coords: [-17.9325, 25.8328] },
-                "The Lookout Cafe": { arrival_time: "12 min", icon: "☕", coords: [-17.9286, 25.8425] },
-                "Elephant's Walk Shopping Village": { arrival_time: "8 min", icon: "🐘", coords: [-17.9147, 25.8183] },
-                "Boma Dinner & Drum Show": { arrival_time: "18 min", icon: "🥁", coords: [-17.9069, 25.8236] },
-                "Victoria Falls Bridge": { arrival_time: "15 min", icon: "🌉", coords: [-17.9310, 25.8267] },
-                "Rainbow Falls": { arrival_time: "25 min", icon: "🌈", coords: [-17.9267, 25.8536] },
-                "Devil's Pool": { arrival_time: "30 min", icon: "😈", coords: [-17.9278, 25.8542] },
-                "Livingstone Island": { arrival_time: "35 min", icon: "🏝️", coords: [-17.9283, 25.8550] },
-                "Victoria Falls National Park": { arrival_time: "12 min", icon: "🌳", coords: [-17.9281, 25.8408] },
-                "Chinotimba Township": { arrival_time: "10 min", icon: "🏘️", coords: [-17.9236, 25.8167] },
-                "Chamabondo National Park": { arrival_time: "40 min", icon: "�", coords: [-17.8500, 25.7000] },
-                "Masuwe River Lodge": { arrival_time: "22 min", icon: "🏕️", coords: [-17.9000, 25.7833] },
-                "Victoria Falls Safari Lodge": { arrival_time: "15 min", icon: "🦁", coords: [-17.9167, 25.8000] },
-                "Ilala Lodge": { arrival_time: "8 min", icon: "🏡", coords: [-17.9300, 25.8283] },
-                "Stanley and Livingstone Hotel": { arrival_time: "25 min", icon: "🏛️", coords: [-17.9667, 25.8333] },
-                "Victoria Falls Backpackers": { arrival_time: "7 min", icon: "🎒", coords: [-17.9333, 25.8333] },
-                "Shearwater Explorers Village": { arrival_time: "12 min", icon: "⛺", coords: [-17.9167, 25.8167] },
-                "A'Zambezi River Lodge": { arrival_time: "18 min", icon: "🚣", coords: [-17.9333, 25.8000] },
-                "Victoria Falls Rest Camp": { arrival_time: "10 min", icon: "⛺", coords: [-17.9333, 25.8333] },
-                "The Kingdom Hotel": { arrival_time: "8 min", icon: "🏰", coords: [-17.9333, 25.8333] },
-                "Palm River Hotel": { arrival_time: "15 min", icon: "🌴", coords: [-17.9333, 25.8167] },
-                "Victoria Falls Rainbow Hotel": { arrival_time: "7 min", icon: "🏩", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Hospital": { arrival_time: "10 min", icon: "🏥", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Police Station": { arrival_time: "8 min", icon: "👮", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Post Office": { arrival_time: "7 min", icon: "📮", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Border Post": { arrival_time: "15 min", icon: "🛂", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Craft Market": { arrival_time: "8 min", icon: "🛍️", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Bus Terminal": { arrival_time: "10 min", icon: "🚌", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Railway Station": { arrival_time: "12 min", icon: "🚂", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Golf Club": { arrival_time: "15 min", icon: "⛳", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Reptile Park": { arrival_time: "20 min", icon: "🐍", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Crocodile Farm": { arrival_time: "25 min", icon: "🐊", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Snake Park": { arrival_time: "22 min", icon: "🐍", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Lion Encounter": { arrival_time: "30 min", icon: "🦁", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Elephant Sanctuary": { arrival_time: "35 min", icon: "🐘", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Giraffe Encounter": { arrival_time: "32 min", icon: "🦒", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Cheetah Encounter": { arrival_time: "28 min", icon: "🐆", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Rhino Encounter": { arrival_time: "40 min", icon: "🦏", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Cultural Village": { arrival_time: "18 min", icon: "🏺", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Traditional Village": { arrival_time: "20 min", icon: "🏡", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Art Gallery": { arrival_time: "12 min", icon: "🎨", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Museum": { arrival_time: "15 min", icon: "🏛️", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Library": { arrival_time: "10 min", icon: "📚", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Community Hall": { arrival_time: "8 min", icon: "🏛️", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Sports Club": { arrival_time: "12 min", icon: "⚽", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Tennis Club": { arrival_time: "15 min", icon: "🎾", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Swimming Pool": { arrival_time: "10 min", icon: "🏊", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Primary School": { arrival_time: "8 min", icon: "🏫", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Secondary School": { arrival_time: "10 min", icon: "🏫", coords: [-17.9333, 25.8333] },
-                "Victoria Falls College": { arrival_time: "12 min", icon: "🎓", coords: [-17.9333, 25.8333] },
-                "Victoria Falls University": { arrival_time: "15 min", icon: "🎓", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Technical College": { arrival_time: "18 min", icon: "🔧", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Business Center": { arrival_time: "10 min", icon: "🏢", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Industrial Area": { arrival_time: "15 min", icon: "🏭", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Residential Area": { arrival_time: "12 min", icon: "🏠", coords: [-17.9333, 25.8333] },
-                "Victoria Falls High Density Area": { arrival_time: "10 min", icon: "🏘️", coords: [-17.9333, 25.8333] },
-                "Victoria Falls Low Density Area": { arrival_time: "15 min", icon: "🏡", coords: [-17.9333, 25.8333] },
-                "Victoria Falls CBD": { arrival_time: "5 min", icon: "🏙️", coords: [-17.9333, 25.8333] }
-            };
-
-            let drivers = [
-                { _id: 'd1', name: 'John Doe', phone: '+263771234561', carReg: 'ABC 123 ZW', capacity: 4, coords: [-17.9350, 25.8280], available: true, vehicleType: 'Standard', marker: null },
-                { _id: 'd2', name: 'Jane Smith', phone: '+263771234562', carReg: 'XYZ 456 ZW', capacity: 7, coords: [-17.9200, 25.8400], available: true, vehicleType: 'XL', marker: null },
-                { _id: 'd3', name: 'Peter Jones', phone: '+263771234563', carReg: 'DEF 789 ZW', capacity: 4, coords: [-17.9100, 25.8150], available: true, vehicleType: 'Premium', marker: null }
-            ];
-            
-            let users = [
-                { id: 'u1', username: 'passenger1', password: 'pass', type: 'passenger' },
-                { id: 'u2', username: 'Munkuli$1996', password: 'PickGod', type: 'admin' }
-            ];
-
-            const ui = {
-                startLocationSelect: document.getElementById('startLocation'),
-                endLocationSelect: document.getElementById('endLocation'),
-                planTripBtn: document.getElementById('planTripBtn'),
-                resultsContainer: document.getElementById('results-container'),
-                authSection: document.getElementById('auth-section'),
-                mainApp: document.getElementById('main-app'),
-                historyContainer: document.getElementById('history-container'),
-                adminDashboard: document.getElementById('admin-dashboard'),
-                driverListContainer: document.getElementById('driver-list-container'),
-                passengerListContainer: document.getElementById('passenger-list-container'),
-                ridePlanningSection: document.getElementById('ride-planning-section'),
-                rideResultsSection: document.getElementById('ride-results-section'),
-                fareMultiplierInput: document.getElementById('fareMultiplier'),
-                updateFareMultiplierBtn: document.getElementById('updateFareMultiplierBtn'),
-            };
-
-            let rideHistory = [];
-            let userMarker = null;
-            let loggedInUser = null;
-            let mapInstance = null;
-            let currentFareMultiplier = 1.0;
-            let geoWatchId = null;
-
-            const vehicleFareMultipliers = { 'Standard': 1.0, 'Premium': 1.5, 'XL': 1.3 };
-
-            const userIcon = new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
-            const driverIcon = new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
-
-            function showMessageBox(message, duration = 3000) {
-                const msgBox = document.getElementById('message-box');
-                if (msgBox) {
-                    msgBox.textContent = message;
-                    msgBox.style.display = 'block';
-                    setTimeout(() => { msgBox.style.display = 'none'; }, duration);
+        // Database Simulation using localStorage
+        const DB = {
+            // Initialize databases if they don't exist
+            init: function() {
+                if (!localStorage.getItem('binga_users')) {
+                    localStorage.setItem('binga_users', JSON.stringify([]));
                 }
-            }
-
-            function generateUUID() { return Math.random().toString(36).substring(2, 15); }
+                if (!localStorage.getItem('binga_products')) {
+                    localStorage.setItem('binga_products', JSON.stringify([]));
+                }
+                if (!localStorage.getItem('binga_activity')) {
+                    localStorage.setItem('binga_activity', JSON.stringify([]));
+                }
+            },
             
-            function haversineDistance(coords1, coords2) {
-                const R = 6371, dLat = (coords2[0] - coords1[0]) * Math.PI / 180, dLon = (coords2[1] - coords1[1]) * Math.PI / 180;
-                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(coords1[0] * Math.PI / 180) * Math.cos(coords2[0] * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            }
-
-            function calculateFare(startCoords, endCoords, vehicleType) {
-                const distance = haversineDistance(startCoords, endCoords);
-                let fare = 3.00 + (distance * 0.80);
-                fare *= (vehicleFareMultipliers[vehicleType] || 1.0);
-                fare *= currentFareMultiplier;
-                fare = Math.max(fare, 5.00);
-                return fare.toFixed(2);
-            }
-
-            function initMap(centerCoords) {
-                if (mapInstance) { mapInstance.remove(); mapInstance = null; }
-                const mapContainer = document.getElementById('map');
-                if (!mapContainer) return;
+            // User operations
+            users: {
+                add: function(user) {
+                    const users = JSON.parse(localStorage.getItem('binga_users'));
+                    users.push(user);
+                    localStorage.setItem('binga_users', JSON.stringify(users));
+                    return user;
+                },
                 
-                mapContainer.classList.remove('hidden');
-                mapInstance = L.map('map').setView(centerCoords, 14);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(mapInstance);
-
-                Object.entries(localTransportData).forEach(([location, data]) => {
-                    const emojiIcon = L.divIcon({ className: 'leaflet-div-icon', html: `<div style="font-size: 24px;">${data.icon}</div>`, iconSize: [30, 42], iconAnchor: [15, 42] });
-                    L.marker(data.coords, { icon: emojiIcon }).addTo(mapInstance).bindPopup(location);
-                });
-
-                drivers.forEach(driver => {
-                    if (driver.marker) driver.marker.remove();
-                    driver.marker = L.marker(driver.coords, { icon: driverIcon, opacity: driver.available ? 1 : 0.5 }).addTo(mapInstance).bindPopup(`<b>${driver.name}</b><br>${driver.vehicleType}`);
-                });
+                getAll: function() {
+                    return JSON.parse(localStorage.getItem('binga_users'));
+                },
                 
-                if (geoWatchId) navigator.geolocation.clearWatch(geoWatchId);
-                geoWatchId = navigator.geolocation.watchPosition(position => {
-                    const userCoords = [position.coords.latitude, position.coords.longitude];
-                    if (userMarker) {
-                        userMarker.setLatLng(userCoords);
-                    } else {
-                        userMarker = L.marker(userCoords, { icon: userIcon }).addTo(mapInstance).bindPopup("Your Location").openPopup();
+                find: function(username) {
+                    const users = JSON.parse(localStorage.getItem('binga_users'));
+                    return users.find(u => u.username === username);
+                }
+            },
+            
+            // Product operations
+            products: {
+                add: function(product) {
+                    const products = JSON.parse(localStorage.getItem('binga_products'));
+                    products.push(product);
+                    localStorage.setItem('binga_products', JSON.stringify(products));
+                    return product;
+                },
+                
+                getAll: function() {
+                    return JSON.parse(localStorage.getItem('binga_products'));
+                },
+                
+                update: function(id, updates) {
+                    const products = JSON.parse(localStorage.getItem('binga_products'));
+                    const index = products.findIndex(p => p.id === id);
+                    if (index !== -1) {
+                        products[index] = {...products[index], ...updates};
+                        localStorage.setItem('binga_products', JSON.stringify(products));
                     }
-                    mapInstance.setView(userCoords, 15);
-                }, () => { showMessageBox("Could not get your location."); });
-            }
-
-            function populateLocations() {
-                ui.startLocationSelect.innerHTML = ''; ui.endLocationSelect.innerHTML = '';
-                Object.keys(localTransportData).forEach(location => {
-                    ui.startLocationSelect.add(new Option(location, location));
-                    ui.endLocationSelect.add(new Option(location, location));
-                });
-            }
-
-            function findClosestDrivers(userCoords) {
-                return drivers.filter(d => d.available).sort((a, b) => haversineDistance(userCoords, a.coords) - haversineDistance(userCoords, b.coords)).slice(0, 3);
-            }
+                },
+                
+                delete: function(id) {
+                    const products = JSON.parse(localStorage.getItem('binga_products'));
+                    const filtered = products.filter(p => p.id !== id);
+                    localStorage.setItem('binga_products', JSON.stringify(filtered));
+                }
+            },
             
-            ui.planTripBtn.addEventListener('click', () => {
-                if (!userMarker) { showMessageBox("Waiting for your location..."); return; }
-                const userCoords = [userMarker.getLatLng().lat, userMarker.getLatLng().lng];
-                ui.resultsContainer.innerHTML = '';
-                ui.rideResultsSection.classList.remove('hidden');
-                const closestDrivers = findClosestDrivers(userCoords);
-                if (closestDrivers.length === 0) {
-                    ui.resultsContainer.innerHTML = `<div class="card p-4"><h3>No drivers available.</h3></div>`;
-                    return;
-                }
-                closestDrivers.forEach(driver => {
-                    const fare = calculateFare(localTransportData[ui.startLocationSelect.value].coords, localTransportData[ui.endLocationSelect.value].coords, driver.vehicleType);
-                    ui.resultsContainer.innerHTML += `<div class="card p-4 mb-4"><h3 class="font-bold">${driver.name} - ${driver.carReg} (${driver.vehicleType})</h3><p>Est. Fare: $${fare}</p><button class="btn-primary mt-2 request-ride-btn" data-driver-id="${driver._id}" data-fare="${fare}">Request Ride</button></div>`;
-                });
-            });
-
-            ui.resultsContainer.addEventListener('click', (event) => {
-                if (event.target.classList.contains('request-ride-btn')) {
-                    const driverId = event.target.dataset.driverId;
-                    const fare = event.target.dataset.fare;
-                    const driver = drivers.find(d => d._id === driverId);
-                    rideHistory.push({ id: generateUUID(), driverName: driver.name, driverCarReg: driver.carReg, driverVehicleType: driver.vehicleType, destination: ui.endLocationSelect.value, fare: fare, date: new Date().toLocaleString() });
-                    showMessageBox(`Ride with ${driver.name} confirmed!`);
-                    displayRideHistory();
-                    ui.rideResultsSection.classList.add('hidden');
-                }
-            });
-            
-            function displayRideHistory() {
-                ui.historyContainer.innerHTML = rideHistory.length === 0 ? '<p>No ride history yet.</p>' : rideHistory.map(ride => `<div class="card p-4 mb-4"><p><b>To:</b> ${ride.destination}</p><p><b>Driver:</b> ${ride.driverName} (${ride.driverVehicleType} - ${ride.driverCarReg})</p><p><b>Fare:</b> $${ride.fare}</p><p><b>Date:</b> ${ride.date}</p></div>`).join('');
-            }
-
-            function displayAdminDrivers() {
-                ui.driverListContainer.innerHTML = drivers.map(d => `<div class="card p-2 mb-2 flex justify-between items-center"><div><h4 class="font-semibold">${d.name}</h4><p>${d.phone} | ${d.carReg}</p></div><button class="btn-primary bg-red-600 delete-btn" data-id="${d._id}" data-type="driver">Delete</button></div>`).join('');
-            }
-            
-            function displayAdminPassengers() {
-                ui.passengerListContainer.innerHTML = users.filter(u => u.type === 'passenger').map(u => `<div class="card p-2 mb-2 flex justify-between items-center"><div><h4 class="font-semibold">${u.username}</h4></div><button class="btn-primary bg-red-600 delete-btn" data-id="${u.id}" data-type="user">Delete</button></div>`).join('');
-            }
-
-            ui.adminDashboard.addEventListener('click', (event) => {
-                if(event.target.classList.contains('delete-btn')) {
-                    const id = event.target.dataset.id;
-                    if (event.target.dataset.type === 'driver') {
-                        drivers = drivers.filter(d => d._id !== id);
-                        displayAdminDrivers();
-                    } else {
-                        users = users.filter(u => u.id !== id);
-                        displayAdminPassengers();
-                    }
-                }
-            });
-
-            document.getElementById('registerDriverBtn').addEventListener('click', () => {
-                const newDriver = { _id: generateUUID(), name: document.getElementById('driverName').value, phone: document.getElementById('driverPhone').value, carReg: document.getElementById('driverCarReg').value, vehicleType: document.getElementById('driverVehicleType').value, capacity: document.getElementById('driverVehicleType').value === 'XL' ? 7 : 4, coords: localTransportData["Town Center"].coords, available: true, marker: null };
-                if (!newDriver.name || !newDriver.phone) { showMessageBox('All fields required.'); return; }
-                drivers.push(newDriver);
-                showMessageBox('Driver registered.');
-                displayAdminDrivers();
-            });
-
-            ui.updateFareMultiplierBtn.addEventListener('click', () => {
-                const newMultiplier = parseFloat(ui.fareMultiplierInput.value);
-                if (!isNaN(newMultiplier) && newMultiplier > 0) {
-                    currentFareMultiplier = newMultiplier;
-                    showMessageBox(`Fare multiplier updated to ${newMultiplier.toFixed(1)}x`);
-                }
-            });
-
-            function setupLoginAndUI() {
-                document.querySelectorAll('#auth-section .login-tab').forEach(tab => {
-                    tab.addEventListener('click', function() {
-                        document.querySelectorAll('#auth-section .login-tab').forEach(t => t.classList.remove('active'));
-                        this.classList.add('active');
-                        document.getElementById('passenger-login').classList.toggle('hidden', this.dataset.tab !== 'passenger');
-                        document.getElementById('admin-login').classList.toggle('hidden', this.dataset.tab !== 'admin');
+            // Activity log
+            activity: {
+                log: function(action, user) {
+                    const activities = JSON.parse(localStorage.getItem('binga_activity'));
+                    activities.unshift({
+                        id: Date.now(),
+                        action: action,
+                        user: user,
+                        timestamp: new Date().toLocaleString()
                     });
-                });
-
-                document.querySelectorAll('#admin-dashboard .login-tab').forEach(tab => {
-                    tab.addEventListener('click', function() {
-                        document.querySelectorAll('#admin-dashboard .login-tab').forEach(t => t.classList.remove('active'));
-                        this.classList.add('active');
-                        document.querySelectorAll('.admin-section').forEach(sec => sec.classList.add('hidden'));
-                        document.getElementById(this.dataset.tab.replace(/-/g, '-') + '-section').classList.remove('hidden');
-                        if (this.dataset.tab === 'manage-drivers') displayAdminDrivers();
-                        if (this.dataset.tab === 'manage-users') displayAdminPassengers();
+                    // Keep only last 50 activities
+                    if (activities.length > 50) activities.pop();
+                    localStorage.setItem('binga_activity', JSON.stringify(activities));
+                },
+                
+                getAll: function() {
+                    return JSON.parse(localStorage.getItem('binga_activity'));
+                }
+            }
+        };
+        
+        // Initialize database
+        DB.init();
+        
+        // Current user state
+        let currentUser = null;
+        let currentUserType = null;
+        
+        // Login function
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const userType = document.querySelector('input[name="userType"]:checked').value;
+            
+            // Check admin credentials
+            if (userType === 'admin' && username === 'Munkuli$1996' && password === 'PickGod') {
+                currentUser = {
+                    username: username,
+                    name: 'Administrator',
+                    type: 'admin',
+                    phone: '+263 77 123 4567'
+                };
+                currentUserType = 'admin';
+                
+                // Check if admin user exists in DB, if not create
+                let adminUser = DB.users.find(username);
+                if (!adminUser) {
+                    adminUser = DB.users.add({
+                        username: username,
+                        name: 'Administrator',
+                        type: 'admin',
+                        phone: '+263 77 123 4567',
+                        registered: new Date().toISOString()
                     });
-                });
-
-                document.getElementById('passengerLoginBtn').addEventListener('click', () => {
-                    const user = users.find(u => u.username === document.getElementById('passengerUsername').value && u.password === document.getElementById('passengerPassword').value);
-                    if (user && user.type === 'passenger') {
-                        loggedInUser = user; ui.authSection.classList.add('hidden'); ui.mainApp.classList.remove('hidden');
-                        initMap(localTransportData["Town Center"].coords);
-                        displayRideHistory();
-                    } else { showMessageBox('Invalid credentials.'); }
-                });
-
-                document.getElementById('passengerRegisterBtn').addEventListener('click', () => {
-                     const u = document.getElementById('passengerUsername').value, p = document.getElementById('passengerPassword').value;
-                    if (!u || !p) { showMessageBox('Username/password required.'); return; }
-                    if (users.some(usr => usr.username === u)) { showMessageBox('Username exists.'); return; }
-                    users.push({ id: generateUUID(), username: u, password: p, type: 'passenger'});
-                    showMessageBox('Registration successful. Please login.');
-                });
-
-                document.getElementById('adminLoginBtn').addEventListener('click', () => {
-                    const user = users.find(u => u.username === document.getElementById('adminUsername').value && u.password === document.getElementById('adminPassword').value);
-                    if (user && user.type === 'admin') {
-                        loggedInUser = user; ui.authSection.classList.add('hidden'); ui.adminDashboard.classList.remove('hidden');
-                        document.querySelector('#admin-dashboard .login-tab').click();
-                    } else { showMessageBox('Invalid admin credentials.'); }
+                }
+                
+                // Log activity
+                DB.activity.log('Admin logged in', username);
+                
+                // Show app
+                showApp();
+            } 
+            // Regular user login (simplified for demo - in production would have proper registration)
+            else if (userType === 'fisherman') {
+                currentUser = {
+                    username: username,
+                    name: username,
+                    type: 'fisherman',
+                    phone: '+263 77 000 0000' // Default, will be updated when adding product
+                };
+                currentUserType = 'fisherman';
+                
+                // Check if user exists in DB, if not create
+                let user = DB.users.find(username);
+                if (!user) {
+                    user = DB.users.add({
+                        username: username,
+                        name: username,
+                        type: 'fisherman',
+                        phone: '+263 77 000 0000',
+                        registered: new Date().toISOString()
+                    });
+                }
+                
+                // Log activity
+                DB.activity.log('User logged in', username);
+                
+                // Show app
+                showApp();
+            } else {
+                alert('Invalid credentials!');
+                return;
+            }
+        }
+        
+        // Show main application
+        function showApp() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+            document.getElementById('currentUser').textContent = currentUser.name;
+            document.getElementById('userRoleDisplay').textContent = currentUserType === 'admin' ? 'Administrator Control Panel' : 'Fisherman/Livestock Seller';
+            
+            // Show/hide tabs based on user type
+            if (currentUserType === 'admin') {
+                document.getElementById('addProductTab').style.display = 'none';
+                document.getElementById('myProductsTab').style.display = 'none';
+                document.getElementById('marketplaceTab').style.display = 'block';
+                document.getElementById('adminPanelTab').style.display = 'block';
+                switchTab('adminPanel');
+            } else {
+                document.getElementById('addProductTab').style.display = 'block';
+                document.getElementById('myProductsTab').style.display = 'block';
+                document.getElementById('marketplaceTab').style.display = 'block';
+                document.getElementById('adminPanelTab').style.display = 'none';
+                switchTab('dashboard');
+            }
+            
+            // Load data
+            updateDashboard();
+            loadMyProducts();
+            loadMarketplace();
+        }
+        
+        // Switch between tabs
+        function switchTab(tabName) {
+            // Update active tab
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.content-area').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Activate selected tab
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            // Refresh data if needed
+            if (tabName === 'dashboard') updateDashboard();
+            if (tabName === 'myProducts') loadMyProducts();
+            if (tabName === 'marketplace') loadMarketplace();
+            if (tabName === 'adminPanel') showPendingVerifications();
+        }
+        
+        // Update product form based on type
+        function updateProductForm() {
+            const type = document.getElementById('productType').value;
+            const label = document.getElementById('productNameLabel');
+            
+            switch(type) {
+                case 'fish':
+                    label.textContent = 'Fish Name/Species';
+                    break;
+                case 'goat':
+                    label.textContent = 'Goat Breed/Description';
+                    break;
+                case 'cow':
+                    label.textContent = 'Cattle Breed/Description';
+                    break;
+                case 'chicken':
+                    label.textContent = 'Poultry Type';
+                    break;
+                case 'sheep':
+                    label.textContent = 'Sheep Breed/Description';
+                    break;
+                default:
+                    label.textContent = 'Product Name';
+            }
+        }
+        
+        // Preview uploaded image
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const preview = document.getElementById('imagePreview');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `
+                        <img src="${e.target.result}" style="max-width: 200px; border-radius: 10px; margin: 10px 0;">
+                        <br><small>Image ready for upload</small>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // Add new product
+        function addProduct() {
+            const type = document.getElementById('productType').value;
+            const name = document.getElementById('productName').value;
+            const quantity = document.getElementById('productQuantity').value;
+            const price = document.getElementById('productPrice').value;
+            const description = document.getElementById('productDescription').value;
+            const phone = document.getElementById('sellerPhone').value;
+            const location = document.getElementById('productLocation').value;
+            
+            if (!name || !quantity || !price || !phone) {
+                alert('Please fill all required fields!');
+                return;
+            }
+            
+            // Generate product ID
+            const productId = 'PROD-' + Date.now();
+            
+            // Get image data if uploaded
+            let imageData = '';
+            const fileInput = document.getElementById('imageUpload');
+            if (fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageData = e.target.result;
+                    saveProduct(productId, type, name, quantity, price, description, phone, location, imageData);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                saveProduct(productId, type, name, quantity, price, description, phone, location, '');
+            }
+        }
+        
+        // Save product to database
+        function saveProduct(id, type, name, quantity, price, description, phone, location, image) {
+            const product = {
+                id: id,
+                type: type,
+                name: name,
+                quantity: quantity,
+                price: parseFloat(price),
+                description: description,
+                sellerPhone: phone,
+                sellerName: currentUser.name,
+                sellerUsername: currentUser.username,
+                location: location,
+                image: image,
+                status: 'pending', // pending, verified, rejected
+                verifiedBy: null,
+                verificationDate: null,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            
+            DB.products.add(product);
+            
+            // Update user's phone number if provided
+            if (phone && currentUserType === 'fisherman') {
+                const users = JSON.parse(localStorage.getItem('binga_users'));
+                const userIndex = users.findIndex(u => u.username === currentUser.username);
+                if (userIndex !== -1) {
+                    users[userIndex].phone = phone;
+                    localStorage.setItem('binga_users', JSON.stringify(users));
+                }
+            }
+            
+            // Log activity
+            DB.activity.log(`Added new ${type}: ${name}`, currentUser.username);
+            
+            // Clear form
+            document.getElementById('productName').value = '';
+            document.getElementById('productQuantity').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productDescription').value = '';
+            document.getElementById('productLocation').value = '';
+            document.getElementById('imageUpload').value = '';
+            document.getElementById('imagePreview').innerHTML = '';
+            
+            alert('✅ Product submitted! Waiting for admin verification.');
+            switchTab('myProducts');
+            loadMyProducts();
+            updateDashboard();
+        }
+        
+        // Load user's products
+        function loadMyProducts() {
+            const container = document.getElementById('myProductsList');
+            const products = DB.products.getAll();
+            const userProducts = products.filter(p => p.sellerUsername === currentUser.username);
+            
+            if (userProducts.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; grid-column: 1 / -1;">
+                        <div style="font-size: 60px;">📦</div>
+                        <h3>No products yet</h3>
+                        <p>Add your first product to start selling!</p>
+                        <button onclick="switchTab('addProduct')" class="submit-btn" style="background: var(--accent); max-width: 300px; margin: 20px auto;">
+                            ➕ Add Your First Product
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = userProducts.map(product => `
+                <div class="product-card">
+                    <div class="product-image">
+                        ${product.image ? 
+                            `<img src="${product.image}" style="width: 100%; height: 100%; object-fit: cover;" onclick="viewImage('${product.image}')">` : 
+                            getProductIcon(product.type)
+                        }
+                        <div class="verification-badge ${product.status === 'verified' ? 'verified' : ''}">
+                            ${product.status === 'verified' ? '✓ Verified' : '⏳ Pending'}
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-name">${product.name}</div>
+                        <div style="color: #666; font-size: 14px; margin: 5px 0;">
+                            ${product.quantity} • ${product.location}
+                        </div>
+                        <div class="product-price">$${product.price.toFixed(2)}</div>
+                        <p style="color: #666; font-size: 14px; margin: 10px 0;">${product.description}</p>
+                        
+                        ${product.status === 'verified' ? `
+                            <a href="https://wa.me/${product.sellerPhone.replace(/[^0-9]/g, '')}?text=Hi! I'm interested in your ${product.name} on Binga Marketplace" 
+                               target="_blank" class="whatsapp-btn">
+                               📱 Contact via WhatsApp
+                            </a>
+                        ` : ''}
+                        
+                        <div style="margin-top: 15px; font-size: 12px; color: #999;">
+                            Added: ${new Date(product.createdAt).toLocaleDateString()}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Load marketplace products (verified only)
+        function loadMarketplace() {
+            const container = document.getElementById('marketplaceProducts');
+            const products = DB.products.getAll();
+            const verifiedProducts = products.filter(p => p.status === 'verified');
+            
+            if (verifiedProducts.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; grid-column: 1 / -1;">
+                        <div style="font-size: 60px;">🏪</div>
+                        <h3>Marketplace is empty</h3>
+                        <p>No verified products available yet. Check back soon!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = verifiedProducts.map(product => `
+                <div class="product-card">
+                    <div class="product-image">
+                        ${product.image ? 
+                            `<img src="${product.image}" style="width: 100%; height: 100%; object-fit: cover;" onclick="viewImage('${product.image}')">` : 
+                            getProductIcon(product.type)
+                        }
+                        <div class="verification-badge verified">
+                            ✓ Verified
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-name">${product.name}</div>
+                        <div style="color: #666; font-size: 14px; margin: 5px 0;">
+                            ${product.quantity} • ${product.location}
+                        </div>
+                        <div class="product-price">$${product.price.toFixed(2)}</div>
+                        <p style="color: #666; font-size: 14px; margin: 10px 0;">${product.description}</p>
+                        
+                        <a href="https://wa.me/${product.sellerPhone.replace(/[^0-9]/g, '')}?text=Hi! I'm interested in your ${product.name} on Binga Marketplace. Price: $${product.price}. Quantity: ${product.quantity}" 
+                           target="_blank" class="whatsapp-btn">
+                           📱 Contact Seller on WhatsApp
+                        </a>
+                        
+                        <div style="margin-top: 15px; font-size: 12px; color: #999;">
+                            Seller: ${product.sellerName}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Search products
+        function searchProducts() {
+            const searchTerm = document.getElementById('searchProducts').value.toLowerCase();
+            const products = DB.products.getAll();
+            const verifiedProducts = products.filter(p => p.status === 'verified');
+            const filteredProducts = verifiedProducts.filter(p => 
+                p.name.toLowerCase().includes(searchTerm) ||
+                p.description.toLowerCase().includes(searchTerm) ||
+                p.type.toLowerCase().includes(searchTerm) ||
+                p.location.toLowerCase().includes(searchTerm)
+            );
+            
+            const container = document.getElementById('marketplaceProducts');
+            if (filteredProducts.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; grid-column: 1 / -1;">
+                        <div style="font-size: 60px;">🔍</div>
+                        <h3>No products found</h3>
+                        <p>Try different search terms</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filteredProducts.map(product => `
+                <div class="product-card">
+                    <div class="product-image">
+                        ${product.image ? 
+                            `<img src="${product.image}" style="width: 100%; height: 100%; object-fit: cover;" onclick="viewImage('${product.image}')">` : 
+                            getProductIcon(product.type)
+                        }
+                        <div class="verification-badge verified">
+                            ✓ Verified
+                        </div>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-name">${product.name}</div>
+                        <div style="color: #666; font-size: 14px; margin: 5px 0;">
+                            ${product.quantity} • ${product.location}
+                        </div>
+                        <div class="product-price">$${product.price.toFixed(2)}</div>
+                        <p style="color: #666; font-size: 14px; margin: 10px 0;">${product.description}</p>
+                        
+                        <a href="https://wa.me/${product.sellerPhone.replace(/[^0-9]/g, '')}?text=Hi! I'm interested in your ${product.name} on Binga Marketplace" 
+                           target="_blank" class="whatsapp-btn">
+                           📱 Contact via WhatsApp
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Admin functions
+        function showPendingVerifications() {
+            const container = document.getElementById('adminContent');
+            const products = DB.products.getAll();
+            const pendingProducts = products.filter(p => p.status === 'pending');
+            
+            if (pendingProducts.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 60px;">✅</div>
+                        <h3>No pending verifications</h3>
+                        <p>All products are verified!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `
+                <h3>⚠️ Pending Product Verifications (${pendingProducts.length})</h3>
+                <div class="product-grid">
+            `;
+            
+            pendingProducts.forEach(product => {
+                html += `
+                    <div class="product-card">
+                        <div class="product-image">
+                            ${product.image ? 
+                                `<img src="${product.image}" style="width: 100%; height: 100%; object-fit: cover;" onclick="viewImage('${product.image}')">` : 
+                                getProductIcon(product.type)
+                            }
+                            <div class="verification-badge">
+                                ⏳ Pending
+                            </div>
+                        </div>
+                        <div class="product-details">
+                            <div class="product-name">${product.name}</div>
+                            <div style="color: #666; font-size: 14px; margin: 5px 0;">
+                                Type: ${product.type} • ${product.quantity}
+                            </div>
+                            <div class="product-price">$${product.price.toFixed(2)}</div>
+                            <p style="color: #666; font-size: 14px; margin: 10px 0;">${product.description}</p>
+                            
+                            <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                                <strong>Seller Info:</strong><br>
+                                Name: ${product.sellerName}<br>
+                                Phone: ${product.sellerPhone}<br>
+                                Location: ${product.location}
+                            </div>
+                            
+                            <div class="admin-controls">
+                                <button class="verify-btn" onclick="verifyProduct('${product.id}')">
+                                    ✅ Verify
+                                </button>
+                                <button class="reject-btn" onclick="rejectProduct('${product.id}')">
+                                    ❌ Reject
+                                </button>
+                            </div>
+                            
+                            <div style="margin-top: 15px; font-size: 12px; color: #999;">
+                                Submitted: ${new Date(product.createdAt).toLocaleString()}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        function showAllProducts() {
+            const container = document.getElementById('adminContent');
+            const products = DB.products.getAll();
+            
+            let html = `
+                <h3>📋 All Products (${products.length})</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Product</th>
+                            <th>Seller</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            products.forEach(product => {
+                html += `
+                    <tr>
+                        <td>${product.id.substring(0, 8)}...</td>
+                        <td>${product.name}</td>
+                        <td>${product.sellerName}</td>
+                        <td>$${product.price.toFixed(2)}</td>
+                        <td class="status-${product.status}">${product.status}</td>
+                        <td>${new Date(product.createdAt).toLocaleDateString()}</td>
+                        <td>
+                            <button onclick="viewProduct('${product.id}')" style="background: var(--primary); color: white; border: none; padding: 5px 10px; border-radius: 3px; margin-right: 5px;">
+                                View
+                            </button>
+                            <button onclick="deleteProduct('${product.id}')" style="background: var(--danger); color: white; border: none; padding: 5px 10px; border-radius: 3px;">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = html;
+        }
+        
+        function showAllUsers() {
+            const container = document.getElementById('adminContent');
+            const users = DB.users.getAll();
+            
+            let html = `
+                <h3>👥 Registered Users (${users.length})</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Phone</th>
+                            <th>Registered</th>
+                            <th>Products</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            const products = DB.products.getAll();
+            
+            users.forEach(user => {
+                const userProducts = products.filter(p => p.sellerUsername === user.username);
+                html += `
+                    <tr>
+                        <td>${user.username}</td>
+                        <td>${user.name}</td>
+                        <td>${user.type}</td>
+                        <td>${user.phone}</td>
+                        <td>${new Date(user.registered).toLocaleDateString()}</td>
+                        <td>${userProducts.length}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = html;
+        }
+        
+        // Verify product
+        function verifyProduct(productId) {
+            DB.products.update(productId, {
+                status: 'verified',
+                verifiedBy: currentUser.username,
+                verificationDate: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            });
+            
+            const product = DB.products.getAll().find(p => p.id === productId);
+            DB.activity.log(`Verified product: ${product.name}`, currentUser.username);
+            
+            alert('Product verified successfully!');
+            showPendingVerifications();
+            updateDashboard();
+            loadMarketplace();
+        }
+        
+        // Reject product
+        function rejectProduct(productId) {
+            const reason = prompt('Enter rejection reason:');
+            if (reason) {
+                DB.products.update(productId, {
+                    status: 'rejected',
+                    rejectionReason: reason,
+                    verifiedBy: currentUser.username,
+                    verificationDate: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
                 });
                 
-                document.getElementById('backToLogin').addEventListener('click', () => {
-                    loggedInUser = null; ui.mainApp.classList.add('hidden'); ui.authSection.classList.remove('hidden');
-                    if (mapInstance) { mapInstance.remove(); mapInstance = null; }
-                    if (geoWatchId) navigator.geolocation.clearWatch(geoWatchId);
-                });
-                document.getElementById('backToLoginAdmin').addEventListener('click', () => {
-                    loggedInUser = null; ui.adminDashboard.classList.add('hidden'); ui.authSection.classList.remove('hidden');
-                });
+                const product = DB.products.getAll().find(p => p.id === productId);
+                DB.activity.log(`Rejected product: ${product.name} (Reason: ${reason})`, currentUser.username);
+                
+                alert('Product rejected!');
+                showPendingVerifications();
+                updateDashboard();
             }
-
-            populateLocations();
-            setupLoginAndUI();
-        });
+        }
+        
+        // Delete product
+        function deleteProduct(productId) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                const product = DB.products.getAll().find(p => p.id === productId);
+                DB.products.delete(productId);
+                DB.activity.log(`Deleted product: ${product.name}`, currentUser.username);
+                
+                alert('Product deleted!');
+                showAllProducts();
+                updateDashboard();
+            }
+        }
+        
+        // View product details
+        function viewProduct(productId) {
+            const product = DB.products.getAll().find(p => p.id === productId);
+            alert(`
+                Product Details:
+                Name: ${product.name}
+                Type: ${product.type}
+                Quantity: ${product.quantity}
+                Price: $${product.price}
+                Description: ${product.description}
+                Seller: ${product.sellerName}
+                Phone: ${product.sellerPhone}
+                Location: ${product.location}
+                Status: ${product.status}
+                Created: ${new Date(product.createdAt).toLocaleString()}
+                ${product.verifiedBy ? `Verified by: ${product.verifiedBy}` : ''}
+            `);
+        }
+        
+        // View image in modal
+        function viewImage(imageSrc) {
+            document.getElementById('modalImage').src = imageSrc;
+            document.getElementById('imageModal').style.display = 'flex';
+        }
+        
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+        
+        // Update dashboard statistics
+        function updateDashboard() {
+            const products = DB.products.getAll();
+            const users = DB.users.getAll();
+            const activities = DB.activity.getAll().slice(0, 10);
+            
+            // Update stats
+            document.getElementById('totalProducts').textContent = products.length;
+            document.getElementById('verifiedProducts').textContent = products.filter(p => p.status === 'verified').length;
+            document.getElementById('pendingVerification').textContent = products.filter(p => p.status === 'pending').length;
+            document.getElementById('totalUsers').textContent = users.length;
+            
+            // Update activity log
+            const activityContainer = document.getElementById('recentActivity');
+            activityContainer.innerHTML = activities.map(activity => `
+                <div style="padding: 10px; border-bottom: 1px solid #eee;">
+                    <strong>${activity.action}</strong>
+                    <div style="color: #666; font-size: 12px;">
+                        By ${activity.user} • ${activity.timestamp}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Refresh all data
+        function refreshData() {
+            updateDashboard();
+            loadMyProducts();
+            loadMarketplace();
+            alert('Data refreshed!');
+        }
+        
+        // Logout
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                DB.activity.log('User logged out', currentUser.username);
+                currentUser = null;
+                currentUserType = null;
+                document.getElementById('loginScreen').style.display = 'block';
+                document.getElementById('appContainer').style.display = 'none';
+            }
+        }
+        
+        // Get product icon based on type
+        function getProductIcon(type) {
+            const icons = {
+                'fish': '🐟',
+                'goat': '🐐',
+                'cow': '🐄',
+                'chicken': '🐓',
+                'sheep': '🐑',
+                'other': '📦'
+            };
+            return icons[type] || '📦';
+        }
+        
+        // Initialize
+        window.onload = function() {
+            updateProductForm();
+        };
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
     </script>
 </body>
 </html>
