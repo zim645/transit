@@ -929,6 +929,46 @@
         .tab-content.active {
             display: block;
         }
+        
+        /* Image upload button */
+        .image-upload-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
+        .image-upload-btn:hover {
+            background: #154360;
+        }
+        
+        /* Password reset */
+        .password-reset {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        /* File input styling */
+        input[type="file"] {
+            display: none;
+        }
+        
+        /* Uploaded image preview */
+        .uploaded-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -1261,6 +1301,20 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Edit Tourist Attraction Form -->
+        <div id="editAttractionSection" class="dashboard-container" style="display: none;">
+            <div class="dashboard-header">
+                <h2><i class="fas fa-edit"></i> Edit Tourist Attraction</h2>
+                <p>Update attraction details</p>
+            </div>
+            
+            <div class="admin-panel">
+                <div id="editAttractionForm">
+                    <!-- Edit attraction form will be loaded here -->
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- Footer -->
@@ -1329,36 +1383,47 @@
                 <div id="loginForm">
                     <h3 id="loginTitle">Login to Seller Account</h3>
                     <div class="form-group">
-                        <label class="form-label" id="loginLabel">Email or Phone</label>
-                        <input type="text" class="form-control" id="loginEmail" placeholder="Email or phone number">
+                        <label class="form-label" id="loginLabel">Username</label>
+                        <input type="text" class="form-control" id="loginEmail" placeholder="Enter your username">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Password</label>
-                        <input type="password" class="form-control" id="loginPassword" placeholder="Password">
+                        <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password">
                     </div>
                     <button class="btn btn-primary" onclick="login()">Login</button>
-                    <p style="text-align: center; margin-top: 15px; color: #666;">
-                        <a href="#" style="color: var(--primary);" onclick="alert('Contact administrator at +263 77 286 3815 to reset password')">Forgot Password?</a>
-                    </p>
+                    <div class="password-reset">
+                        <p style="color: #666; font-size: 14px;">
+                            <a href="#" style="color: var(--primary);" onclick="handleForgotPassword()">Forgot Password?</a>
+                        </p>
+                        <p style="color: #666; font-size: 14px; margin-top: 10px;">
+                            Note: For security reasons, you need to register again if you forget your password.
+                        </p>
+                    </div>
                 </div>
                 
                 <div id="registerForm" style="display: none;">
                     <h3>Create Seller Account</h3>
                     <div class="form-group">
-                        <label class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="registerName" placeholder="Full name">
+                        <label class="form-label">Full Name*</label>
+                        <input type="text" class="form-control" id="registerName" placeholder="Full name" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Phone Number*</label>
-                        <input type="tel" class="form-control" id="registerPhone" placeholder="+263 77 286 3815" required>
+                        <input type="tel" class="form-control" id="registerPhone" placeholder="263771234567" required>
+                        <small style="color: #666;">Enter phone number without + sign (e.g., 263771234567)</small>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Email (Optional)</label>
-                        <input type="email" class="form-control" id="registerEmail" placeholder="Email address">
+                        <label class="form-label">Username*</label>
+                        <input type="text" class="form-control" id="registerUsername" placeholder="Choose a username" required>
+                        <small style="color: #666;">This will be used to login</small>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Password*</label>
                         <input type="password" class="form-control" id="registerPassword" placeholder="Create password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirm Password*</label>
+                        <input type="password" class="form-control" id="registerConfirmPassword" placeholder="Confirm password" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Location in Binga*</label>
@@ -1381,7 +1446,7 @@
     </div>
     
     <script>
-        // Database for storing users, products, and tourist attractions - FIXED VERSION
+        // Database for storing users, products, and tourist attractions - IMPROVED VERSION
         const BINGA_MARKETPLACE_DB = {
             // Initialize local storage databases
             init: function() {
@@ -1407,8 +1472,8 @@
                         },
                         {
                             id: 2,
-                            username: 'seller1',
-                            password: 'seller123',
+                            username: 'johnfish',
+                            password: 'john123',
                             name: 'John Fishing',
                             phone: '263773456789',
                             email: 'john@email.com',
@@ -1422,8 +1487,8 @@
                         },
                         {
                             id: 3,
-                            username: 'seller2',
-                            password: 'seller123',
+                            username: 'marygoat',
+                            password: 'mary123',
                             name: 'Mary Livestock',
                             phone: '263774567890',
                             email: 'mary@email.com',
@@ -1437,8 +1502,8 @@
                         },
                         {
                             id: 4,
-                            username: 'seller3',
-                            password: 'seller123',
+                            username: 'thomasfarm',
+                            password: 'thomas123',
                             name: 'Thomas Farming',
                             phone: '263775678901',
                             email: 'thomas@email.com',
@@ -1473,7 +1538,8 @@
                             featured: true,
                             views: 45,
                             createdAt: new Date('2024-01-15').toISOString(),
-                            adminContact: '263772863815'
+                            adminContact: '263772863815',
+                            imageUrl: ''
                         },
                         {
                             id: 1002,
@@ -1491,7 +1557,8 @@
                             featured: false,
                             views: 32,
                             createdAt: new Date('2024-01-18').toISOString(),
-                            adminContact: '263772863815'
+                            adminContact: '263772863815',
+                            imageUrl: ''
                         },
                         {
                             id: 1003,
@@ -1509,7 +1576,8 @@
                             featured: true,
                             views: 67,
                             createdAt: new Date('2024-01-12').toISOString(),
-                            adminContact: '263772863815'
+                            adminContact: '263772863815',
+                            imageUrl: ''
                         },
                         {
                             id: 1004,
@@ -1527,7 +1595,8 @@
                             featured: false,
                             views: 28,
                             createdAt: new Date('2024-01-20').toISOString(),
-                            adminContact: '263772863815'
+                            adminContact: '263772863815',
+                            imageUrl: ''
                         },
                         {
                             id: 1005,
@@ -1545,25 +1614,8 @@
                             featured: true,
                             views: 39,
                             createdAt: new Date('2024-01-10').toISOString(),
-                            adminContact: '263772863815'
-                        },
-                        {
-                            id: 1006,
-                            title: 'Boat Engine Repair',
-                            description: 'Professional boat engine repair services. Specializing in Yamaha and Mercury engines. Available for mobile service.',
-                            category: 'services',
-                            price: 50,
-                            location: 'Chete Island',
-                            sellerId: 1,
-                            sellerName: 'Binga Administrator',
-                            sellerPhone: '263772863815',
-                            whatsappLink: 'https://wa.me/263772863815?text=Hi! I saw your Boat Engine Repair on Binga Marketplace',
-                            status: 'pending',
-                            approved: false,
-                            featured: false,
-                            views: 12,
-                            createdAt: new Date('2024-01-22').toISOString(),
-                            adminContact: '263772863815'
+                            adminContact: '263772863815',
+                            imageUrl: ''
                         }
                     ];
                     localStorage.setItem('binga_marketplace_products', JSON.stringify(sampleProducts));
@@ -1580,11 +1632,13 @@
                             location: 'Lake Kariba Shore',
                             description: 'Beautiful sandy beach on Lake Kariba. Perfect for swimming, picnics, and sunset views. Clean and family-friendly.',
                             contact: '263772863815',
+                            whatsappLink: 'https://wa.me/263772863815?text=Hi! I want to book a tour to Binga Beach from Binga Marketplace',
                             status: 'active',
                             addedBy: 1,
                             addedByName: 'Binga Administrator',
                             createdAt: new Date('2024-01-01').toISOString(),
-                            adminContact: '263772863815'
+                            adminContact: '263772863815',
+                            imageUrl: ''
                         },
                         {
                             id: 2002,
@@ -1594,11 +1648,13 @@
                             location: 'Siachilaba',
                             description: 'Natural hot springs with therapeutic properties. Popular for relaxation and healing. Beautiful natural setting.',
                             contact: '263772863815',
+                            whatsappLink: 'https://wa.me/263772863815?text=Hi! I want to book a tour to Siachilaba Hot Springs from Binga Marketplace',
                             status: 'active',
                             addedBy: 1,
                             addedByName: 'Binga Administrator',
                             createdAt: new Date('2024-01-05').toISOString(),
-                            adminContact: '263772863815'
+                            adminContact: '263772863815',
+                            imageUrl: ''
                         },
                         {
                             id: 2003,
@@ -1608,11 +1664,13 @@
                             location: 'Lake Kariba',
                             description: 'Guided fishing tours on Lake Kariba. Equipment provided. Experience the best fishing spots with local guides.',
                             contact: '263772863815',
+                            whatsappLink: 'https://wa.me/263772863815?text=Hi! I want to book a fishing tour on Lake Kariba from Binga Marketplace',
                             status: 'active',
                             addedBy: 1,
                             addedByName: 'Binga Administrator',
                             createdAt: new Date('2024-01-08').toISOString(),
-                            adminContact: '263772863815'
+                            adminContact: '263772863815',
+                            imageUrl: ''
                         },
                         {
                             id: 2004,
@@ -1622,11 +1680,13 @@
                             location: 'Chete Island',
                             description: 'Wildlife safari on Chete Island. See elephants, buffalo, and various bird species in their natural habitat.',
                             contact: '263772863815',
+                            whatsappLink: 'https://wa.me/263772863815?text=Hi! I want to book a safari to Chete Island from Binga Marketplace',
                             status: 'active',
                             addedBy: 1,
                             addedByName: 'Binga Administrator',
                             createdAt: new Date('2024-01-12').toISOString(),
-                            adminContact: '263772863815'
+                            adminContact: '263772863815',
+                            imageUrl: ''
                         }
                     ];
                     localStorage.setItem('binga_marketplace_attractions', JSON.stringify(sampleAttractions));
@@ -1701,7 +1761,7 @@
                         registered: new Date().toISOString(),
                         products: [],
                         rating: 0,
-                        approved: user.type === 'admin' ? true : false, // Admins auto-approved, sellers need approval
+                        approved: user.type === 'admin' ? true : false,
                         status: 'pending'
                     };
                     users.push(newUser);
@@ -1819,7 +1879,8 @@
                         ...attraction,
                         status: 'active',
                         createdAt: new Date().toISOString(),
-                        adminContact: '263772863815'
+                        adminContact: '263772863815',
+                        whatsappLink: attraction.whatsappLink || `https://wa.me/${attraction.contact}?text=Hi! I want to book a tour to ${attraction.name} from Binga Marketplace`
                     };
                     attractions.push(newAttraction);
                     localStorage.setItem('binga_marketplace_attractions', JSON.stringify(attractions));
@@ -1839,6 +1900,11 @@
                     const attractions = this.getAll();
                     const filtered = attractions.filter(a => a.id !== id);
                     localStorage.setItem('binga_marketplace_attractions', JSON.stringify(filtered));
+                },
+                
+                findById: function(id) {
+                    const attractions = this.getAll();
+                    return attractions.find(a => a.id === id);
                 }
             }
         };
@@ -1907,7 +1973,7 @@
                 buttons[0].classList.add('active');
                 document.getElementById('loginTitle').textContent = 'Login to Seller Account';
                 document.getElementById('loginLabel').textContent = 'Username';
-                document.getElementById('loginEmail').placeholder = 'Username';
+                document.getElementById('loginEmail').placeholder = 'Enter your username';
             } else {
                 buttons[1].classList.add('active');
                 document.getElementById('loginTitle').textContent = 'Admin Login';
@@ -1970,7 +2036,14 @@
             }
         }
         
-        // Login function - FIXED
+        // Handle forgot password
+        function handleForgotPassword() {
+            if (confirm("For security reasons, you need to register again if you forget your password. Click OK to go to registration page.")) {
+                showAuthForm('register');
+            }
+        }
+        
+        // Login function
         function login() {
             const username = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
@@ -2018,27 +2091,41 @@
                 // Show success message
                 showAlert(`Login successful! Welcome ${user.name}`, 'success');
                 
+                // If seller just registered and approved, show post ad form
+                if (user.type === 'seller' && user.justRegistered) {
+                    setTimeout(() => {
+                        showPostAdForm();
+                        // Remove the flag
+                        BINGA_MARKETPLACE_DB.users.update(user.id, { justRegistered: false });
+                    }, 1000);
+                }
                 // Redirect based on user type
-                if (user.type === 'admin') {
+                else if (user.type === 'admin') {
                     setTimeout(() => showSection('admin'), 500);
                 } else {
                     setTimeout(() => showSection('dashboard'), 500);
                 }
             } else {
-                alert('Invalid credentials');
+                alert('Invalid credentials. Please check your username and password.');
             }
         }
         
-        // Register function - FIXED
+        // Register function
         function register() {
             const name = document.getElementById('registerName').value.trim();
             const phone = document.getElementById('registerPhone').value.replace(/\D/g, '');
-            const email = document.getElementById('registerEmail').value.trim();
+            const username = document.getElementById('registerUsername').value.trim();
             const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
             const location = document.getElementById('registerLocation').value;
             
-            if (!name || !phone || !password || !location) {
+            if (!name || !phone || !username || !password || !confirmPassword || !location) {
                 alert('Please fill all required fields');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
                 return;
             }
             
@@ -2047,15 +2134,17 @@
                 return;
             }
             
-            // Check if user already exists
+            // Check if username already exists
             const users = BINGA_MARKETPLACE_DB.users.getAll();
+            if (users.find(u => u.username === username)) {
+                alert('Username already taken. Please choose another one.');
+                return;
+            }
+            
             if (users.find(u => u.phone === phone)) {
                 alert('Phone number already registered');
                 return;
             }
-            
-            // Create username from name and phone
-            const username = name.toLowerCase().replace(/\s+/g, '') + phone.slice(-4);
             
             // Add new user
             const newUser = BINGA_MARKETPLACE_DB.users.add({
@@ -2063,24 +2152,35 @@
                 password: password,
                 name: name,
                 phone: phone,
-                email: email || '',
+                email: '',
                 location: location,
-                type: 'seller'
+                type: 'seller',
+                justRegistered: true  // Flag to show post ad form after login
+            });
+            
+            // Auto-approve for demo (remove in production)
+            BINGA_MARKETPLACE_DB.users.update(newUser.id, {
+                approved: true,
+                status: 'active'
             });
             
             // Show success message
-            showAlert('Registration submitted! Your account is pending administrator approval. Contact +263 77 286 3815 for faster approval.', 'success');
+            showAlert('Registration successful! You can now login with your username and password.', 'success');
             
             // Clear form
             document.getElementById('registerName').value = '';
             document.getElementById('registerPhone').value = '';
-            document.getElementById('registerEmail').value = '';
+            document.getElementById('registerUsername').value = '';
             document.getElementById('registerPassword').value = '';
+            document.getElementById('registerConfirmPassword').value = '';
             document.getElementById('registerLocation').value = '';
             
             // Go back to login
             showAuthForm('login');
             setLoginType('seller');
+            
+            // Auto-fill login form
+            document.getElementById('loginEmail').value = username;
         }
         
         // Logout function
@@ -2165,11 +2265,12 @@
             };
             
             const icon = categoryIcons[product.category] || '📦';
+            const displayIcon = product.imageUrl ? `<img src="${product.imageUrl}" alt="${product.title}">` : icon;
             
             return `
                 <div class="product-card">
                     <div class="product-image">
-                        ${icon}
+                        ${displayIcon}
                         <div class="product-price">$${product.price}</div>
                     </div>
                     <div class="product-details">
@@ -2202,11 +2303,14 @@
             };
             
             const icon = attractionIcons[attraction.type] || '🏞️';
+            const displayImage = attraction.imageUrl ? 
+                `<img src="${attraction.imageUrl}" alt="${attraction.name}">` : 
+                icon;
             
             return `
                 <div class="attraction-card">
                     <div class="attraction-image">
-                        ${icon}
+                        ${displayImage}
                         <div class="attraction-type">${attraction.typeName || attraction.type}</div>
                     </div>
                     <div class="product-details">
@@ -2219,8 +2323,8 @@
                             <i class="fas fa-map-marker-alt"></i> ${attraction.location}
                         </div>
                         <div style="margin-top: 10px;">
-                            <a href="tel:+${attraction.contact}" class="whatsapp-btn" style="background: var(--tourist);">
-                                <i class="fas fa-phone"></i> Book Tour: +${attraction.contact}
+                            <a href="${attraction.whatsappLink}" target="_blank" class="whatsapp-btn" style="background: var(--tourist);">
+                                <i class="fab fa-whatsapp"></i> Book on WhatsApp
                             </a>
                         </div>
                     </div>
@@ -2281,6 +2385,7 @@
             document.getElementById('adminSection').style.display = 'none';
             document.getElementById('postAdSection').style.display = 'none';
             document.getElementById('addAttractionSection').style.display = 'none';
+            document.getElementById('editAttractionSection').style.display = 'none';
             
             // Show selected section
             if (section === 'home') {
@@ -2328,8 +2433,11 @@
                         <h3>Plan Your Binga Visit</h3>
                         <p>Contact our tourism desk for bookings and information:</p>
                         <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 20px;">
-                            <h4><i class="fas fa-phone"></i> +263 77 286 3815</h4>
+                            <h4><i class="fab fa-whatsapp"></i> WhatsApp: +263 77 286 3815</h4>
                             <p>Available for tour bookings, accommodation, and travel information</p>
+                            <a href="https://wa.me/263772863815" target="_blank" class="whatsapp-btn" style="margin-top: 10px;">
+                                <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+                            </a>
                         </div>
                     </div>
                 `;
@@ -2502,7 +2610,7 @@
             }
         }
         
-        // Show post ad form - FIXED
+        // Show post ad form
         function showPostAdForm() {
             if (!currentUser || currentUser.type !== 'seller') {
                 openAuthModal('login', 'seller');
@@ -2515,6 +2623,7 @@
             document.getElementById('dashboardSection').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
             document.getElementById('addAttractionSection').style.display = 'none';
+            document.getElementById('editAttractionSection').style.display = 'none';
             
             // Show post ad section
             document.getElementById('postAdSection').style.display = 'block';
@@ -2569,6 +2678,13 @@
                     <div class="form-group">
                         <label class="form-label">Contact Phone*</label>
                         <input type="tel" class="form-control" id="adPhone" value="${currentUser.phone}">
+                        <small>Buyers will contact you on this number via WhatsApp</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Product Image URL (Optional)</label>
+                        <input type="text" class="form-control" id="adImageUrl" placeholder="https://example.com/image.jpg">
+                        <small>Enter a direct link to your product image</small>
                     </div>
                     
                     <div class="form-group">
@@ -2592,7 +2708,7 @@
             `;
         }
         
-        // Submit ad - FIXED
+        // Submit ad
         function submitAd() {
             const title = document.getElementById('adTitle').value.trim();
             const category = document.getElementById('adCategory').value;
@@ -2600,6 +2716,7 @@
             const location = document.getElementById('adLocation').value;
             const description = document.getElementById('adDescription').value.trim();
             const phone = document.getElementById('adPhone').value.replace(/\D/g, '');
+            const imageUrl = document.getElementById('adImageUrl').value.trim();
             const note = document.getElementById('adNote').value.trim();
             
             if (!title || !category || !price || !location || !description || !phone) {
@@ -2627,7 +2744,8 @@
                 sellerPhone: phone,
                 whatsappLink: whatsappLink,
                 status: 'pending',
-                adminNote: note || ''
+                adminNote: note || '',
+                imageUrl: imageUrl || ''
             });
             
             // Update user's products
@@ -2648,6 +2766,7 @@
             document.getElementById('adPrice').value = '';
             document.getElementById('adLocation').value = '';
             document.getElementById('adDescription').value = '';
+            document.getElementById('adImageUrl').value = '';
             document.getElementById('adNote').value = '';
             
             // Go to dashboard
@@ -2685,7 +2804,7 @@
                         ${myProducts.map(p => `
                             <div class="product-card">
                                 <div class="product-image">
-                                    ${p.category === 'fish' ? '🐟' : p.category === 'goat' ? '🐐' : '📦'}
+                                    ${p.imageUrl ? `<img src="${p.imageUrl}" alt="${p.title}">` : (p.category === 'fish' ? '🐟' : p.category === 'goat' ? '🐐' : '📦')}
                                     <div class="product-price">$${p.price}</div>
                                 </div>
                                 <div class="product-details">
@@ -2727,6 +2846,7 @@
                         <li>Contact +263 77 286 3815 for faster approval</li>
                         <li>Approved ads appear on homepage immediately</li>
                         <li>Use clear descriptions and fair pricing</li>
+                        <li>Add images to make your ads more attractive</li>
                     </ul>
                 </div>
             `;
@@ -2755,7 +2875,7 @@
                                 ${pendingProducts.map(p => `
                                     <div class="product-card">
                                         <div class="product-image">
-                                            ${p.category === 'fish' ? '🐟' : p.category === 'goat' ? '🐐' : '📦'}
+                                            ${p.imageUrl ? `<img src="${p.imageUrl}" alt="${p.title}">` : (p.category === 'fish' ? '🐟' : p.category === 'goat' ? '🐐' : '📦')}
                                             <div class="product-price">$${p.price}</div>
                                         </div>
                                         <div class="product-details">
@@ -2793,6 +2913,7 @@
                                         <tr style="background: #f8f9fa;">
                                             <th style="padding: 12px; text-align: left;">Name</th>
                                             <th style="padding: 12px; text-align: left;">Phone</th>
+                                            <th style="padding: 12px; text-align: left;">Username</th>
                                             <th style="padding: 12px; text-align: left;">Location</th>
                                             <th style="padding: 12px; text-align: left;">Registered</th>
                                             <th style="padding: 12px; text-align: left;">Actions</th>
@@ -2803,6 +2924,7 @@
                                             <tr style="border-bottom: 1px solid #eee;">
                                                 <td style="padding: 12px;">${u.name}</td>
                                                 <td style="padding: 12px;">${u.phone}</td>
+                                                <td style="padding: 12px;">${u.username}</td>
                                                 <td style="padding: 12px;">${u.location}</td>
                                                 <td style="padding: 12px;">${new Date(u.registered).toLocaleDateString()}</td>
                                                 <td style="padding: 12px;">
@@ -2840,7 +2962,7 @@
                             ${attractions.map(a => `
                                 <div class="attraction-card">
                                     <div class="attraction-image">
-                                        ${a.type === 'beach' ? '🏖️' : a.type === 'hotspring' ? '♨️' : '🏞️'}
+                                        ${a.imageUrl ? `<img src="${a.imageUrl}" alt="${a.name}">` : (a.type === 'beach' ? '🏖️' : a.type === 'hotspring' ? '♨️' : '🏞️')}
                                         <div class="attraction-type">${a.typeName || a.type}</div>
                                     </div>
                                     <div class="product-details">
@@ -2931,6 +3053,133 @@
             }
         }
         
+        // Admin: Edit attraction
+        function editAttraction(attractionId) {
+            const attraction = BINGA_MARKETPLACE_DB.attractions.findById(attractionId);
+            if (!attraction) {
+                alert('Attraction not found');
+                return;
+            }
+            
+            // Hide other sections
+            document.getElementById('homeSection').style.display = 'none';
+            document.getElementById('tourismSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('adminSection').style.display = 'none';
+            document.getElementById('postAdSection').style.display = 'none';
+            document.getElementById('addAttractionSection').style.display = 'none';
+            
+            // Show edit attraction section
+            document.getElementById('editAttractionSection').style.display = 'block';
+            
+            // Load edit attraction form
+            const attractionTypes = JSON.parse(localStorage.getItem('binga_marketplace_attraction_types')) || [];
+            
+            document.getElementById('editAttractionForm').innerHTML = `
+                <form id="editAttractionFormContent">
+                    <div class="form-group">
+                        <label class="form-label">Attraction Name*</label>
+                        <input type="text" class="form-control" id="editAttractionName" value="${attraction.name}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Attraction Type*</label>
+                        <select class="form-control" id="editAttractionType" required>
+                            <option value="">Select Type</option>
+                            ${attractionTypes.map(type => `
+                                <option value="${type.id}" ${attraction.type === type.id ? 'selected' : ''}>${type.name}</option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Location*</label>
+                        <input type="text" class="form-control" id="editAttractionLocation" value="${attraction.location}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Description*</label>
+                        <textarea class="form-control" id="editAttractionDescription" rows="4" required>${attraction.description}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Contact Number for Bookings*</label>
+                        <input type="tel" class="form-control" id="editAttractionContact" value="${attraction.contact}" required>
+                        <small>This number will be linked to WhatsApp for bookings</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Image URL</label>
+                        <input type="text" class="form-control" id="editAttractionImageUrl" value="${attraction.imageUrl || ''}" placeholder="https://example.com/image.jpg">
+                        <small>Enter a direct link to an image of the attraction</small>
+                    </div>
+                    
+                    ${attraction.imageUrl ? `
+                        <div class="form-group">
+                            <label class="form-label">Current Image Preview</label>
+                            <div>
+                                <img src="${attraction.imageUrl}" alt="${attraction.name}" class="uploaded-image">
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="action-buttons">
+                        <button type="button" class="action-btn approve" onclick="updateAttraction(${attractionId})">
+                            <i class="fas fa-save"></i> Update Attraction
+                        </button>
+                        <button type="button" class="action-btn" onclick="showAdminTab('attractions'); showSection('admin')" style="background: #f0f0f0;">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            `;
+        }
+        
+        // Update attraction
+        function updateAttraction(attractionId) {
+            const name = document.getElementById('editAttractionName').value.trim();
+            const type = document.getElementById('editAttractionType').value;
+            const location = document.getElementById('editAttractionLocation').value.trim();
+            const description = document.getElementById('editAttractionDescription').value.trim();
+            const contact = document.getElementById('editAttractionContact').value.replace(/\D/g, '');
+            const imageUrl = document.getElementById('editAttractionImageUrl').value.trim();
+            
+            if (!name || !type || !location || !description || !contact) {
+                alert('Please fill all required fields');
+                return;
+            }
+            
+            // Get type name
+            const attractionTypes = JSON.parse(localStorage.getItem('binga_marketplace_attraction_types')) || [];
+            const typeObj = attractionTypes.find(t => t.id === type);
+            const typeName = typeObj ? typeObj.name : type;
+            
+            // Update attraction
+            BINGA_MARKETPLACE_DB.attractions.update(attractionId, {
+                name: name,
+                type: type,
+                typeName: typeName,
+                location: location,
+                description: description,
+                contact: contact,
+                imageUrl: imageUrl,
+                whatsappLink: `https://wa.me/${contact}?text=Hi! I want to book a tour to ${encodeURIComponent(name)} from Binga Marketplace`,
+                updatedAt: new Date().toISOString(),
+                updatedBy: currentUser.id
+            });
+            
+            // Show success message
+            showAlert('Tourist attraction updated successfully!', 'success');
+            
+            // Go back to admin attractions tab
+            showSection('admin');
+            showAdminTab('attractions');
+            loadTouristAttractions();
+            if (document.getElementById('tourismSection').style.display !== 'none') {
+                loadTourismContent();
+            }
+        }
+        
         // Admin: Delete attraction
         function deleteAttraction(attractionId) {
             if (confirm('Are you sure you want to delete this tourist attraction?')) {
@@ -2957,6 +3206,7 @@
             document.getElementById('dashboardSection').style.display = 'none';
             document.getElementById('adminSection').style.display = 'none';
             document.getElementById('postAdSection').style.display = 'none';
+            document.getElementById('editAttractionSection').style.display = 'none';
             
             // Show add attraction section
             document.getElementById('addAttractionSection').style.display = 'block';
@@ -2992,16 +3242,22 @@
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Contact for Bookings</label>
+                        <label class="form-label">Contact Number for Bookings*</label>
                         <input type="tel" class="form-control" id="attractionContact" value="263772863815">
-                        <small>This number will be displayed for tour bookings</small>
+                        <small>This number will be linked to WhatsApp for bookings</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Image URL (Optional)</label>
+                        <input type="text" class="form-control" id="attractionImageUrl" placeholder="https://example.com/image.jpg">
+                        <small>Enter a direct link to an image of the attraction</small>
                     </div>
                     
                     <div class="action-buttons">
                         <button type="button" class="action-btn approve" onclick="submitAttraction()">
                             <i class="fas fa-plus-circle"></i> Add Attraction
                         </button>
-                        <button type="button" class="action-btn" onclick="showAdminTab('attractions')" style="background: #f0f0f0;">
+                        <button type="button" class="action-btn" onclick="showAdminTab('attractions'); showSection('admin')" style="background: #f0f0f0;">
                             Cancel
                         </button>
                     </div>
@@ -3016,8 +3272,9 @@
             const location = document.getElementById('attractionLocation').value.trim();
             const description = document.getElementById('attractionDescription').value.trim();
             const contact = document.getElementById('attractionContact').value.replace(/\D/g, '');
+            const imageUrl = document.getElementById('attractionImageUrl').value.trim();
             
-            if (!name || !type || !location || !description) {
+            if (!name || !type || !location || !description || !contact) {
                 alert('Please fill all required fields');
                 return;
             }
@@ -3027,6 +3284,9 @@
             const typeObj = attractionTypes.find(t => t.id === type);
             const typeName = typeObj ? typeObj.name : type;
             
+            // Create WhatsApp link
+            const whatsappLink = `https://wa.me/${contact}?text=Hi! I want to book a tour to ${encodeURIComponent(name)} from Binga Marketplace`;
+            
             // Add attraction
             BINGA_MARKETPLACE_DB.attractions.add({
                 name: name,
@@ -3034,7 +3294,9 @@
                 typeName: typeName,
                 location: location,
                 description: description,
-                contact: contact || '263772863815',
+                contact: contact,
+                imageUrl: imageUrl,
+                whatsappLink: whatsappLink,
                 addedBy: currentUser.id,
                 addedByName: currentUser.name
             });
