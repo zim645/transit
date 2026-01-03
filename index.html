@@ -1083,7 +1083,7 @@
                     <i class="fas fa-fire"></i> Marketplace Listings
                 </h2>
                 
-                <div id="marketplaceMessage" class="no-products">
+                <div id="marketplaceMessage" class="no-products" style="display: none;">
                     <div style="font-size: 60px; margin-bottom: 20px;">🏪</div>
                     <h3>Marketplace is Empty</h3>
                     <p>No approved products have been listed yet. Be the first to post!</p>
@@ -1097,7 +1097,7 @@
                     </div>
                 </div>
                 
-                <div class="products-grid" id="featuredProducts" style="display: none;">
+                <div class="products-grid" id="featuredProducts">
                     <!-- Approved products will be loaded here -->
                 </div>
             </div>
@@ -1108,13 +1108,13 @@
                     <i class="fas fa-camera"></i> Binga Tourist Attractions
                 </h2>
                 
-                <div id="noAttractionsMessage" class="no-products">
+                <div id="noAttractionsMessage" class="no-products" style="display: none;">
                     <div style="font-size: 60px; margin-bottom: 20px;">🏞️</div>
                     <h3>No Tourist Attractions Listed</h3>
                     <p>Administrators can add Binga's beautiful attractions here</p>
                 </div>
                 
-                <div class="products-grid" id="touristAttractions" style="display: none;">
+                <div class="products-grid" id="touristAttractions">
                     <!-- Tourist attractions will be loaded here -->
                 </div>
             </div>
@@ -1155,11 +1155,11 @@
                         <i class="fas fa-clock"></i> Recent Listings
                     </h2>
                     
-                    <div class="products-grid" id="recentProducts" style="display: none;">
+                    <div class="products-grid" id="recentProducts">
                         <!-- Recent products will be loaded here -->
                     </div>
                     
-                    <div id="recentProductsMessage" class="no-products">
+                    <div id="recentProductsMessage" class="no-products" style="display: none;">
                         <div style="font-size: 60px; margin-bottom: 20px;">📦</div>
                         <h3>No Recent Listings</h3>
                         <p>Check back soon or be the first to post!</p>
@@ -1381,13 +1381,13 @@
     </div>
     
     <script>
-        // Database for storing users, products, and tourist attractions - EMPTY INITIALLY
+        // Database for storing users, products, and tourist attractions - WITH SAMPLE DATA
         const BINGA_MARKETPLACE_DB = {
             // Initialize local storage databases
             init: function() {
                 // Initialize users database
                 if (!localStorage.getItem('binga_marketplace_users')) {
-                    // Create default admin user only
+                    // Create default admin user and sample sellers
                     const defaultUsers = [
                         {
                             id: 1,
@@ -1403,20 +1403,229 @@
                             products: [],
                             rating: 5.0,
                             approved: true
+                        },
+                        {
+                            id: 2,
+                            username: 'seller_123456',
+                            password: 'seller123',
+                            name: 'John Fishing',
+                            phone: '+263773456789',
+                            email: 'john@email.com',
+                            location: 'Siachilaba',
+                            type: 'seller',
+                            registered: new Date().toISOString(),
+                            products: [1001, 1002],
+                            rating: 4.5,
+                            approved: true
+                        },
+                        {
+                            id: 3,
+                            username: 'seller_789012',
+                            password: 'seller123',
+                            name: 'Mary Livestock',
+                            phone: '+263774567890',
+                            email: 'mary@email.com',
+                            location: 'Kariyangwe',
+                            type: 'seller',
+                            registered: new Date().toISOString(),
+                            products: [1003, 1004],
+                            rating: 4.8,
+                            approved: true
+                        },
+                        {
+                            id: 4,
+                            username: 'seller_345678',
+                            password: 'seller123',
+                            name: 'Thomas Farming',
+                            phone: '+263775678901',
+                            email: 'thomas@email.com',
+                            location: 'Binga Centre',
+                            type: 'seller',
+                            registered: new Date().toISOString(),
+                            products: [1005],
+                            rating: 4.2,
+                            approved: true
                         }
                     ];
                     localStorage.setItem('binga_marketplace_users', JSON.stringify(defaultUsers));
                 }
                 
-                // Initialize products database - COMPLETELY EMPTY
+                // Initialize products database - WITH SAMPLE DATA
                 if (!localStorage.getItem('binga_marketplace_products')) {
-                    localStorage.setItem('binga_marketplace_products', JSON.stringify([]));
+                    const sampleProducts = [
+                        {
+                            id: 1001,
+                            title: 'Fresh Kapenta - 20kg',
+                            description: 'Sun-dried kapenta from Lake Kariba. High quality, perfect for cooking. Fresh catch from this morning.',
+                            category: 'fish',
+                            price: 80,
+                            location: 'Siachilaba',
+                            sellerId: 2,
+                            sellerName: 'John Fishing',
+                            sellerPhone: '+263773456789',
+                            whatsappLink: 'https://wa.me/263773456789?text=Hi! I saw your Fresh Kapenta - 20kg on Binga Marketplace',
+                            status: 'active',
+                            approved: true,
+                            featured: true,
+                            views: 45,
+                            createdAt: new Date('2024-01-15').toISOString(),
+                            adminContact: '+263772863815'
+                        },
+                        {
+                            id: 1002,
+                            title: 'Lake Bream - Fresh Catch',
+                            description: 'Fresh bream caught today. 2-3kg each. Perfect for grilling or frying. Available in bulk.',
+                            category: 'fish',
+                            price: 15,
+                            location: 'Siachilaba',
+                            sellerId: 2,
+                            sellerName: 'John Fishing',
+                            sellerPhone: '+263773456789',
+                            whatsappLink: 'https://wa.me/263773456789?text=Hi! I saw your Lake Bream - Fresh Catch on Binga Marketplace',
+                            status: 'active',
+                            approved: true,
+                            featured: false,
+                            views: 32,
+                            createdAt: new Date('2024-01-18').toISOString(),
+                            adminContact: '+263772863815'
+                        },
+                        {
+                            id: 1003,
+                            title: 'Healthy Goats - 3 Available',
+                            description: '1-year old male goats. Good for breeding or meat. Vaccinated and healthy.',
+                            category: 'goat',
+                            price: 120,
+                            location: 'Kariyangwe',
+                            sellerId: 3,
+                            sellerName: 'Mary Livestock',
+                            sellerPhone: '+263774567890',
+                            whatsappLink: 'https://wa.me/263774567890?text=Hi! I saw your Healthy Goats - 3 Available on Binga Marketplace',
+                            status: 'active',
+                            approved: true,
+                            featured: true,
+                            views: 67,
+                            createdAt: new Date('2024-01-12').toISOString(),
+                            adminContact: '+263772863815'
+                        },
+                        {
+                            id: 1004,
+                            title: 'Local Chickens - 10 Available',
+                            description: 'Free-range local chickens. Good for meat and eggs. Ready for sale.',
+                            category: 'poultry',
+                            price: 25,
+                            location: 'Kariyangwe',
+                            sellerId: 3,
+                            sellerName: 'Mary Livestock',
+                            sellerPhone: '+263774567890',
+                            whatsappLink: 'https://wa.me/263774567890?text=Hi! I saw your Local Chickens - 10 Available on Binga Marketplace',
+                            status: 'active',
+                            approved: true,
+                            featured: false,
+                            views: 28,
+                            createdAt: new Date('2024-01-20').toISOString(),
+                            adminContact: '+263772863815'
+                        },
+                        {
+                            id: 1005,
+                            title: 'Fertilizer - 50kg bag',
+                            description: 'Compound D fertilizer. Perfect for maize farming. High quality agricultural fertilizer.',
+                            category: 'agriculture',
+                            price: 35,
+                            location: 'Binga Centre',
+                            sellerId: 4,
+                            sellerName: 'Thomas Farming',
+                            sellerPhone: '+263775678901',
+                            whatsappLink: 'https://wa.me/263775678901?text=Hi! I saw your Fertilizer - 50kg bag on Binga Marketplace',
+                            status: 'active',
+                            approved: true,
+                            featured: true,
+                            views: 39,
+                            createdAt: new Date('2024-01-10').toISOString(),
+                            adminContact: '+263772863815'
+                        },
+                        {
+                            id: 1006,
+                            title: 'Boat Engine Repair',
+                            description: 'Professional boat engine repair services. Specializing in Yamaha and Mercury engines. Available for mobile service.',
+                            category: 'services',
+                            price: 50,
+                            location: 'Chete Island',
+                            sellerId: 1,
+                            sellerName: 'Binga Administrator',
+                            sellerPhone: '+263772863815',
+                            whatsappLink: 'https://wa.me/263772863815?text=Hi! I saw your Boat Engine Repair on Binga Marketplace',
+                            status: 'pending',
+                            approved: false,
+                            featured: false,
+                            views: 12,
+                            createdAt: new Date('2024-01-22').toISOString(),
+                            adminContact: '+263772863815'
+                        }
+                    ];
+                    localStorage.setItem('binga_marketplace_products', JSON.stringify(sampleProducts));
                 }
                 
                 // Initialize tourist attractions database
                 if (!localStorage.getItem('binga_marketplace_attractions')) {
-                    // Start with empty array
-                    localStorage.setItem('binga_marketplace_attractions', JSON.stringify([]));
+                    const sampleAttractions = [
+                        {
+                            id: 2001,
+                            name: 'Binga Beach',
+                            type: 'beach',
+                            typeName: 'Beach',
+                            location: 'Lake Kariba Shore',
+                            description: 'Beautiful sandy beach on Lake Kariba. Perfect for swimming, picnics, and sunset views. Clean and family-friendly.',
+                            contact: '+263772863815',
+                            status: 'active',
+                            addedBy: 1,
+                            addedByName: 'Binga Administrator',
+                            createdAt: new Date('2024-01-01').toISOString(),
+                            adminContact: '+263772863815'
+                        },
+                        {
+                            id: 2002,
+                            name: 'Siachilaba Hot Springs',
+                            type: 'hotspring',
+                            typeName: 'Hot Spring',
+                            location: 'Siachilaba',
+                            description: 'Natural hot springs with therapeutic properties. Popular for relaxation and healing. Beautiful natural setting.',
+                            contact: '+263772863815',
+                            status: 'active',
+                            addedBy: 1,
+                            addedByName: 'Binga Administrator',
+                            createdAt: new Date('2024-01-05').toISOString(),
+                            adminContact: '+263772863815'
+                        },
+                        {
+                            id: 2003,
+                            name: 'Lake Kariba Fishing Tours',
+                            type: 'tour',
+                            typeName: 'Tour Service',
+                            location: 'Lake Kariba',
+                            description: 'Guided fishing tours on Lake Kariba. Equipment provided. Experience the best fishing spots with local guides.',
+                            contact: '+263772863815',
+                            status: 'active',
+                            addedBy: 1,
+                            addedByName: 'Binga Administrator',
+                            createdAt: new Date('2024-01-08').toISOString(),
+                            adminContact: '+263772863815'
+                        },
+                        {
+                            id: 2004,
+                            name: 'Chete Island Safari',
+                            type: 'wildlife',
+                            typeName: 'Wildlife',
+                            location: 'Chete Island',
+                            description: 'Wildlife safari on Chete Island. See elephants, buffalo, and various bird species in their natural habitat.',
+                            contact: '+263772863815',
+                            status: 'active',
+                            addedBy: 1,
+                            addedByName: 'Binga Administrator',
+                            createdAt: new Date('2024-01-12').toISOString(),
+                            adminContact: '+263772863815'
+                        }
+                    ];
+                    localStorage.setItem('binga_marketplace_attractions', JSON.stringify(sampleAttractions));
                 }
                 
                 // Initialize categories
@@ -1874,30 +2083,33 @@
             products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             
             // Check if there are any products
+            const featuredContainer = document.getElementById('featuredProducts');
+            const message = document.getElementById('marketplaceMessage');
+            const recentContainer = document.getElementById('recentProducts');
+            const recentMessage = document.getElementById('recentProductsMessage');
+            
             if (products.length === 0) {
                 // Show empty marketplace message
-                document.getElementById('marketplaceMessage').style.display = 'block';
-                document.getElementById('featuredProducts').style.display = 'none';
-                document.getElementById('recentProductsMessage').style.display = 'block';
-                document.getElementById('recentProducts').style.display = 'none';
+                message.style.display = 'block';
+                featuredContainer.style.display = 'none';
+                recentMessage.style.display = 'block';
+                recentContainer.style.display = 'none';
                 return;
             }
             
             // Hide empty messages
-            document.getElementById('marketplaceMessage').style.display = 'none';
-            document.getElementById('recentProductsMessage').style.display = 'none';
+            message.style.display = 'none';
+            recentMessage.style.display = 'none';
             
             // Featured products (verified and popular)
             const featuredProducts = products.filter(p => p.featured).slice(0, 8);
             const recentProducts = products.slice(0, 12);
             
             // Display featured products
-            const featuredContainer = document.getElementById('featuredProducts');
             featuredContainer.style.display = 'grid';
             featuredContainer.innerHTML = featuredProducts.map(product => renderProductCard(product)).join('');
             
             // Display recent products
-            const recentContainer = document.getElementById('recentProducts');
             recentContainer.style.display = 'grid';
             recentContainer.innerHTML = recentProducts.map(product => renderProductCard(product)).join('');
         }
@@ -1909,13 +2121,13 @@
             const container = document.getElementById('touristAttractions');
             const message = document.getElementById('noAttractionsMessage');
             
-            if (attractions.length > 0) {
-                message.style.display = 'none';
-                container.style.display = 'grid';
-                container.innerHTML = attractions.map(attraction => renderAttractionCard(attraction)).join('');
-            } else {
+            if (attractions.length === 0) {
                 container.style.display = 'none';
                 message.style.display = 'block';
+            } else {
+                container.style.display = 'grid';
+                message.style.display = 'none';
+                container.innerHTML = attractions.map(attraction => renderAttractionCard(attraction)).join('');
             }
         }
         
